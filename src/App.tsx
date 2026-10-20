@@ -28,11 +28,26 @@ type Go = (s: Screen, opts?: { replace?: boolean; cloth?: boolean }) => void
 const NavContext = createContext<Go>(() => {})
 export const useNav = () => useContext(NavContext)
 
+// History can be unavailable inside sandboxed frames; navigation still works without it.
+function remember(s: Screen, replace: boolean) {
+  try {
+    if (replace) history.replaceState(s, '')
+    else history.pushState(s, '')
+  } catch {
+    /* ignore */
+  }
+}
+
 function initialScreen(): Screen {
   // Dev only: open any screen directly, e.g. ?screen={"name":"quiz",...} for visual checks.
   const forced = import.meta.env.DEV && new URLSearchParams(location.search).get('screen')
   if (forced) return JSON.parse(forced) as Screen
-  const s = history.state as Screen | null
+  let s: Screen | null = null
+  try {
+    s = history.state as Screen | null
+  } catch {
+    /* ignore */
+  }
   // Results and quizzes are not restorable after a reload; send those back to the map.
   if (s?.name === 'quiz' || s?.name === 'results') return { name: 'map', area: s.area }
   return s ?? { name: 'home' }
@@ -45,8 +60,7 @@ function Router() {
   const go: Go = useCallback(
     (next, { replace = false, cloth = true } = {}) => {
       const swap = () => {
-        if (replace) history.replaceState(next, '')
-        else history.pushState(next, '')
+        remember(next, replace)
         setScreen(next)
         window.scrollTo(0, 0)
       }
@@ -57,7 +71,7 @@ function Router() {
   )
 
   useEffect(() => {
-    history.replaceState(screen, '')
+    remember(screen, true)
     const onPop = (e: PopStateEvent) => {
       const s = (e.state as Screen | null) ?? { name: 'home' }
       void curtain(() => setScreen(s.name === 'quiz' || s.name === 'results' ? { name: 'map', area: s.area } : s))
