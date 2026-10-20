@@ -1,0 +1,97 @@
+.results {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 120px 16px 32px;
+}
+
+.res-card {
+  position: relative;
+  z-index: 11;
+  width: min(100%, 520px);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 60%),
+    rgba(251, 244, 230, 0.86);
+}
+
+.res-body {
+  padding: 0 24px 26px;
+  text-align: center;
+  display: grid;
+  justify-items: center;
+}
+
+.res-kobe {
+  margin-top: -110px;
+}
+
+.res-sub {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+
+.res-stars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin: 10px 0 4px;
+}
+
+.res-star.s0 {
+  transform: rotate(-14deg) translateY(4px);
+}
+
+.res-star.s2 {
+  transform: rotate(14deg) translateY(4px);
+}
+
+.res-head {
+  margin: 6px 0 0;
+  font-size: clamp(40px, 8vw, 56px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--terracotta);
+}
+
+.res-score {
+  font-size: 20px;
+  margin-top: 8px;
+}
+
+.res-msg {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  max-width: 380px;
+}
+
+.res-grow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 18px;
+}
+
+.res-arrow {
+  font-size: 24px;
+  font-weight: 800;
+  transform-origin: left;
+}
+
+.res-grow-text {
+  font-size: 16px;
+}
+
+.res-actions {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+}

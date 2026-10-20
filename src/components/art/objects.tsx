@@ -366,7 +366,7 @@ const ART = {
     </>
   ),
   clip: (
-    <path {...S} fill="none" stroke="#3f8fa3" d="M22 50V18c0-6 10-6 10 0v28c0 3-5 3-5 0V22" transform="rotate(90 32 32)" />
+    <path {...S} fill="none" stroke="#2a6f80" strokeWidth={5} d="M10 26h40c8 0 8 12 0 12H16c-4 0-4-6 0-6h30" />
   ),
   hand: (
     <path {...S} fill="#b5743e" d="M18 52c-6-6-10-14-8-18 2-2 4-2 6 2l4 6V14c0-3 5-3 5 0v16-20c0-3 5-3 5 0v20-18c0-3 5-3 5 0v18-14c0-3 5-3 5 0v26c0 8-4 12-10 14z" />

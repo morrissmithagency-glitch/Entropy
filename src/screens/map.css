@@ -1,0 +1,411 @@
+.map {
+  min-height: 100dvh;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(rgba(42, 27, 18, 0.07) 1.2px, transparent 1.4px),
+    radial-gradient(rgba(42, 27, 18, 0.05) 1.2px, transparent 1.4px);
+  background-size: 26px 26px, 26px 26px;
+  background-position: 0 0, 13px 13px;
+}
+
+.map-hero {
+  position: relative;
+  height: clamp(220px, 34vh, 300px);
+  overflow: hidden;
+  border-bottom: 3px solid var(--ink);
+}
+
+.map-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 14px;
+  background-color: var(--teal-deep);
+  background-image:
+    radial-gradient(circle at 7px 7px, var(--ochre) 2.6px, transparent 3px),
+    linear-gradient(135deg, var(--accent) 25%, transparent 25%),
+    linear-gradient(225deg, var(--accent) 25%, transparent 25%);
+  background-size: 14px 14px;
+}
+
+.map-title h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ink);
+  text-shadow: 0 2px 0 rgba(255, 250, 240, 0.6);
+}
+
+.map-area {
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.map-trail {
+  position: relative;
+  width: min(100% - 32px, 480px);
+  margin: 0 auto 80px;
+}
+
+.map-path {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.map-sign {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-1.5deg);
+  width: min(320px, 86%);
+  background: var(--teal-deep);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 0 rgba(42, 27, 18, 0.85);
+  text-align: center;
+  z-index: 1;
+}
+
+.sign-body {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 14px 12px;
+}
+
+.sign-code {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ochre);
+}
+
+.sign-title {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.map-stop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 170px;
+  z-index: 2;
+}
+
+.stop-btn {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  display: grid;
+  place-items: center;
+}
+
+.stop-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.stop-face {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fffaf0;
+  border: 3px solid var(--ink);
+  box-shadow: 0 6px 0 var(--ink), inset 0 -8px 0 rgba(42, 27, 18, 0.07);
+}
+
+.is-next .stop-face {
+  background: #fff3d6;
+  animation: pulse-ring 1.8s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 6px 0 var(--ink), 0 0 0 0 rgba(242, 179, 61, 0.7);
+  }
+  80%,
+  100% {
+    box-shadow: 0 6px 0 var(--ink), 0 0 0 18px rgba(242, 179, 61, 0);
+  }
+}
+
+.stop-level {
+  position: absolute;
+  right: -4px;
+  bottom: -2px;
+  background: #fffaf0;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+
+.stop-label {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 650;
+  font-size: 15px;
+  line-height: 1.2;
+  background: rgba(251, 244, 230, 0.9);
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.stop-code {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.stop-kobe {
+  position: absolute;
+  top: 0;
+  left: 142px;
+  pointer-events: none;
+}
+
+.stop-kobe > svg {
+  transform: scaleX(-1);
+}
+
+.stop-kobe.left {
+  left: auto;
+  right: 142px;
+}
+
+.stop-kobe.left > svg {
+  transform: none;
+}
+
+.challenge {
+  width: 220px;
+}
+
+.challenge-btn {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(242, 179, 61, 0.35), rgba(242, 179, 61, 0) 70%);
+}
+
+.challenge.locked .challenge-btn {
+  background: none;
+}
+
+.challenge-lock {
+  position: absolute;
+  bottom: 18px;
+  right: 22px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Sheet */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(20, 51, 47, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet {
+  width: min(100%, 560px);
+  max-height: 92dvh;
+  overflow: auto;
+  border-radius: 30px 30px 0 0;
+  background: rgba(251, 244, 230, 0.93);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (min-width: 700px) {
+  .sheet-backdrop {
+    align-items: center;
+  }
+  .sheet {
+    border-radius: 30px;
+  }
+}
+
+.sheet .sheet-close {
+  position: absolute;
+  top: 26px;
+  right: 16px;
+  width: 44px !important;
+  min-height: 44px !important;
+}
+
+.sheet-body {
+  padding: 18px 20px 22px;
+}
+
+.sheet-head {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding-right: 50px;
+}
+
+.sheet-head h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.sheet-head p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+}
+
+.sheet-code {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+}
+
+.levels {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.level-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 8px 14px 8px 10px;
+  border-radius: 18px;
+  border: 2.5px solid rgba(42, 27, 18, 0.18);
+  background: #fffaf0;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.level-row.chosen {
+  border-color: var(--ink);
+  background: #fff1cf;
+  box-shadow: 0 4px 0 var(--ink);
+  transform: translateY(-2px);
+}
+
+.level-row.locked {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.level-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-name {
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.level-hint {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.level-lock {
+  color: var(--ink-soft);
+  padding-right: 6px;
+}
+
+.sheet-go {
+  width: 100%;
+}
+
+.sheet-note {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.challenge-reqs {
+  display: grid;
+  gap: 6px;
+  margin: 16px 0 18px;
+}
+
+.req {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: #fffaf0;
+  border-radius: 12px;
+  border: 2px solid rgba(42, 27, 18, 0.12);
+}
+
+.req.ok {
+  border-color: var(--good);
+}
+
+.req-state {
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.req.ok .req-state {
+  color: var(--good);
+}
+
+/* Scenery along the trail on wide screens. */
+.map-prop {
+  position: absolute;
+  transform: translateY(-50%);
+  opacity: 0.85;
+  filter: saturate(0.85);
+  pointer-events: none;
+}
+
+.map-prop.l {
+  right: calc(100% + 30px);
+}
+
+.map-prop.r {
+  left: calc(100% + 30px);
+}
+
+@media (max-width: 760px) {
+  .map-prop {
+    display: none;
+  }
+}
