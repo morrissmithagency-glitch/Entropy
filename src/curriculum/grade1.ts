@@ -167,4 +167,76 @@ export const GRADE1: LearningArea[] = [
       },
     ],
   },
+  {
+    // Strands from the rationalised KICD Grade 1 Creative Activities design (2024).
+    id: 'creative',
+    kind: 'creative',
+    title: 'Creative Activities',
+    world: 'Sunbird Meadow',
+    tagline: 'Sounds, pictures, songs and play',
+    strands: [
+      {
+        id: 'art-creating',
+        code: '1.0',
+        title: 'Creating and Exploration',
+        subStrands: [
+          { id: 'c-sounds', code: '1.1', title: 'Musical Sounds', blurb: 'Loud, soft, high and low sounds' },
+          { id: 'c-picture', code: '1.2', title: 'Picture Making', blurb: 'Drawing and colouring' },
+          { id: 'c-rhythm', code: '1.3', title: 'Rhythm', blurb: 'Clapping and stamping patterns' },
+        ],
+      },
+      {
+        id: 'art-performing',
+        code: '2.0',
+        title: 'Performing and Display',
+        subStrands: [
+          { id: 'c-stretch', code: '2.1', title: 'Stretching', blurb: 'Reaching, bending and warming up' },
+          { id: 'c-jump', code: '2.2', title: 'Jumping', blurb: 'Jumping, hopping and landing softly' },
+          { id: 'c-games', code: '2.3', title: 'Singing Games', blurb: 'Songs we play together' },
+          { id: 'c-catch', code: '2.4', title: 'Throwing and Catching', blurb: 'Bean bags and balls' },
+          { id: 'c-rolls', code: '2.5', title: 'Rolls and Balances', blurb: 'Log rolls and standing still' },
+          { id: 'c-water', code: '2.6', title: 'Water Safety', blurb: 'Staying safe near water' },
+          { id: 'c-instruments', code: '2.7', title: 'Musical Instruments', blurb: 'Drums, shakers and bells' },
+        ],
+      },
+    ],
+  },
+  {
+    // CRE follows the Creation / Holy Bible / Christian Living pattern of Grades 2 and 3.
+    id: 'cre',
+    kind: 'cre',
+    title: 'Christian Religious Education',
+    world: 'Garden of Grace',
+    tagline: 'God made me, my family and the world',
+    strands: [
+      {
+        id: 'cre-creation',
+        code: '1.0',
+        title: 'Creation',
+        subStrands: [
+          { id: 'r-self', code: '1.1', title: 'God Made Me', blurb: 'My name, my body and my senses' },
+          { id: 'r-family', code: '1.2', title: 'My Family', blurb: 'The people God gave me' },
+          { id: 'r-creation', code: '1.3', title: 'God\'s Creation', blurb: 'Plants, animals, land and water' },
+        ],
+      },
+      {
+        id: 'cre-bible',
+        code: '2.0',
+        title: 'The Holy Bible',
+        subStrands: [
+          { id: 'r-bible', code: '2.1', title: 'The Bible', blurb: 'God\'s special book and its stories' },
+          { id: 'r-jesus', code: '2.2', title: 'Baby Jesus', blurb: 'The birth of Jesus' },
+        ],
+      },
+      {
+        id: 'cre-living',
+        code: '3.0',
+        title: 'Christian Living',
+        subStrands: [
+          { id: 'r-living', code: '3.1', title: 'Being Good', blurb: 'Prayer, sharing and obeying' },
+          { id: 'r-church', code: '3.2', title: 'The Church', blurb: 'Where we worship together' },
+        ],
+      },
+    ],
+  },
 ]

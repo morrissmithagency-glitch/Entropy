@@ -16,7 +16,9 @@ links are listed at the bottom.
 | English Language Activities | High on strands | 4 strands taken from a KICD design hosted by a publisher |
 | Environmental Activities | High | Strand and sub-strand names plus lesson counts found in a KICD design copy |
 | Kiswahili Language Activities | Medium (_verify_) | Skill strands follow the standard KICD language structure |
-| CRE / IRE / HRE, Creative Activities | Not in v1 | Need the PDFs; less suited to auto-marked quizzes |
+| Creative Activities | Added (Oct 2026) | KICD Grade 1 design: 1.0 Creating and Exploration (Musical Sounds, Picture Making/Drawing, Rhythm), 2.0 Performing and Display (Stretching, Jumping, Singing Games, Throwing and Catching, Rolls and Balances, Water Safety, Playing Musical Instruments) |
+| CRE | Added (Oct 2026), medium confidence | Creation, The Holy Bible, Christian Living, following Grades 2 and 3; check against the KICD Grade 1 CRE PDF |
+| IRE / HRE | Not yet | Should be written or reviewed by teachers of those subjects |
 
 ## 2024 rationalisation — what changed for Grade 1
 

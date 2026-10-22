@@ -38,12 +38,12 @@ papers; see [`research/grade3-papers.md`](research/grade3-papers.md).
 
 ## What's in Grade 1
 
-| World | Learning area | Strands | Questions |
-|---|---|---|---|
-| Number Savanna | Mathematical Activities | Numbers · Measurement · Geometry | Generated, so every paper is new |
-| Story Forest | English Language Activities | Listening & Speaking · Reading · Language Use · Writing | Generated phonics/spelling/grammar + written passages |
-| Village & Wild | Environmental Activities | Social · Natural · Resources | 165 written questions |
-| Bustani ya Maneno | Kiswahili Language Activities | Kusikiliza na Kuzungumza · Kusoma · Kuandika | Generated vocabulary/syllables + written passages |
+Six worlds: Number Savanna (Maths), Story Forest (English), Village & Wild (Environmental),
+Bustani ya Maneno (Kiswahili), Sunbird Meadow (Creative Activities) and Garden of Grace (CRE):
+52 sub-strands, each with a short picture-led lesson and at least 15 different questions per
+level (stories: 5). Creative Activities follows the KICD Grade 1 design (Creating and
+Exploration; Performing and Display); CRE follows the Grade 2 and 3 pattern and needs
+checking against the KICD PDF.
 
 The curriculum mapping, sources and confidence levels are in
 [`research/grade1-strands.md`](research/grade1-strands.md). All questions are original:
@@ -51,7 +51,7 @@ commercial papers (JESMA etc.) were used only as a guide to format and difficult
 
 ## Enough to practise for a term
 
-Every Grade 2 and Grade 3 sub-strand has at least 15 different questions at every level (comprehension:
+Every Grade 1, 2 and 3 sub-strand has at least 15 different questions at every level (comprehension:
 7, because stories are written by hand), and most have hundreds. The test
 `src/engine/__tests__/depth.test.ts` keeps it that way. Quizzes mix two sources:
 
@@ -63,7 +63,7 @@ Every Grade 2 and Grade 3 sub-strand has at least 15 different questions at ever
 
 ## Teaching, not just testing
 
-* **Lessons.** Every Grade 2 and Grade 3 sub-strand has a short, read-aloud lesson with worked examples
+* **Lessons.** Every sub-strand in Grades 1, 2 and 3 has a short, read-aloud lesson with worked examples
   (`src/lessons/`). A new sub-strand starts with its lesson; the lesson ends on one key
   idea to remember. Kiswahili lessons are written in Kiswahili.
 * **Mistakes explained.** A wrong answer shows why, then gives one unscored question on the

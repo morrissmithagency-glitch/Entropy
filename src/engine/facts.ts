@@ -58,7 +58,10 @@ const others = (cats: Category[], c: Category) => peers(cats, c).flatMap((x) => 
 const list = (xs: string[]) => xs.join(', ')
 
 function fromCategories(rng: Rng, level: Level, cats: Category[], w: Wording): ChoiceQuestion {
-  const c = rng.pick(cats.filter((x) => x.items.length >= 3 && others(cats, x).length >= 3))
+  const usable = cats.filter((x) => x.items.length >= 3 && others(cats, x).length >= 3)
+  // "Which one is NOT a thing we must NOT…" is a double negative: ask those lists another way.
+  const plain = usable.filter((x) => !/\bnot\b/i.test(x.one))
+  const c = rng.pick(level === 3 && plain.length ? plain : usable)
   // Explanations are written in English; other languages fall back to the lesson's key idea.
   const en = w === ENGLISH
   const outside = others(cats, c)

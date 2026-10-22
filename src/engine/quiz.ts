@@ -12,6 +12,9 @@ import { ENGLISH3_GRAMMAR } from './generators/english3-grammar'
 import { KISWAHILI3_GRAMMAR } from './generators/kiswahili3-grammar'
 import { MATH2_GENERATORS } from './generators/math2'
 import { GRADE2_BANKS, GRADE2_FACT_GENERATORS } from './banks/grade2'
+import { GRADE1_MORE_BANKS, GRADE1_MORE_GENERATORS } from './banks/grade1-more'
+import { GRADE1_ENV_GENERATORS } from './banks/grade1-env'
+import * as G1 from './generators/grade1-extra'
 import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
 import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
 import { uid } from './helpers'
@@ -21,8 +24,35 @@ import type { BankQuestion, Generator, Level, Question, Rng } from './types'
 export const QUIZ_LENGTH = 8
 export const CHALLENGE_LENGTH = 10
 
-const GENERATORS: Record<string, Generator> = { ...MATH_GENERATORS, ...ENGLISH_GENERATORS, ...KISWAHILI_GENERATORS, ...MATH3_GENERATORS, ...ENGLISH3_GENERATORS, ...GRADE3_MORE_GENERATORS, ...GRADE3_FACT_GENERATORS, ...ENGLISH3_GRAMMAR, ...KISWAHILI3_GRAMMAR, ...MATH2_GENERATORS, ...ENGLISH2_GENERATORS, ...KISWAHILI2_GENERATORS, ...GRADE2_FACT_GENERATORS }
-const BANKS: Record<string, BankQuestion[]> = { ...ENVIRONMENTAL_BANKS, ...ENGLISH_BANKS, ...KISWAHILI_BANKS, ...ENVIRONMENTAL3_BANKS, ...ENGLISH3_BANKS, ...GRADE3_MORE_BANKS, ...ENGLISH2_BANKS, ...KISWAHILI2_BANKS, ...GRADE2_BANKS }
+const GENERATORS: Record<string, Generator> = { ...MATH_GENERATORS, ...ENGLISH_GENERATORS, ...KISWAHILI_GENERATORS, ...MATH3_GENERATORS, ...ENGLISH3_GENERATORS, ...GRADE3_MORE_GENERATORS, ...GRADE3_FACT_GENERATORS, ...ENGLISH3_GRAMMAR, ...KISWAHILI3_GRAMMAR, ...MATH2_GENERATORS, ...ENGLISH2_GENERATORS, ...KISWAHILI2_GENERATORS, ...GRADE2_FACT_GENERATORS, ...GRADE1_MORE_GENERATORS }
+const BANKS: Record<string, BankQuestion[]> = { ...ENVIRONMENTAL_BANKS, ...ENGLISH_BANKS, ...KISWAHILI_BANKS, ...ENVIRONMENTAL3_BANKS, ...ENGLISH3_BANKS, ...GRADE3_MORE_BANKS, ...ENGLISH2_BANKS, ...KISWAHILI2_BANKS, ...GRADE2_BANKS, ...GRADE1_MORE_BANKS }
+
+// Grade 1 levels that were thin get extra question makers mixed in; the original
+// questions keep their place at every other level.
+const mix = (id: string, extra: Generator, levels: Level[], share?: number) => {
+  GENERATORS[id] = G1.levelMix(GENERATORS[id], extra, levels, share)
+}
+mix('m-length', G1.length1, [1, 3])
+mix('m-mass', G1.mass1, [1, 2, 4])
+mix('m-capacity', G1.capacity1, [1, 2, 3])
+mix('m-time', G1.time1, [1, 2])
+mix('m-money', G1.money1, [1, 2])
+mix('m-lines', G1.lines1, [1, 2, 4, 5])
+mix('m-shapes', G1.shapes1, [1, 4])
+mix('e-sounds', G1.firstSound1, [3, 4])
+mix('e-letters', G1.letters1, [1, 4, 5])
+mix('e-sight', G1.sight1, [3, 4, 5])
+mix('e-naming', G1.naming1, [4, 5])
+mix('e-grammar', G1.grammar1, [4, 5])
+mix('e-spelling', G1.spell2, [1, 3])
+mix('e-sentences', G1.sentences1, [1, 2, 3, 4, 5], 0.7)
+mix('k-msamiati', G1.msamiati2, [4, 5])
+mix('k-silabi', G1.silabi2, [1, 4])
+mix('k-kuandika', G1.tahajia2, [3, 4])
+// Bank-only Grade 1 sub-strands gain a question maker; the builder mixes the two.
+Object.assign(GENERATORS, GRADE1_ENV_GENERATORS, { 'e-polite': G1.polite1, 'k-salamu': G1.salamu2 })
+BANKS['e-comprehension'] = [...BANKS['e-comprehension'], ...G1.COMP1_MORE]
+BANKS['k-ufahamu'] = [...BANKS['k-ufahamu'], ...G1.UFAHAMU1_MORE]
 
 export function hasSource(subId: string): boolean {
   return subId in GENERATORS || subId in BANKS
