@@ -458,7 +458,7 @@ const CREATION3: BankQuestion[] = [
   t(2, 'Adam and Eve lived in the garden of ___.', 'Eden', ['Egypt', 'Nineveh']),
   t(2, 'The first woman God created was ___.', 'Eve', ['Mary', 'Sarah']),
   t(2, 'God rested on the ___ day.', 'seventh', ['first', 'third']),
-  t(3, 'How can we care for God\'s creation?', 'by planting trees', ['by burning forests', 'by killing animals']),
+  t(3, 'How can we care for God\'s creation?', 'by planting trees', ['by burning forests', 'by littering']),
   t(3, 'God created light on the ___ day.', 'first', ['seventh', 'sixth']),
   t(3, 'God made man from the ___ of the ground.', 'dust', ['water', 'trees']),
   t(4, 'On which day did God create human beings?', 'the sixth day', ['the first day', 'the third day', 'the seventh day']),
@@ -479,7 +479,7 @@ const FAMILY3: BankQuestion[] = [
   t(3, 'My uncle\'s children are my ___.', 'cousins', ['grandparents', 'aunts']),
   t(3, 'Which shows love in a family?', 'helping with house chores', ['fighting with siblings', 'hiding food']),
   t(3, 'Christian families pray together to ___.', 'thank God and ask for His help', ['make noise', 'finish food']),
-  t(4, 'Which commandment teaches us about parents?', 'Honour your father and mother', ['Do not steal', 'Do not kill', 'Keep the Sabbath holy']),
+  t(4, 'Which commandment teaches us about parents?', 'Honour your father and mother', ['Do not steal', 'Do not tell lies', 'Keep the Sabbath holy']),
   t(4, 'Grandparents, uncles, aunts and cousins form the ___ family.', 'extended', ['nuclear', 'school', 'small']),
   t(4, 'Jesus obeyed His parents Mary and ___.', 'Joseph', ['Moses', 'David', 'Peter']),
   t(5, 'Your little sister is sick and Mother is busy. What should you do?', 'take care of her and call Mother', ['go out to play', 'shout at her', 'eat her food']),
@@ -490,7 +490,7 @@ const FAMILY3: BankQuestion[] = [
 const BIBLE3: BankQuestion[] = [
   t(1, '___ saw the burning bush.', 'Moses', ['Noah', 'Jonah']),
   t(1, 'Who built the ark?', 'Noah', ['Moses', 'David']),
-  t(1, 'Who killed Goliath?', 'David', ['Saul', 'Daniel']),
+  t(1, 'Which shepherd boy bravely defeated the giant Goliath?', 'David', ['Saul', 'Daniel']),
   t(2, 'Jonah was sent to the city of ___.', 'Nineveh', ['Tarshish', 'Egypt']),
   t(2, 'Naaman was suffering from ___.', 'leprosy', ['measles', 'malaria']),
   t(2, 'Jonah was swallowed by a big ___.', 'fish', ['lion', 'bird']),
@@ -501,7 +501,7 @@ const BIBLE3: BankQuestion[] = [
   t(4, 'Who told Naaman to wash in River Jordan?', 'Elisha', ['Elijah', 'Moses', 'Samuel']),
   t(4, 'Who protected Daniel in the den of lions?', 'God\'s angel', ['the king', 'his friends', 'the soldiers']),
   t(5, 'What lesson do we learn from Jonah?', 'we should obey God', ['we should run away', 'we should fear fish', 'we should travel by ship']),
-  t(5, 'Which story shows God healing a sick person?', 'Naaman washing in River Jordan', ['Noah building the ark', 'David killing Goliath', 'Jonah going to Tarshish']),
+  t(5, 'Which story shows God healing a sick person?', 'Naaman washing in River Jordan', ['Noah building the ark', 'David and Goliath', 'Jonah going to Tarshish']),
   t(5, 'The three Hebrew men were Shadrach, Meshach and ___.', 'Abednego', ['Daniel', 'Samuel', 'Elisha']),
 ]
 
@@ -519,7 +519,7 @@ const JESUS3: BankQuestion[] = [
   t(4, 'Who gave Jesus the five loaves and two fish?', 'a young boy', ['a king', 'a soldier', 'a shepherd']),
   t(4, 'At the age of twelve Jesus was found in the ___ in Jerusalem.', 'Temple', ['market', 'river', 'field']),
   t(5, 'Jesus said, "Let the little children come to me." This shows that Jesus ___.', 'loves children', ['was tired', 'wanted to play', 'was angry']),
-  t(5, 'Which shows a miracle of Jesus?', 'healing the blind man', ['building the ark', 'killing Goliath', 'washing in River Jordan']),
+  t(5, 'Which shows a miracle of Jesus?', 'healing the blind man', ['building the ark', 'David and Goliath', 'washing in River Jordan']),
   t(5, 'Five loaves and two fish fed many people, with ___ baskets left over.', 'twelve', ['two', 'five', 'seven']),
 ]
 

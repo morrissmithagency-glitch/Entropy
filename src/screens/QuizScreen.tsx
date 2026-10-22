@@ -251,7 +251,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
           >
             <div className="fb-inner">
               <div className="fb-kobe">
-                <Kobe mood={mood} size={92} />
+                <Kobe mood={mood} size={92} interactive={false} />
               </div>
               <div className="fb-text">
                 <div className="display fb-title">{phrase}</div>

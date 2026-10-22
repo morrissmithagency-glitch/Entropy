@@ -137,7 +137,7 @@ export const ENVIRONMENTAL3_LESSONS: Record<string, Lesson> = {
       {
         title: 'Stopping soil erosion',
         text: 'Running water can carry soil away. Planting trees and grass, and digging terraces, hold the soil in place.',
-        example: ['Do not burn grass: it kills small animals and makes soil poor.'],
+        example: ['Do not burn grass: it harms small creatures and makes soil poor.'],
       },
     ],
     remember: 'Loam grows crops best. Manure feeds the soil; trees and grass hold it in place.',
@@ -215,7 +215,7 @@ export const ENVIRONMENTAL3_LESSONS: Record<string, Lesson> = {
       },
       {
         title: 'Caring for animals',
-        text: 'Give them food and clean water, a clean shed, and never beat them. A veterinary doctor treats sick animals.',
+        text: 'Give them food and clean water, a clean shed, and always handle them gently. A veterinary doctor treats sick animals.',
       },
     ],
     remember: 'Feed them, give them water and shelter, be gentle, and call the vet when they are sick.',

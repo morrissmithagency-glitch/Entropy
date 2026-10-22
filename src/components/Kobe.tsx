@@ -1,7 +1,8 @@
 // Kobe the tortoise ("kobe" is Kiswahili for tortoise). Slow and steady wins: the
 // mascot's whole personality is patient encouragement.
-import { motion, useAnimationControls } from 'framer-motion'
-import { useEffect, useId, useRef, useState } from 'react'
+import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
+import { useEffect, useId, useRef, useState, type PointerEvent as RPointerEvent } from 'react'
+import { haptic } from './motion'
 
 export type Mood = 'idle' | 'happy' | 'cheer' | 'think' | 'oops'
 
@@ -9,8 +10,26 @@ const INK = '#1f2733'
 const SKIN = '#a9bd8c'
 const SKIN_SHADE = '#88a06e'
 
-export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; size?: number; className?: string }) {
+/** How Kobe answers a run of pokes: a giggle, then tickled, then grumpy, then hiding. */
+type Reaction = 'giggle' | 'tickle' | 'grumpy' | 'hide' | 'peek'
+const LINES: Record<Reaction, string[]> = {
+  giggle: ['Hehe!', 'Hello!', 'Jambo!'],
+  tickle: ['Tickly!', 'Hihi, stop!'],
+  grumpy: ['Hmph!', 'Hey!'],
+  hide: ['Need space!'],
+  peek: ['Friends?'],
+}
+
+export function Kobe({ mood = 'idle', size = 220, className, interactive = true }: { mood?: Mood; size?: number; className?: string; interactive?: boolean }) {
   const ref = useRef<SVGSVGElement>(null)
+  const [reaction, setReaction] = useState<Reaction | null>(null)
+  const [line, setLine] = useState<string | null>(null)
+  const [tucked, setTucked] = useState(false)
+  const place = useAnimationControls()
+  const pokes = useRef({ count: 0, last: 0, busy: false })
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const later = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, ms))
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
   const [look, setLook] = useState({ x: 0, y: 0 })
   const [blink, setBlink] = useState(false)
   const body = useAnimationControls()
@@ -62,13 +81,75 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
     }
   }, [mood, body, arm])
 
-  const look2 = mood === 'think' ? { x: 0.3, y: -0.9 } : look
-  const happyEyes = mood === 'happy' || mood === 'cheer'
+  const say = (r: Reaction, ms: number) => {
+    const options = LINES[r]
+    setReaction(r)
+    setLine(options[Math.floor(Math.random() * options.length)])
+    timers.current.forEach(clearTimeout)
+    timers.current = []
+    later(ms, () => {
+      setReaction(null)
+      setLine(null)
+    })
+  }
+
+  const poke = (e: RPointerEvent) => {
+    const p = pokes.current
+    if (!interactive || p.busy) return
+    const now = Date.now()
+    p.count = now - p.last > 2600 ? 1 : p.count + 1
+    p.last = now
+    haptic('tap')
+    if (p.count <= 2) {
+      say('giggle', 1100)
+      void body.start({ scaleY: [1, 0.86, 1.06, 1], scaleX: [1, 1.08, 0.97, 1], transition: { duration: 0.5 } })
+    } else if (p.count <= 4) {
+      say('tickle', 1300)
+      void body.start({ rotate: [0, -6, 6, -4, 4, 0], y: [0, -6, 0], transition: { duration: 0.6 } })
+    } else if (p.count <= 6) {
+      say('grumpy', 1400)
+      void body.start({ rotate: [0, -3, 3, -3, 0], transition: { duration: 0.45 } })
+    } else {
+      // Enough: tuck into the shell and shuffle away from the finger, then make up.
+      p.busy = true
+      say('hide', 2600)
+      setTucked(true)
+      const r = ref.current?.getBoundingClientRect()
+      const centre = r ? r.left + r.width / 2 : 0
+      let dir = centre >= e.clientX ? 1 : -1
+      if (r && (r.right + 80 > window.innerWidth ? dir > 0 : r.left - 80 < 0 ? dir < 0 : false)) dir = -dir
+      void place.start({ x: dir * 70, transition: { duration: 0.9, ease: [0.3, 0.7, 0.3, 1] } })
+      later(2700, () => {
+        setTucked(false)
+        say('peek', 1800)
+        later(1900, () => {
+          void place.start({ x: 0, transition: { duration: 1.6, ease: 'easeInOut' } })
+          p.count = 0
+          p.busy = false
+        })
+      })
+    }
+  }
+
+  const shownMood: Mood = reaction === 'giggle' || reaction === 'tickle' ? 'happy' : reaction === 'grumpy' ? 'oops' : reaction === 'peek' ? 'think' : mood
+  const look2 = shownMood === 'think' ? { x: 0.3, y: -0.9 } : look
+  const happyEyes = shownMood === 'happy' || shownMood === 'cheer'
   const px = look2.x * 3.6
   const py = look2.y * 3.2
 
   return (
-    <motion.svg ref={ref} viewBox="0 0 230 180" width={size} height={(size * 180) / 230} className={className} role="img" aria-label="Kobe the tortoise" style={{ overflow: 'visible' }}>
+    <motion.svg
+      ref={ref}
+      viewBox="0 0 230 180"
+      width={size}
+      height={(size * 180) / 230}
+      className={className}
+      role="img"
+      aria-label="Kobe the tortoise"
+      animate={place}
+      onPointerDown={poke}
+      style={{ overflow: 'visible', cursor: interactive ? 'pointer' : undefined, touchAction: 'manipulation', pointerEvents: interactive ? 'auto' : undefined }}
+    >
       <defs>
         <pattern id={`${pid}-plates`} width="34" height="30" patternUnits="userSpaceOnUse" patternTransform="translate(6 4)">
           <path d="M8.5 0h17L34 15l-8.5 15h-17L0 15z" fill="#e6c07e" stroke={INK} strokeWidth="2.2" />
@@ -83,8 +164,10 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
         <ellipse cx="112" cy="166" rx="88" ry="10" fill={INK} opacity="0.16" />
         <motion.g animate={body}>
           {/* back legs */}
-          <path d="M42 120c-6 18-2 34 10 38h16c4-10 4-24 0-38z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
-          <path d="M142 122c-4 16-2 30 6 36h16c6-10 6-24 2-36z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+          <motion.g animate={{ y: tucked ? -22 : 0 }} transition={{ duration: 0.25 }}>
+            <path d="M42 120c-6 18-2 34 10 38h16c4-10 4-24 0-38z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+            <path d="M142 122c-4 16-2 30 6 36h16c6-10 6-24 2-36z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+          </motion.g>
           {/* shell */}
           <path d="M26 118C26 64 62 34 108 34s80 30 80 84z" fill="#b97a66" stroke={INK} strokeWidth="3.2" strokeLinejoin="round" />
           <g clipPath={`url(#${pid}-shell)`}>
@@ -97,11 +180,14 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
             <circle key={i} cx={30 + i * 11.4} cy={122} r={2.3} fill="#e6c07e" />
           ))}
           {/* front legs */}
-          <path d="M60 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
-          <motion.g animate={arm} style={{ originX: 0.5, originY: 0.05 }}>
-            <path d="M160 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+          <motion.g animate={{ y: tucked ? -26 : 0 }} transition={{ duration: 0.25 }}>
+            <path d="M60 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+            <motion.g animate={arm} style={{ originX: 0.5, originY: 0.05 }}>
+              <path d="M160 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+            </motion.g>
           </motion.g>
-          {/* neck + head */}
+          {/* neck + head (pulled into the shell when Kobe hides) */}
+          <motion.g animate={tucked ? { x: -34, y: 18, scale: 0.4, opacity: 0 } : { x: 0, y: 0, scale: 1, opacity: 1 }} transition={{ duration: tucked ? 0.22 : 0.5, ease: 'easeOut' }} style={{ originX: 0, originY: 1 }}>
           <path d="M172 104c4-14 12-22 20-24l10 26c-8 8-20 10-30-2z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
           <g>
             <ellipse cx="192" cy="78" rx="32" ry="29" fill={SKIN} stroke={INK} strokeWidth="3.2" />
@@ -128,10 +214,10 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
                     )}
                   </>
                 )}
-                {(mood === 'oops' || mood === 'think') && (
+                {(shownMood === 'oops' || shownMood === 'think') && (
                   // Worried brows lift at the inner ends; thinking raises one brow.
                   <path
-                    d={mood === 'oops' ? (i === 0 ? `M${cx - 8} 61l13 -5` : `M${cx + 8} 61l-13 -5`) : i === 0 ? `M${cx - 8} 59l14 -1` : `M${cx + 8} 55l-14 1`}
+                    d={shownMood === 'oops' ? (i === 0 ? `M${cx - 8} 61l13 -5` : `M${cx + 8} 61l-13 -5`) : i === 0 ? `M${cx - 8} 59l14 -1` : `M${cx + 8} 55l-14 1`}
                     stroke={INK}
                     strokeWidth="3"
                     strokeLinecap="round"
@@ -143,9 +229,9 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
             <ellipse cx="172" cy="88" rx="5" ry="3" fill="#e86a8a" opacity="0.55" />
             <ellipse cx="212" cy="88" rx="5" ry="3" fill="#e86a8a" opacity="0.55" />
             {/* mouth */}
-            {mood === 'think' ? (
+            {shownMood === 'think' ? (
               <circle cx="192" cy="91" r="3.4" fill={INK} />
-            ) : mood === 'oops' ? (
+            ) : shownMood === 'oops' ? (
               <path d="M184 92q8 4 16 0" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round" />
             ) : happyEyes ? (
               <path d="M180 88q12 14 24 0z" fill="#9c3b27" stroke={INK} strokeWidth="2.8" strokeLinejoin="round" />
@@ -153,8 +239,29 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
               <path d="M182 89q10 9 20 0" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round" />
             )}
           </g>
+          </motion.g>
         </motion.g>
       </motion.g>
+      <AnimatePresence>
+        {line && (
+          <motion.g
+            key={line}
+            initial={{ opacity: 0, y: 8, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+            style={{ originX: 0.5, originY: 1 }}
+            pointerEvents="none"
+          >
+            <rect x={118 - line.length * 6.2 - 16} y={-44} width={line.length * 12.4 + 32} height={46} rx={23} fill="#fffaf0" stroke={INK} strokeWidth="3" />
+            <path d="M124 1l14 12 2-12z" fill="#fffaf0" stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+            <path d="M121 0h22" stroke="#fffaf0" strokeWidth="4" />
+            <text x={118} y={-14} textAnchor="middle" fontSize="23" fontWeight="700" fill={INK} fontFamily="inherit">
+              {line}
+            </text>
+          </motion.g>
+        )}
+      </AnimatePresence>
     </motion.svg>
   )
 }

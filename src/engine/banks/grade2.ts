@@ -71,7 +71,7 @@ const FACTS: Record<string, FactSet> = {
       {
         pairs: [
           ['black', 'the people of Kenya'],
-          ['red', 'the blood shed in the fight for freedom'],
+          ['red', 'the sacrifices made to win our freedom'],
           ['green', 'our land'],
           ['white', 'peace'],
         ],
@@ -401,7 +401,7 @@ const FACTS: Record<string, FactSet> = {
       {
         pairs: [
           ['Noah', 'built a big boat called the ark'],
-          ['David', 'was a shepherd boy who killed Goliath'],
+          ['David', 'was a brave shepherd boy who defeated Goliath'],
           ['Samuel', 'heard God calling him at night'],
           ['Jonah', 'was swallowed by a big fish'],
           ['Moses', 'led God\'s people out of Egypt'],

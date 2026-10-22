@@ -310,7 +310,7 @@ export const GRADE1_MORE_BANKS: Record<string, BankQuestion[]> = {
     t(1, 'Who made the trees?', 'God', ['people', 'cars']),
     a(2, 'Which one did God make?', 'tree', ['cup', 'chair']),
     t(3, 'How can we care for God\'s plants?', 'by watering them', ['by burning them', 'by stepping on them']),
-    t(4, 'How should we treat animals?', 'kindly', ['roughly', 'cruelly']),
+    t(4, 'How should we treat animals?', 'kindly', ['roughly', 'carelessly']),
     t(5, 'Why should we not throw rubbish in rivers?', 'God made rivers and fish live there', ['rivers like rubbish', 'fish eat plastic']),
   ],
   'r-bible': [

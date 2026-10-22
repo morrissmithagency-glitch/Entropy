@@ -151,7 +151,7 @@ export const ENVIRONMENTAL3_BANKS: Record<string, BankQuestion[]> = {
     t(4, 'Grass on the ground helps to ___.', 'hold the soil together', ['make soil hot', 'remove manure', 'dry the soil']),
     t(5, 'Which group has only ways of caring for soil?', 'planting trees, adding manure, making terraces', ['burning bushes, planting trees, adding manure', 'throwing plastics, digging terraces, planting grass', 'cutting trees, burning grass, adding manure']),
     t(5, 'A farmer\'s maize is small and yellow. What should he add to the soil?', 'manure', ['plastic', 'stones', 'salt']),
-    t(5, 'Why should we not burn grass on the farm?', 'it kills small animals and makes soil poor', ['it makes soil fertile', 'it brings rain', 'it makes the farm green']),
+    t(5, 'Why should we not burn grass on the farm?', 'it harms small creatures and makes soil poor', ['it makes soil fertile', 'it brings rain', 'it makes the farm green']),
   ],
   // 2.3 Heat: sources, uses and safety.
   'tv-heat': [
@@ -217,12 +217,12 @@ export const ENVIRONMENTAL3_BANKS: Record<string, BankQuestion[]> = {
     t(2, 'A donkey helps people to ___.', 'carry loads', ['lay eggs', 'give wool']),
     t(3, 'Where should cows sleep at night?', 'in a clean shed', ['on the road', 'in the classroom']),
     t(3, 'A person who treats sick animals is a ___.', 'veterinary doctor', ['teacher', 'carpenter']),
-    tf(3, 'It is good to beat animals when they are slow.', false),
+    tf(3, 'It is good to give our animals clean water every day.', true),
     t(4, 'Which product do we get from both cows and goats?', 'milk', ['eggs', 'wool', 'honey']),
     t(4, 'We get honey from ___.', 'bees', ['cows', 'hens', 'goats']),
     t(4, 'Why should we clean an animal shed often?', 'to keep away germs and pests', ['to make the animals cold', 'to remove the food', 'to make it dark']),
     t(5, 'Which group has only animal products?', 'milk, eggs, honey', ['milk, maize, eggs', 'honey, beans, wool', 'eggs, cabbage, meat']),
-    t(5, 'Kamau\'s goat is not eating and looks weak. What should he do?', 'tell an adult to call a veterinary doctor', ['beat the goat', 'give it soda', 'leave it alone for a week']),
+    t(5, 'Kamau\'s goat is not eating and looks weak. What should he do?', 'tell an adult to call a veterinary doctor', ['give it soda', 'leave it alone for a week', 'make it run around']),
     t(5, 'A farmer has 6 hens. Each hen lays 2 eggs in a day. How many eggs are laid in one day?', '12', ['8', '4', '10']),
   ],
   // 3.4 Waste materials: collecting, sorting, re-using.

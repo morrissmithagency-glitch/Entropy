@@ -205,7 +205,7 @@ export const CREATIVE3_LESSONS: Record<string, Lesson> = {
       },
       {
         title: 'Our flag',
-        text: 'Black for the people, red for the blood of those who fought for freedom, green for the land, white for peace.',
+        text: 'Black for the people, red for the sacrifices made for our freedom, green for the land, white for peace.',
       },
     ],
     remember: 'A prayer in three verses and two languages. Stand still and sing with respect.',

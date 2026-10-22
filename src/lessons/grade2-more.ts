@@ -31,7 +31,7 @@ export const ENVIRONMENTAL2_LESSONS: Record<string, Lesson> = {
   'sv-flag': {
     intro: 'The Kenyan flag stands for our country and its people.',
     steps: [
-      { title: 'Four colours', text: 'Black for the people, red for the blood shed for freedom, green for the land, white for peace.' },
+      { title: 'Four colours', text: 'Black for the people, red for the sacrifices made for freedom, green for the land, white for peace.' },
       { title: 'The shield', text: 'In the middle is a shield with two spears. They stand for defending our freedom.' },
       { title: 'Respect', text: 'Stand still when the flag is raised. Keep it clean and never tear it.' },
     ],
@@ -276,7 +276,7 @@ export const CRE2_LESSONS: Record<string, Lesson> = {
     intro: 'The Bible is God\'s word. It guides us.',
     steps: [
       { title: 'Caring for the Bible', text: 'Keep it clean, cover it, never tear it, and keep it in a safe place.' },
-      { title: 'Bible stories', text: 'Noah built the ark. David killed Goliath. Samuel heard God call him at night.' },
+      { title: 'Bible stories', text: 'Noah built the ark. Brave David defeated the giant Goliath. Samuel heard God call him at night.' },
     ],
     remember: 'The Bible is God\'s word; care for it and learn from its stories.',
   },

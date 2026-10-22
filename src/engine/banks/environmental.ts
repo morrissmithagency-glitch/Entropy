@@ -204,7 +204,7 @@ export const ENVIRONMENTAL_BANKS: Record<string, BankQuestion[]> = {
     a(3, 'Which animal has a trunk?', 'elephant', ['lion', 'goat']),
     t(4, 'Where do wild animals like lions and elephants live in Kenya?', 'in game parks', ['in classrooms', 'in kitchens', 'in matatus']),
     t(4, 'Which animal helps a farmer to plough?', 'ox', ['cat', 'hen', 'fish']),
-    t(4, 'How should we treat domestic animals?', 'give them food, water and shelter', ['beat them', 'leave them hungry', 'chase them away']),
+    t(4, 'How should we treat domestic animals?', 'give them food, water and shelter', ['forget to feed them', 'leave them out in the rain', 'ignore them']),
     t(5, 'Which group has only domestic animals?', 'cow, goat, hen, dog', ['lion, zebra, cow, dog', 'giraffe, elephant, goat, cat', 'lion, giraffe, zebra, elephant']),
     t(5, 'We get eggs, meat and feathers from a …', 'hen', ['cow', 'goat', 'dog']),
     t(5, 'Tourists come to Kenya to see wild animals in places like …', 'the Maasai Mara', ['the market', 'the school', 'the hospital']),

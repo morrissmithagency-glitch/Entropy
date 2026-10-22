@@ -213,7 +213,7 @@ const ENV: Record<string, FactSet> = {
       { one: 'an animal product', many: 'animal products', items: ['milk', 'eggs', 'honey', 'meat', 'wool', 'hides and skins'] },
       { one: 'a plant product', many: 'plant products', items: ['maize', 'cotton', 'tea leaves', 'timber', 'sugarcane', 'beans'] },
       { one: 'a way of caring for animals', many: 'ways of caring for animals', items: ['giving them clean water', 'feeding them well', 'cleaning their shed', 'taking them to the vet', 'spraying them against ticks'], set: 'b' },
-      { one: 'a way of mistreating animals', many: 'ways of mistreating animals', items: ['beating them', 'leaving them without water', 'overloading a donkey', 'keeping them in a dirty shed'], set: 'b' },
+      { one: 'a way of neglecting animals', many: 'ways of neglecting animals', items: ['forgetting to feed them', 'leaving them without water', 'overloading a donkey', 'keeping them in a dirty shed'], set: 'b' },
     ],
     pairs: [
       {
@@ -463,7 +463,7 @@ const CREATIVE: Record<string, FactSet> = {
       {
         pairs: [
           ['black', 'the people of Kenya'],
-          ['red', 'the blood shed in the fight for freedom'],
+          ['red', 'the sacrifices made to win our freedom'],
           ['green', 'our land and its plants'],
           ['white', 'peace'],
         ],
@@ -480,7 +480,7 @@ const CRE: Record<string, FactSet> = {
       { one: 'a thing God created', many: 'things God created', items: ['the sun', 'the moon', 'the stars', 'animals', 'plants', 'the sea', 'people'] },
       { one: 'a thing people made', many: 'things people made', items: ['a car', 'a house', 'a chair', 'a phone', 'a bicycle', 'a radio'] },
       { one: 'a way of caring for creation', many: 'ways of caring for creation', items: ['planting trees', 'feeding animals', 'keeping rivers clean', 'not wasting water'], set: 'b' },
-      { one: 'a way of harming creation', many: 'ways of harming creation', items: ['cutting all the trees', 'killing animals for fun', 'throwing litter in rivers', 'wasting water'], set: 'b' },
+      { one: 'a way of harming creation', many: 'ways of harming creation', items: ['cutting all the trees', 'wasting food', 'throwing litter in rivers', 'wasting water'], set: 'b' },
     ],
     pairs: [
       {
@@ -529,7 +529,7 @@ const CRE: Record<string, FactSet> = {
           ['Noah', 'built the ark'],
           ['Jonah', 'was swallowed by a big fish'],
           ['Daniel', 'was thrown into the den of lions'],
-          ['David', 'killed Goliath with a sling'],
+          ['David', 'defeated the giant Goliath with a sling'],
           ['Naaman', 'was healed of leprosy in River Jordan'],
           ['Elisha', 'told Naaman to wash seven times'],
         ],
