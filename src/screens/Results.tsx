@@ -7,10 +7,13 @@ import { CountUp } from '../components/motion'
 import { NatureScene } from '../components/NatureScene'
 import { LevelGlyph, SCENE_FOR, Star } from '../components/ui'
 import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
+import { findPaper } from '../engine/kpsea'
 import { starsFor } from '../engine/quiz'
 import type { Level } from '../engine/types'
 import { lessonFor } from '../lessons'
+import { kpseaAccess, recordKpsea, startKpsea } from '../state/kpsea'
 import { nextPaper, recordChallenge, recordQuiz } from '../state/progress'
+import { getSubscription } from '../state/subscription'
 import './results.css'
 
 const MESSAGES: Record<number, [string, string]> = {
@@ -73,8 +76,12 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
   const saved = useRef(false)
   const isChallenge = !!target.strand
   const isReview = !!target.review
+  const isKpsea = !!target.kpsea
+  const percent = Math.round((correct / total) * 100)
   const title = isReview
     ? 'Mistakes review'
+    : isKpsea
+      ? `KPSEA practice · ${findPaper(target.kpsea!).title}`
     : isChallenge
       ? `${findStrand(target.strand!).strand.title} · Baobab Challenge`
       : `${findSubStrand(target.sub!).sub.title} · ${LEVEL_NAMES[target.level - 1]}`
@@ -82,9 +89,11 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
     ? correct === total
       ? (['All grown back', 'Every one you missed before is right now. They will visit once more, a little later, to stay strong.'] as const)
       : (['Still growing', 'The ones you missed will come back tomorrow. That is how they stick.'] as const)
-    : MESSAGES[stars]
-  const canGrow = !isChallenge && !isReview && stars >= 1 && target.level < 5
-  const lesson = !isChallenge && !isReview && target.sub ? lessonFor(target.sub) : undefined
+    : isKpsea
+      ? ([`${percent}%`, percent >= 75 ? 'Exam-ready on this paper. Keep it sharp with another one.' : percent >= 50 ? 'A solid paper. The questions you missed are waiting in your mistakes review.' : 'Every paper teaches. Your missed questions are saved for review, and the lessons will help.'] as const)
+      : MESSAGES[stars]
+  const canGrow = !isChallenge && !isReview && !isKpsea && stars >= 1 && target.level < 5
+  const lesson = !isChallenge && !isReview && !isKpsea && target.sub ? lessonFor(target.sub) : undefined
   const nextName = LEVEL_NAMES[Math.min(4, target.level)]
   const C = 2 * Math.PI * 76
 
@@ -92,9 +101,10 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
     if (saved.current) return
     saved.current = true
     if (isReview) return
-    if (isChallenge) recordChallenge(target.strand!, stars)
+    if (isKpsea) recordKpsea(target.kpsea!, percent)
+    else if (isChallenge) recordChallenge(target.strand!, stars)
     else recordQuiz(target.sub!, target.level, stars)
-  }, [isChallenge, isReview, stars, target])
+  }, [isChallenge, isReview, isKpsea, percent, stars, target])
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = []
@@ -111,6 +121,12 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
   }, [stars, headline, correct, total, area.kind])
 
   const retry = () => {
+    if (isKpsea) {
+      const access = kpseaAccess(getSubscription())
+      if (access === 'locked') go({ name: 'plans', from: target.area }, { replace: true })
+      else go({ ...target, name: 'quiz', paper: startKpsea(target.kpsea!, access === 'free') }, { replace: true })
+      return
+    }
     const key = isChallenge ? `challenge:${target.strand}` : `${target.sub}:${target.level}`
     go({ ...target, name: 'quiz', paper: nextPaper(key) }, { replace: true })
   }
@@ -210,8 +226,8 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
             </button>
           )}
           {!isReview && (
-            <button type="button" className="btn quiet" onClick={() => go({ name: 'map', area: target.area }, { replace: true })}>
-              Back to the journey
+            <button type="button" className="btn quiet" onClick={() => go(isKpsea ? { name: 'worlds', grade: 'g6' } : { name: 'map', area: target.area }, { replace: true })}>
+              {isKpsea ? 'Back to Grade 6' : 'Back to the journey'}
             </button>
           )}
         </motion.div>

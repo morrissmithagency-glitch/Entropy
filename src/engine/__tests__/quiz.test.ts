@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { ALL_AREAS } from '../../curriculum'
 import { ART_IDS } from '../../components/art/objects'
-import { buildChallenge, buildQuiz, hasSource, isCorrect, rampLevels, QUIZ_LENGTH } from '../quiz'
+import { KPSEA_PAPERS } from '../kpsea'
+import { buildChallenge, buildKpsea, buildQuiz, hasSource, signature, isCorrect, rampLevels, QUIZ_LENGTH } from '../quiz'
 import type { Level, Question, Visual } from '../types'
 
 const LEVELS: Level[] = [1, 2, 3, 4, 5]
@@ -96,4 +97,20 @@ describe('grade 1 question engine', () => {
           })
         }
   })
+})
+
+describe('KPSEA practice papers', () => {
+  for (const paper of KPSEA_PAPERS)
+    it(`${paper.id} builds full, valid papers at exam level`, () => {
+      for (let seed = 1; seed <= 12; seed++) {
+        const qs = buildKpsea(paper.id, seed * 7919)
+        expect(qs.length).toBe(paper.length)
+        expect(new Set(qs.map((q) => signature(q))).size).toBe(qs.length)
+        qs.forEach((q, i) => {
+          check(q, `kpsea ${paper.id} seed ${seed} q${i}`)
+          expect(q.level).toBeGreaterThanOrEqual(3)
+          expect(q.sub, 'every question records its sub-strand').toMatch(/^u[456]/)
+        })
+      }
+    })
 })

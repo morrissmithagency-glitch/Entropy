@@ -4,6 +4,10 @@ import { CRE1_LESSONS, CREATIVE1_LESSONS, ENVIRONMENTAL1_LESSONS, KISWAHILI1_LES
 import { ENGLISH2_LESSONS, MATH2_LESSONS } from './grade2-math-english'
 import { CRE2_LESSONS, CREATIVE2_LESSONS, ENVIRONMENTAL2_LESSONS, KISWAHILI2_LESSONS } from './grade2-more'
 import { GRADE3_LESSONS } from './grade3'
+import { UPPER_ENGLISH_LESSONS, UPPER_KISWAHILI_LESSONS } from './upper-languages'
+import { UPPER_MATH_LESSONS } from './upper-math'
+import { UPPER_AGRICULTURE_LESSONS, UPPER_SCIENCE_LESSONS } from './upper-science'
+import { UPPER_CREATIVE_LESSONS, UPPER_CRE_LESSONS, UPPER_SOCIAL_LESSONS } from './upper-social-arts-cre'
 import type { Lesson } from './types'
 
 export type { Lesson, LessonStep } from './types'
@@ -24,5 +28,16 @@ export const LESSONS: Record<string, Lesson> = {
   ...GRADE3_LESSONS,
 }
 
-/** Upper-primary lessons are written once per topic and shared by every grade that has it. */
-export const lessonFor = (subId: string): Lesson | undefined => LESSONS[subId] ?? LESSONS[topicOf(subId)]
+/** Upper-primary lessons are written once per topic (um-frac) and shared by every grade that has it. */
+export const TOPIC_LESSONS: Record<string, Lesson> = {
+  ...UPPER_MATH_LESSONS,
+  ...UPPER_ENGLISH_LESSONS,
+  ...UPPER_KISWAHILI_LESSONS,
+  ...UPPER_SCIENCE_LESSONS,
+  ...UPPER_AGRICULTURE_LESSONS,
+  ...UPPER_SOCIAL_LESSONS,
+  ...UPPER_CREATIVE_LESSONS,
+  ...UPPER_CRE_LESSONS,
+}
+
+export const lessonFor = (subId: string): Lesson | undefined => LESSONS[subId] ?? TOPIC_LESSONS[topicOf(subId)]

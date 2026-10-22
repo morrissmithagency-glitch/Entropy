@@ -1,7 +1,8 @@
 # CBC Helper
 
 Calm, nature-themed practice for Kenyan learners on the Competency-Based Curriculum (CBC/CBE).
-Grades 1, 2 and 3 are live; the other grades show as "Coming soon".
+Grades 1 to 6 are live, with KPSEA practice papers for Grade 6; PP1, PP2 and Grades 7–9
+show as "Coming soon".
 
 Learners pick a **world** (learning area) and walk a path **strand by strand**. Each
 sub-strand is a stop with five levels that grow like a tree:
@@ -17,6 +18,35 @@ sub-strand is a stop with five levels that grow like a tree:
 Each quiz has 8 questions and opens with two warm-ups one level lower. Passing (5/8) unlocks
 the next level. When every stop in a strand reaches Acacia, the strand's **Baobab Challenge**
 unlocks: 10 mixed questions at levels 4–5.
+
+## What's in Grades 4, 5 and 6 (upper primary and KPSEA)
+
+Eight worlds per grade, following the rationalised KICD upper-primary designs: Mathematics,
+English, Kiswahili, Science and Technology, Agriculture and Nutrition, Social Studies, Creative
+Arts and CRE. 223 sub-strands (74, 75 and 74). Topics grow year by year: numbers to 100,000 in
+Grade 4 and to millions with percentages in Grade 6; Social Studies moves from our county
+(Grade 4) to Kenya (Grade 5) to East Africa (Grade 6). Difficulty is set by JESMA papers and
+the KPSEA format.
+
+* **Questions.** Maths generators for every topic (8-digit answers, bar graphs and tables),
+  English and Kiswahili grammar makers built on hand-checked tables (ngeli agreement,
+  kukanusha, -nge-/-ki-, reported speech, passive voice, question tags), comprehension and
+  cloze passages in KPSEA format, and fact tables plus written scenario questions for the
+  sciences, Social Studies, Creative Arts and CRE.
+* **Lessons.** One lesson per topic (`src/lessons/upper-*.ts`), shared by the grades that
+  teach it; Kiswahili lessons are in Kiswahili.
+* **KPSEA practice papers.** Five exam-style papers on the Grade 6 page (Mathematics, English,
+  Kiswahili, Integrated Science, Creative Arts and Social Studies), 25 questions each, drawn
+  from all of Grades 4–6 at levels 3–5. Every sitting is a new paper; missed questions go to
+  the mistakes review. A plan covering Grade 6 opens them; the first paper is free.
+
+See [`research/upper-primary-strands.md`](research/upper-primary-strands.md).
+
+## Child-safe content
+
+`src/engine/__tests__/safety.test.ts` scans every question, wrong answer and lesson for
+cruel or frightening wording (no harming animals, violence or scary scenarios), so content
+stays light and educational.
 
 ## What's in Grade 2
 
@@ -52,7 +82,8 @@ commercial papers (JESMA etc.) were used only as a guide to format and difficult
 ## Enough to practise for a term
 
 Every Grade 1, 2 and 3 sub-strand has at least 15 different questions at every level (comprehension:
-7, because stories are written by hand), and most have hundreds. The test
+7, because stories are written by hand), and most have hundreds. Grades 4–6 have at least 10
+(passages: 8), and most have hundreds. The test
 `src/engine/__tests__/depth.test.ts` keeps it that way. Quizzes mix two sources:
 
 * **Written questions** for stories, reasoning and "what should you do" situations.

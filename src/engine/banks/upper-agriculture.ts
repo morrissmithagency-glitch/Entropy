@@ -732,8 +732,8 @@ const G6: Record<string, Topic> = {
   nutrition: {
     facts: {
       categories: [
-        { one: 'a food rich in vitamin A', many: 'foods rich in vitamin A', items: ['carrots', 'pumpkins', 'mangoes', 'orange-fleshed sweet potatoes', 'liver'], set: 'v' },
-        { one: 'a food rich in vitamin C', many: 'foods rich in vitamin C', items: ['oranges', 'lemons', 'guavas', 'pawpaw', 'tomatoes'], set: 'v' },
+        { one: 'a food rich in vitamin A', many: 'foods rich in vitamin A', items: ['carrots', 'pumpkins', 'orange-fleshed sweet potatoes', 'liver', 'egg yolk'], set: 'v' },
+        { one: 'a food rich in vitamin C', many: 'foods rich in vitamin C', items: ['oranges', 'lemons', 'guavas', 'tangerines', 'passion fruit'], set: 'v' },
         { one: 'a food rich in iron', many: 'foods rich in iron', items: ['liver', 'dark green vegetables', 'beans', 'red meat', 'omena'], set: 'v2' },
         { one: 'a food rich in calcium', many: 'foods rich in calcium', items: ['milk', 'yoghurt', 'cheese', 'small fish eaten with bones'], set: 'v2' },
       ],

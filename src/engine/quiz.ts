@@ -1,4 +1,5 @@
-import { findStrand } from '../curriculum'
+import { findGrade, findStrand } from '../curriculum'
+import { findPaper } from './kpsea'
 import { ENVIRONMENTAL_BANKS } from './banks/environmental'
 import { ENGLISH_BANKS, ENGLISH_GENERATORS } from './generators/english'
 import { KISWAHILI_BANKS, KISWAHILI_GENERATORS } from './generators/kiswahili'
@@ -153,6 +154,34 @@ export function buildChallenge(strandId: string, seed: number): Question[] {
     out.push(...questionsFor(rng, order[i % order.length], [level], usedBank, seen, 3))
   })
   return out
+}
+
+/**
+ * A KPSEA practice paper: questions from every Grade 4–6 sub-strand of the paper's learning
+ * areas, Grade 6 drawn twice as often, climbing from level 3 to level 5. Reading questions
+ * come first, as on the real English and Kiswahili papers.
+ */
+export function buildKpsea(paperId: string, seed: number): Question[] {
+  const paper = findPaper(paperId)
+  const rng = createRng(seed ^ hashString(`kpsea:${paperId}`))
+  const subs = (['g4', 'g5', 'g6'] as const)
+    .flatMap((g) => findGrade(g).areas)
+    .filter((a) => paper.kinds.includes(a.kind))
+    .flatMap((a) => a.strands.flatMap((s) => s.subStrands.map((x) => x.id)))
+    .filter(hasSource)
+  const pool = subs.flatMap((id) => (id.startsWith('u6') ? [id, id] : [id]))
+  const levelAt = (i: number): Level => (i < paper.length * 0.3 ? 3 : i < paper.length * 0.75 ? 4 : 5)
+  const usedBank = new Set<BankQuestion>()
+  const seen = new Set<string>()
+  const out: Question[] = []
+  // Earlier grades' topics are asked at their hardest, so every question is exam-level.
+  const levelFor = (id: string, base: Level): Level => (id.startsWith('u4') ? 5 : id.startsWith('u5') ? (Math.max(4, base) as Level) : base)
+  for (let tries = 0; out.length < paper.length && tries < paper.length * 6; tries++) {
+    const id = rng.pick(pool)
+    out.push(...questionsFor(rng, id, [levelFor(id, levelAt(out.length))], usedBank, seen, 3))
+  }
+  const reading = (q: Question) => /-(comp|cloze|ufahamu)$/.test(q.sub ?? '')
+  return [...out.filter(reading), ...out.filter((q) => !reading(q))]
 }
 
 /**

@@ -784,7 +784,7 @@ export const timeU = (g: UGrade): Generator => (rng, level) => {
       }
       const weeks = rng.int(2, 9)
       const days = rng.int(1, 6)
-      return num(level, `A school term lasts ${weeks} weeks and ${days} days. How many days is that?`, weeks * 7 + days, { explain: `${weeks} × 7 + ${days} = ${weeks * 7 + days}` })
+      return num(level, `A school term lasts ${weeks} weeks and ${days} day${days === 1 ? "" : "s"}. How many days is that?`, weeks * 7 + days, { explain: `${weeks} × 7 + ${days} = ${weeks * 7 + days}` })
     }
   }
 }

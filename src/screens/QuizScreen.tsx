@@ -10,7 +10,8 @@ import { Breath, Icon, LevelGlyph, SCENE_FOR } from '../components/ui'
 import { NumberPad, OrderTiles } from '../components/widgets/Inputs'
 import { VisualView } from '../components/widgets/Visual'
 import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
-import { buildChallenge, buildQuiz, isCorrect, similarQuestion } from '../engine/quiz'
+import { findPaper } from '../engine/kpsea'
+import { buildChallenge, buildKpsea, buildQuiz, isCorrect, similarQuestion } from '../engine/quiz'
 import type { Option, Question } from '../engine/types'
 import { lessonFor } from '../lessons'
 import { dueReview, getProgress, recordAnswer, recordReview, useProgress, type ReviewItem } from '../state/progress'
@@ -70,7 +71,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
   const { settings } = useProgress()
   const [items, setItems] = useState<Item[]>(() => {
     if (target.review) return dueReview(getProgress()).map((r) => ({ q: r.q, review: r }))
-    const qs = target.strand ? buildChallenge(target.strand, target.paper * 7919) : buildQuiz(target.sub!, target.level, target.paper * 7919)
+    const qs = target.kpsea ? buildKpsea(target.kpsea, target.paper * 7919) : target.strand ? buildChallenge(target.strand, target.paper * 7919) : buildQuiz(target.sub!, target.level, target.paper * 7919)
     return qs.map((q) => ({ q }))
   })
   const [idx, setIdx] = useState(0)
@@ -85,7 +86,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
   const area = findArea(areaId)
   const lang = area.kind === 'kiswahili' ? 'sw' : 'en'
   const sw = lang === 'sw'
-  const title = target.review ? (sw ? 'Marudio' : 'Mistakes review') : target.strand ? findStrand(target.strand).strand.title : findSubStrand(target.sub!).sub.title
+  const title = target.review ? (sw ? 'Marudio' : 'Mistakes review') : target.kpsea ? `KPSEA · ${findPaper(target.kpsea).title}` : target.strand ? findStrand(target.strand).strand.title : findSubStrand(target.sub!).sub.title
   const scored = useMemo(() => items.map((it, i) => (it.practice ? -1 : i)).filter((i) => i >= 0), [items])
   const [results, setResults] = useState<Record<number, boolean>>({})
   const [response, setResponse] = useState<Response | null>(null)
@@ -121,8 +122,9 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
     if (!item.practice) setResults((rs) => ({ ...rs, [idx]: ok }))
     if (item.review) recordReview(item.review, ok)
     else if (!item.practice && sub) recordAnswer(q, sub, areaId, ok)
-    // A miss in a quiz gets one fresh question on the same idea, straight after.
-    if (!ok && !item.practice && !item.review) {
+    // A miss in a quiz gets one fresh question on the same idea, straight after. Practice
+    // papers run straight through, like the real exam.
+    if (!ok && !item.practice && !item.review && !target.kpsea) {
       const like = similarQuestion(q, target.paper * 131 + idx)
       if (like) setItems((xs) => [...xs.slice(0, idx + 1), { q: like, practice: true }, ...xs.slice(idx + 1)])
     }
@@ -176,9 +178,9 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
           ))}
         </div>
         <div className="quiz-level">
-          <LevelGlyph level={target.strand ? 5 : target.review ? q.level : target.level} size={30} />
+          <LevelGlyph level={target.strand || target.kpsea ? 5 : target.review ? q.level : target.level} size={30} />
           <span>
-            <span className="ql-name">{target.review ? (sw ? 'Marudio' : 'Review') : target.strand ? 'Baobab Challenge' : LEVEL_NAMES[target.level - 1]}</span>
+            <span className="ql-name">{target.review ? (sw ? 'Marudio' : 'Review') : target.kpsea ? (sw ? 'Mtihani wa mazoezi' : 'Practice paper') : target.strand ? 'Baobab Challenge' : LEVEL_NAMES[target.level - 1]}</span>
             <span className="ql-title">{title}</span>
           </span>
         </div>

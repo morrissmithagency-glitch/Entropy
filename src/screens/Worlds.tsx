@@ -3,6 +3,7 @@ import { useNav } from '../App'
 import { sfx } from '../audio/sfx'
 import { NatureScene } from '../components/NatureScene'
 import { ReviewCard } from '../components/ReviewCard'
+import { KpseaSection } from '../components/KpseaSection'
 import { CountUp } from '../components/motion'
 import { Breath, Chip, Icon, SCENE_FOR, SettingsButtons, TopBar } from '../components/ui'
 import { findGrade, findSubStrand, findStrand, LEVEL_NAMES, type GradeId } from '../curriculum'
@@ -118,6 +119,7 @@ export function Worlds({ grade }: { grade: GradeId }) {
             )
           })}
         </div>
+        {grade === 'g6' && <KpseaSection />}
       </section>
     </main>
   )

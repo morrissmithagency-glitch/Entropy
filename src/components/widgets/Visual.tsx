@@ -368,7 +368,7 @@ function Bars({ labels, values, title, unit }: { labels: string[]; values: numbe
   const H = 180
   const left = 40
   const bw = (W - left - 10) / labels.length
-  const y = (v: number) => 10 + (H - 10) * (1 - v / top)
+  const y = (v: number) => 28 + (H - 28) * (1 - v / top)
   const ticks = Array.from({ length: top / step + 1 }, (_, i) => i * step)
   return (
     <svg viewBox={`0 0 ${W} ${H + 40}`} width="100%" style={{ maxWidth: 360 }} role="img" aria-label={title ?? 'bar graph'}>
@@ -403,7 +403,7 @@ function Bars({ labels, values, title, unit }: { labels: string[]; values: numbe
         </text>
       ))}
       {unit && (
-        <text x={6} y={8} fontSize="11" fill={INK} opacity={0.7}>
+        <text x={6} y={12} fontSize="11" fill={INK} opacity={0.7}>
           {unit}
         </text>
       )}

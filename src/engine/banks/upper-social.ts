@@ -762,7 +762,6 @@ const G6: Record<string, Topic> = {
         {
           pairs: [
             ['tanzanite', 'Tanzania'],
-            ['cloves', 'Zanzibar'],
             ['coffee as the main export', 'Uganda'],
             ['mountain gorilla tourism', 'Rwanda'],
             ['cobalt and copper', 'the Democratic Republic of Congo'],

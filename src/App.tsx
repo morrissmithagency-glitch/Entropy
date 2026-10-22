@@ -21,6 +21,8 @@ export interface QuizTarget {
   paper: number
   /** A mistakes-review session instead of a quiz. */
   review?: boolean
+  /** A KPSEA practice paper instead of a quiz. */
+  kpsea?: string
 }
 
 export type Screen =
@@ -58,7 +60,7 @@ function initialScreen(): Screen {
     /* ignore */
   }
   // Results and quizzes are not restorable after a reload; send those back to the map.
-  if (s?.name === 'quiz' || s?.name === 'results' || s?.name === 'learn') return { name: 'map', area: s.area }
+  if (s?.name === 'quiz' || s?.name === 'results' || s?.name === 'learn') return s.name !== 'learn' && s.kpsea ? { name: 'worlds', grade: 'g6' } : { name: 'map', area: s.area }
   if (s?.name === 'worlds' && !s.grade) return { name: 'worlds', grade: 'g1' }
   return s ?? { name: 'home' }
 }
@@ -99,7 +101,7 @@ function Router() {
       {screen.name === 'learn' && <Learn key={screen.sub} area={screen.area} sub={screen.sub} />}
       {screen.name === 'parent' && <Parent />}
       {screen.name === 'plans' && <Plans from={screen.from} />}
-      {screen.name === 'quiz' && <QuizScreen key={`${screen.review ? 'review' : (screen.sub ?? screen.strand)}:${screen.level}:${screen.paper}`} target={screen} />}
+      {screen.name === 'quiz' && <QuizScreen key={`${screen.review ? 'review' : (screen.kpsea ?? screen.sub ?? screen.strand)}:${screen.level}:${screen.paper}`} target={screen} />}
       {screen.name === 'results' && <Results target={screen} correct={screen.correct} total={screen.total} />}
     </NavContext.Provider>
   )
