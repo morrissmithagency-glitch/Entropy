@@ -1,0 +1,760 @@
+// Upper-primary English (Grades 4–6), in the formats of JESMA papers and KPSEA: grammar items
+// with four options, cloze passages and comprehension. Word tables are checked by hand; the
+// grade sets which rows are used, so Grade 6 meets the harder forms.
+import { KENYAN_NAMES, uid } from '../helpers'
+import type { BankQuestion, ChoiceQuestion, Generator, Level, OrderQuestion, Rng } from '../types'
+import { labelOptions as opts } from './english'
+
+type G = 4 | 5 | 6
+
+const q = (level: Level, prompt: string, answer: string, wrong: string[], explain?: string): ChoiceQuestion => ({
+  id: uid('ue'),
+  type: 'choice',
+  level,
+  prompt,
+  options: [answer, ...[...new Set(wrong)].filter((w) => w !== answer)].slice(0, 4).map((l) => ({ id: l, label: l })),
+  answer,
+  explain,
+})
+const name = (rng: Rng) => rng.pick(KENYAN_NAMES)
+/** Rows are [minimum grade, ...data]; only rows for this grade or below are used. */
+const forGrade = <T extends unknown[]>(rows: [G, ...T][], g: G): T[] => rows.filter(([min]) => min <= g).map(([, ...rest]) => rest as unknown as T)
+
+// ── Vocabulary ──────────────────────────────────────────────────────────────
+
+const SYNONYMS: [G, string, string][] = [
+  [4, 'big', 'large'],
+  [4, 'begin', 'start'],
+  [4, 'quick', 'fast'],
+  [4, 'shut', 'close'],
+  [4, 'glad', 'happy'],
+  [4, 'gift', 'present'],
+  [4, 'end', 'finish'],
+  [4, 'small', 'little'],
+  [5, 'brave', 'courageous'],
+  [5, 'rich', 'wealthy'],
+  [5, 'tired', 'exhausted'],
+  [5, 'strange', 'unusual'],
+  [5, 'enough', 'sufficient'],
+  [5, 'help', 'assist'],
+  [5, 'shy', 'timid'],
+  [5, 'ancient', 'very old'],
+  [6, 'abundant', 'plentiful'],
+  [6, 'humble', 'modest'],
+  [6, 'vacant', 'empty'],
+  [6, 'conceal', 'hide'],
+  [6, 'purchase', 'buy'],
+  [6, 'courteous', 'polite'],
+  [6, 'obstinate', 'stubborn'],
+  [6, 'diligent', 'hard-working'],
+]
+const ANTONYMS: [G, string, string][] = [
+  [4, 'ancient', 'modern'],
+  [4, 'arrive', 'depart'],
+  [4, 'cheap', 'expensive'],
+  [4, 'narrow', 'wide'],
+  [4, 'bitter', 'sweet'],
+  [4, 'friend', 'enemy'],
+  [4, 'polite', 'rude'],
+  [4, 'always', 'never'],
+  [5, 'victory', 'defeat'],
+  [5, 'generous', 'mean'],
+  [5, 'ascend', 'descend'],
+  [5, 'shallow', 'deep'],
+  [5, 'accept', 'reject'],
+  [5, 'scarce', 'plentiful'],
+  [5, 'innocent', 'guilty'],
+  [6, 'humble', 'proud'],
+  [6, 'temporary', 'permanent'],
+  [6, 'maximum', 'minimum'],
+  [6, 'include', 'exclude'],
+  [6, 'external', 'internal'],
+  [6, 'optimist', 'pessimist'],
+  [6, 'ignorance', 'knowledge'],
+]
+const COLLECTIVE: [G, string, string][] = [
+  [4, 'cattle', 'herd'],
+  [4, 'sheep', 'flock'],
+  [4, 'bees', 'swarm'],
+  [4, 'fish', 'school'],
+  [4, 'players', 'team'],
+  [5, 'lions', 'pride'],
+  [5, 'soldiers', 'army'],
+  [5, 'stairs', 'flight'],
+  [5, 'thieves', 'gang'],
+  [5, 'grapes', 'bunch'],
+  [6, 'wolves', 'pack'],
+  [6, 'ships', 'fleet'],
+  [6, 'singers', 'choir'],
+  [6, 'puppies', 'litter'],
+  [6, 'elephants', 'herd'],
+]
+
+export const vocabU = (g: G): Generator => (rng, level) => {
+  const syn = forGrade(SYNONYMS, g)
+  const ant = forGrade(ANTONYMS, g)
+  if (level <= 2 || (level === 4 && rng.next() < 0.5)) {
+    const [w, s] = rng.pick(syn)
+    const wrong = rng.sample(ant.map(([, b]) => b).concat(syn.filter(([x]) => x !== w).map(([, b]) => b)), 3)
+    return q(level, `Which word means the same as "${w}"?`, s, wrong, `"${w}" and "${s}" mean the same.`)
+  }
+  if (level === 3 || level === 4) {
+    const [w, a] = rng.pick(ant)
+    const wrong = rng.sample(syn.map(([, b]) => b).concat(ant.filter(([x]) => x !== w).map(([, b]) => b)), 3)
+    return q(level, `Which word is the opposite of "${w}"?`, a, wrong, `The opposite of "${w}" is "${a}".`)
+  }
+  const [thing, coll] = rng.pick(forGrade(COLLECTIVE, g))
+  return q(level, `Choose the right word: a ___ of ${thing}`, coll, rng.sample([...new Set(forGrade(COLLECTIVE, g).map(([, c]) => c))].filter((c) => c !== coll), 3))
+}
+
+// ── Nouns ───────────────────────────────────────────────────────────────────
+
+const PLURALS: [G, string, string, string[]][] = [
+  [4, 'knife', 'knives', ['knifes', 'knive']],
+  [4, 'leaf', 'leaves', ['leafs', 'leafes']],
+  [4, 'baby', 'babies', ['babys', 'babyes']],
+  [4, 'tomato', 'tomatoes', ['tomatos', 'tomatoe']],
+  [4, 'box', 'boxes', ['boxs', 'boxen']],
+  [4, 'tooth', 'teeth', ['tooths', 'toothes']],
+  [4, 'goose', 'geese', ['gooses', 'geeses']],
+  [5, 'ox', 'oxen', ['oxes', 'oxs']],
+  [5, 'thief', 'thieves', ['thiefs', 'thiefes']],
+  [5, 'potato', 'potatoes', ['potatos', 'potatoe']],
+  [5, 'sheep', 'sheep', ['sheeps', 'sheepes']],
+  [5, 'deer', 'deer', ['deers', 'deeres']],
+  [5, 'woman', 'women', ['womans', 'womens']],
+  [6, 'mother-in-law', 'mothers-in-law', ['mother-in-laws', 'mothers-in-laws']],
+  [6, 'passer-by', 'passers-by', ['passer-bys', 'passers-bys']],
+  [6, 'crisis', 'crises', ['crisises', 'crisis']],
+  [6, 'cactus', 'cacti', ['cactuss', 'cactis']],
+  [6, 'belief', 'beliefs', ['believes', 'beliefes']],
+  [6, 'chief', 'chiefs', ['chieves', 'chiefes']],
+]
+const KINDS: [G, string, string, string][] = [
+  // [min grade, sentence, underlined noun, kind]
+  [4, 'Wanjiku lives in _Nakuru_.', 'Nakuru', 'proper noun'],
+  [4, 'The _dog_ barked at the visitor.', 'dog', 'common noun'],
+  [4, 'Our _class_ won the trophy.', 'class', 'collective noun'],
+  [4, 'We met at the _market_ on Friday.', 'market', 'common noun'],
+  [4, 'The _team_ trained every evening.', 'team', 'collective noun'],
+  [4, 'Mr _Otieno_ teaches us Maths.', 'Otieno', 'proper noun'],
+  [5, 'Her _kindness_ made everyone happy.', 'kindness', 'abstract noun'],
+  [5, 'The boy showed great _courage_.', 'courage', 'abstract noun'],
+  [5, 'A _herd_ of cattle crossed the road.', 'herd', 'collective noun'],
+  [5, '_Lake Turkana_ is in northern Kenya.', 'Lake Turkana', 'proper noun'],
+  [6, '_Honesty_ is the best policy.', 'Honesty', 'abstract noun'],
+  [6, 'The _jury_ listened carefully.', 'jury', 'collective noun'],
+  [6, 'There is great _happiness_ in giving.', 'happiness', 'abstract noun'],
+  [6, 'We crossed the _River Tana_ by boat.', 'River Tana', 'proper noun'],
+]
+const ABSTRACT: [G, string, string, string[]][] = [
+  [5, 'happy', 'happiness', ['happily', 'happier', 'happyness']],
+  [5, 'brave', 'bravery', ['bravely', 'braver', 'braveness']],
+  [5, 'kind', 'kindness', ['kindly', 'kinder', 'kindful']],
+  [5, 'honest', 'honesty', ['honestly', 'honester', 'honestness']],
+  [5, 'free', 'freedom', ['freely', 'freer', 'freeness']],
+  [6, 'wise', 'wisdom', ['wisely', 'wiser', 'wiseness']],
+  [6, 'strong', 'strength', ['strongly', 'stronger', 'strongness']],
+  [6, 'poor', 'poverty', ['poorly', 'poorer', 'poorness']],
+  [6, 'true', 'truth', ['truly', 'truer', 'trueness']],
+  [6, 'friend', 'friendship', ['friendly', 'friendlier', 'friendness']],
+]
+
+export const nounsU = (g: G): Generator => (rng, level) => {
+  if (level <= 2) {
+    const [one, many, wrong] = rng.pick(forGrade(PLURALS, g))
+    return q(level, `What is the plural of "${one}"?`, many, wrong.concat(`${one}s`), `one ${one}, many ${many}`)
+  }
+  if (level === 3) {
+    const [s, , kind] = rng.pick(forGrade(KINDS, g))
+    return q(level, `What kind of noun is underlined?\n${s}`, kind, ['proper noun', 'common noun', 'collective noun', ...(g >= 5 ? ['abstract noun'] : [])].filter((k) => k !== kind))
+  }
+  if (level === 4 || g === 4) {
+    const owner = rng.pick([
+      ['the boy', "the boy's", ['the boys', "the boys'"]],
+      ['the girls', "the girls'", ["the girl's", "the girls's"]],
+      ['the children', "the children's", ["the childrens'", 'the childrens']],
+      ['James', "James's", ['Jameses', "James'es"]],
+      ['the teacher', "the teacher's", ['the teachers', "the teacher'"]],
+      ['the men', "the men's", ["the mens'", 'the mens']],
+    ] as const)
+    return q(level, `Choose the correct form: These are ___ books. (books belonging to ${owner[0]})`, owner[1], [...owner[2]], 'Add \'s to show who owns something; a plural ending in s takes only \'.')
+  }
+  const [adj, noun, wrong] = rng.pick(forGrade(ABSTRACT, g))
+  return q(level, `Which noun is formed from the word "${adj}"?`, noun, wrong, `The noun form of "${adj}" is "${noun}".`)
+}
+
+// ── Pronouns ────────────────────────────────────────────────────────────────
+
+const REFLEX: [string, string][] = [
+  ['I', 'myself'],
+  ['You', 'yourself'],
+  ['He', 'himself'],
+  ['She', 'herself'],
+  ['We', 'ourselves'],
+  ['They', 'themselves'],
+]
+const RELATIVE: [string, string][] = [
+  ['This is the girl ___ won the race.', 'who'],
+  ['That is the man ___ car was stolen.', 'whose'],
+  ['I found the book ___ you lost.', 'which'],
+  ['The pupils ___ passed were praised.', 'who'],
+  ['The dog ___ bit him has been caught.', 'which'],
+  ['She is the farmer ___ cows won a prize.', 'whose'],
+  ['Here is the house ___ my grandfather built.', 'which'],
+  ['The nurse ___ helped me is very kind.', 'who'],
+]
+
+export const pronounsU = (g: G): Generator => (rng, level) => {
+  if (level === 1) {
+    const [s, ans, wrong] = rng.pick<[string, string, string[]]>([
+      ['The teacher called Juma and ___ to the office.', 'me', ['I', 'mine', 'myself']],
+      ['___ and my sister went to the market.', 'I', ['Me', 'Mine', 'Myself']],
+      ['Give the ball to ___.', 'us', ['we', 'our', 'ours']],
+      ['___ are going to the farm.', 'They', ['Them', 'Their', 'Theirs']],
+      ['Mother gave ___ a new dress.', 'her', ['she', 'hers', 'herself']],
+      ['Between you and ___, the test was easy.', 'me', ['I', 'mine', 'myself']],
+    ])
+    return q(level, `Choose the correct pronoun:\n${s}`, ans, wrong)
+  }
+  if (level === 2) {
+    const [owner, poss] = rng.pick([
+      ['me', 'mine'],
+      ['us', 'ours'],
+      ['them', 'theirs'],
+      ['her', 'hers'],
+      ['you', 'yours'],
+      ['him', 'his'],
+    ])
+    return q(level, `This bag belongs to ${owner}. It is ___.`, poss, ['mine', 'ours', 'theirs', 'hers', 'yours', 'his'].filter((x) => x !== poss).slice(0, 3))
+  }
+  if (level === 3) {
+    const [subj, ref] = rng.pick(REFLEX)
+    const verb = rng.pick(['hurt', 'washed', 'enjoyed', 'blamed', 'taught'])
+    return q(level, `${subj} ${verb} ___ .`, ref, REFLEX.map(([, r]) => r).filter((r) => r !== ref).slice(0, 3), `${subj} → ${ref}`)
+  }
+  const [s, ans] = rng.pick(RELATIVE)
+  if (g === 4 && level === 5) return q(level, `Choose the correct word: ${s}`, ans, ['who', 'whose', 'which', 'whom'].filter((x) => x !== ans))
+  return q(level, `Choose the correct word: ${s}`, ans, ['who', 'whose', 'which', 'what'].filter((x) => x !== ans), ans === 'who' ? '"who" for people.' : ans === 'whose' ? '"whose" shows owning.' : '"which" for things and animals.')
+}
+
+// ── Verbs and tenses ────────────────────────────────────────────────────────
+
+// [min grade, base, past, past participle, continuation]
+const IRREG: [G, string, string, string, string][] = [
+  [4, 'go', 'went', 'gone', 'to Kisumu'],
+  [4, 'eat', 'ate', 'eaten', 'all the food'],
+  [4, 'write', 'wrote', 'written', 'a letter'],
+  [4, 'sing', 'sang', 'sung', 'a beautiful song'],
+  [4, 'take', 'took', 'taken', 'the book'],
+  [4, 'buy', 'bought', 'bought', 'a new bag'],
+  [4, 'drink', 'drank', 'drunk', 'the milk'],
+  [5, 'teach', 'taught', 'taught', 'us English'],
+  [5, 'catch', 'caught', 'caught', 'a big fish'],
+  [5, 'break', 'broke', 'broken', 'the window'],
+  [5, 'choose', 'chose', 'chosen', 'a leader'],
+  [5, 'speak', 'spoke', 'spoken', 'to the class'],
+  [5, 'swim', 'swam', 'swum', 'across the river'],
+  [6, 'forgive', 'forgave', 'forgiven', 'his friend'],
+  [6, 'tear', 'tore', 'torn', 'the paper'],
+  [6, 'freeze', 'froze', 'frozen', 'the water'],
+  [6, 'lead', 'led', 'led', 'the team'],
+  [6, 'seek', 'sought', 'sought', 'help'],
+  [6, 'bear', 'bore', 'borne', 'the pain'],
+]
+
+export const verbsU = (g: G): Generator => (rng, level) => {
+  const rows = forGrade(IRREG, g)
+  const [base, past, pp, rest] = rng.pick(rows)
+  const who = name(rng)
+  switch (level) {
+    case 1:
+      return q(level, `Yesterday ${who} ___ ${rest}.`, past, [base, pp !== past ? pp : `${base}ed`, `${base}s`], `"Yesterday" needs the past tense: ${past}.`)
+    case 2:
+      return q(level, `${who} has already ___ ${rest}.`, pp, [past !== pp ? past : `${base}ed`, base, `${base}ing`], `After "has" or "have" we use the past participle: ${pp}.`)
+    case 3: {
+      const subj = rng.pick([
+        ['Neither the teacher nor the pupils', 'were'],
+        ['Each of the boys', 'was'],
+        ['The pupils', 'were'],
+        ['My mother and father', 'were'],
+        ['Everyone in the class', 'was'],
+        ['The news', 'was'],
+        ['A herd of cattle', 'was'],
+      ] as const)
+      return q(level, `${subj[0]} ___ at the meeting.`, subj[1], [subj[1] === 'was' ? 'were' : 'was', 'is being', 'be'], subj[1] === 'was' ? 'The subject is singular, so "was".' : 'The subject is plural, so "were".')
+    }
+    case 4: {
+      const time = rng.pick([
+        ['Look! The children ___ in the field.', 'are playing', ['play', 'played', 'have play']],
+        ['By next year, we ___ to a new school.', 'will have moved', ['moved', 'are moving', 'move']],
+        ['When the rain started, we ___ football.', 'were playing', ['are playing', 'play', 'have played']],
+        ['She ___ in Mombasa since 2020.', 'has lived', ['lives', 'is living', 'lived']],
+        ['Tomorrow I ___ my grandmother.', 'will visit', ['visited', 'have visited', 'visiting']],
+        ['Every morning, Juma ___ to school.', 'walks', ['walk', 'walking', 'is walked']],
+      ] as const)
+      return q(level, time[0], time[1], [...time[2]])
+    }
+    default: {
+      if (g === 6) {
+        const pas = rng.pick([
+          ['The cat chased the rat.', 'The rat was chased by the cat.', ['The rat chased the cat.', 'The rat is chased by the cat.', 'The cat was chased by the rat.']],
+          ['Wanjiku wrote the letter.', 'The letter was written by Wanjiku.', ['The letter wrote Wanjiku.', 'The letter is written by Wanjiku.', 'Wanjiku was written by the letter.']],
+          ['The farmers planted trees.', 'Trees were planted by the farmers.', ['Trees planted the farmers.', 'Trees was planted by the farmers.', 'The farmers were planted by trees.']],
+          ['The teacher marks our books.', 'Our books are marked by the teacher.', ['Our books were marked by the teacher.', 'Our books is marked by the teacher.', 'The teacher is marked by our books.']],
+        ] as const)
+        return q(level, `Change to the passive: "${pas[0]}"`, pas[1], [...pas[2]], 'The object becomes the subject, and we use "was/were/is/are" + past participle.')
+      }
+      const [b2, p2, pp2, r2] = rng.pick(rows)
+      return q(level, `Choose the correct sentence.`, `We had ${pp2} ${r2} before the bell rang.`, [`We had ${p2 === pp2 ? `${b2}ed` : p2} ${r2} before the bell rang.`, `We had ${b2} ${r2} before the bell rang.`, `We have ${b2}ing ${r2} before the bell rang.`])
+    }
+  }
+}
+
+// ── Adjectives and adverbs ──────────────────────────────────────────────────
+
+const COMPARE: [G, string, string, string][] = [
+  [4, 'tall', 'taller', 'tallest'],
+  [4, 'big', 'bigger', 'biggest'],
+  [4, 'happy', 'happier', 'happiest'],
+  [4, 'good', 'better', 'best'],
+  [4, 'bad', 'worse', 'worst'],
+  [5, 'beautiful', 'more beautiful', 'most beautiful'],
+  [5, 'many', 'more', 'most'],
+  [5, 'little', 'less', 'least'],
+  [5, 'careful', 'more careful', 'most careful'],
+  [6, 'far', 'farther', 'farthest'],
+  [6, 'intelligent', 'more intelligent', 'most intelligent'],
+  [6, 'comfortable', 'more comfortable', 'most comfortable'],
+]
+const ADVERBS: [string, string, string[]][] = [
+  ['quick', 'quickly', ['quick', 'quicker', 'quickness']],
+  ['careful', 'carefully', ['careful', 'more careful', 'carefulness']],
+  ['happy', 'happily', ['happy', 'happier', 'happiness']],
+  ['slow', 'slowly', ['slow', 'slower', 'slowness']],
+  ['good', 'well', ['good', 'goodly', 'better']],
+  ['proud', 'proudly', ['proud', 'prouder', 'pride']],
+  ['gentle', 'gently', ['gentle', 'gentler', 'gentleness']],
+  ['silent', 'silently', ['silent', 'silence', 'more silent']],
+]
+const ORDER: [string, string[], string[]][] = [
+  ['She bought ___ dress.', ['a', 'beautiful', 'long', 'red'], ['a red long beautiful', 'a long beautiful red', 'a beautiful red long']],
+  ['We saw ___ elephants.', ['two', 'huge', 'grey'], ['grey two huge', 'huge two grey', 'two grey huge']],
+  ['He has ___ car.', ['a', 'new', 'Japanese'], ['a Japanese new']],
+  ['I sat on ___ chair.', ['an', 'old', 'wooden'], ['a wooden old', 'an wooden old']],
+  ['They live in ___ house.', ['a', 'lovely', 'small', 'white'], ['a white small lovely', 'a small lovely white', 'a lovely white small']],
+]
+
+export const adjU = (g: G): Generator => (rng, level) => {
+  const rows = forGrade(COMPARE, g)
+  // many, little and far do not describe a person, so they appear only in the written items.
+  const [base, er, est] = rng.pick(rows.filter(([b]) => !['many', 'little', 'far'].includes(b)))
+  switch (level) {
+    case 1:
+      return q(level, `Kamau is ___ than his brother. (${base})`, er, [base, est, `more ${er}`].filter((x) => x !== er), 'Comparing two: the comparative form.')
+    case 2:
+      return q(level, `She is the ___ girl in our class. (${base})`, est, [base, er, `most ${est}`], 'Comparing three or more: the superlative form.')
+    case 3: {
+      const [adj, adv, wrong] = rng.pick(ADVERBS)
+      return q(level, `The old man walked ___ across the road. (${adj})`, adv, wrong, `Adverbs tell how: ${adj} → ${adv}.`)
+    }
+    case 4: {
+      if (g === 4) {
+        const [s, ans, wrong] = rng.pick<[string, string, string[]]>([
+          ['Of all the trees in the park, the baobab is the ___.', 'biggest', ['bigger', 'big', 'most big']],
+          ['My handwriting is ___ than it was last term.', 'better', ['gooder', 'best', 'more good']],
+          ['That was the ___ storm we have ever had.', 'worst', ['worse', 'baddest', 'most bad']],
+          ['A cheetah runs ___ than a lion.', 'faster', ['fastest', 'more fast', 'fast']],
+          ['Today is ___ than yesterday.', 'hotter', ['hottest', 'hoter', 'more hot']],
+          ['Kendi is the ___ of the three sisters.', 'youngest', ['younger', 'young', 'most young']],
+        ])
+        return q(level, `Choose the correct word: ${s}`, ans, wrong)
+      }
+      const [s, words, wrong] = rng.pick(ORDER)
+      return q(level, `Choose the best order: ${s}`, words.join(' '), wrong, 'Opinion, size, age, shape, colour, origin, material, then the noun.')
+    }
+    default: {
+      const [s, ans, wrong] = rng.pick<[string, string, string[]]>([
+        ['This is ___ book I have ever read.', 'the best', ['the better', 'the goodest', 'the most good']],
+        ['Mount Kenya is ___ than Mount Elgon.', 'higher', ['highest', 'more high', 'most high']],
+        ['Of the two sisters, Akinyi is ___.', 'the taller', ['the tallest', 'taller', 'the most tall']],
+        ['He ran so ___ that he won the race.', 'fast', ['fastly', 'faster', 'fastest']],
+        ['The baby slept ___ after the meal.', 'soundly', ['sound', 'sounder', 'soundness']],
+        ['There is ___ water in the tank than yesterday.', 'less', ['fewer', 'little', 'least']],
+        ['There are ___ pupils in class today than yesterday.', 'fewer', ['less', 'little', 'least']],
+      ])
+      return q(level, `Choose the correct word: ${s}`, ans, wrong)
+    }
+  }
+}
+
+// ── Prepositions and conjunctions ───────────────────────────────────────────
+
+const PREPS: [G, string, string, string[]][] = [
+  [4, 'We go to church ___ Sunday.', 'on', ['in', 'at', 'by']],
+  [4, 'School opens ___ January.', 'in', ['on', 'at', 'by']],
+  [4, 'The bell rings ___ eight o\'clock.', 'at', ['on', 'in', 'by']],
+  [4, 'The frog jumped ___ the water.', 'into', ['at', 'among', 'between']],
+  [4, 'Share the sweets ___ the three children.', 'among', ['between', 'with', 'by']],
+  [4, 'The ball rolled ___ the table.', 'under', ['on', 'at', 'among']],
+  [5, 'Divide the mango ___ the two of you.', 'between', ['among', 'with', 'to']],
+  [5, 'She has lived here ___ 2019.', 'since', ['for', 'from', 'by']],
+  [5, 'We waited ___ two hours.', 'for', ['since', 'from', 'at']],
+  [5, 'He is good ___ Mathematics.', 'at', ['in', 'on', 'with']],
+  [5, 'The book was written ___ a Kenyan author.', 'by', ['from', 'with', 'of']],
+  [6, 'She is very fond ___ music.', 'of', ['with', 'about', 'for']],
+  [6, 'The thief was accused ___ stealing.', 'of', ['for', 'with', 'by']],
+  [6, 'He apologised ___ coming late.', 'for', ['of', 'about', 'with']],
+  [6, 'This answer is different ___ mine.', 'from', ['than', 'with', 'to']],
+  [6, 'She insisted ___ paying the bill.', 'on', ['in', 'at', 'for']],
+]
+const CONJ: [G, string, string, string[]][] = [
+  [4, 'I wanted to play, ___ it was raining.', 'but', ['and', 'so', 'because']],
+  [4, 'He was hungry, ___ he ate some bread.', 'so', ['but', 'or', 'although']],
+  [4, 'We stayed indoors ___ it was cold.', 'because', ['but', 'or', 'so']],
+  [4, 'Would you like tea ___ coffee?', 'or', ['and', 'but', 'so']],
+  [5, '___ it was raining, we went to school.', 'Although', ['Because', 'So', 'Unless']],
+  [5, 'You will fail ___ you work hard.', 'unless', ['if', 'because', 'and']],
+  [5, 'She sings ___ she dances.', 'and', ['but', 'or', 'so']],
+  [5, 'He ran fast ___ he could catch the bus.', 'so that', ['although', 'unless', 'but']],
+  [6, '___ Juma ___ Atieno came to school. (both were absent)', 'Neither … nor', ['Either … or', 'Both … and', 'Not only … but also']],
+  [6, '___ the boys ___ the girls passed. (all of them passed)', 'Both … and', ['Neither … nor', 'Either … or', 'Whether … or']],
+  [6, 'You can ___ walk ___ take a matatu.', 'either … or', ['neither … nor', 'both … and', 'whether … nor']],
+  [6, 'She is ___ clever ___ hard-working.', 'not only … but also', ['neither … or', 'either … nor', 'both … or']],
+]
+
+export const prepU = (g: G): Generator => (rng, level) => {
+  const pool = level <= 2 || (level === 4 && rng.next() < 0.5) ? forGrade(PREPS, g) : forGrade(CONJ, g)
+  const [s, ans, wrong] = rng.pick(pool)
+  return q(level, `Choose the correct word to fill the blank:\n${s}`, ans, wrong)
+}
+
+// ── Punctuation ─────────────────────────────────────────────────────────────
+
+const PUNCT: [G, string, string[]][] = [
+  [4, 'Where are you going?', ['Where are you going.', 'where are you going?', 'Where are you going!']],
+  [4, 'Kamau, Atieno and Hassan are friends.', ['Kamau Atieno and Hassan are friends.', 'kamau, atieno and hassan are friends.', 'Kamau, Atieno, and, Hassan are friends.']],
+  [4, 'We visited Nairobi on Monday.', ['We visited nairobi on monday.', 'we visited Nairobi on Monday.', 'We visited Nairobi on monday.']],
+  [4, 'What a beautiful day!', ['What a beautiful day?', 'what a beautiful day!', 'What a beautiful day,']],
+  [5, "It's time to go home.", ["Its time to go home.", "It's time to go home", "Its' time to go home."]],
+  [5, "The boy's bag is red.", ["The boys bag is red.", "The boy's bag is red", "The boys' bag is red,"]],
+  [5, 'We bought mangoes, oranges, bananas and pawpaws.', ['We bought mangoes oranges bananas and pawpaws.', 'We bought, mangoes, oranges, bananas, and, pawpaws.', 'we bought mangoes, oranges, bananas and pawpaws.']],
+  [5, "I can't find my pen.", ["I cant find my pen.", "I can't find my pen", "I ca'nt find my pen."]],
+  [6, '"Close the door," said the teacher.', ['"Close the door" said the teacher.', 'Close the door, said the teacher.', '"Close the door," said the teacher']],
+  [6, 'Mother asked, "Have you finished your homework?"', ['Mother asked, "Have you finished your homework."', 'Mother asked "have you finished your homework?"', 'Mother asked, Have you finished your homework?']],
+  [6, "The girls' dormitory is clean.", ["The girls dormitory is clean.", "The girl's' dormitory is clean.", "The girls's dormitory is clean."]],
+  [6, 'Yes, I will come to the party.', ['Yes I will come to the party.', 'Yes, I will come to the party', 'yes, i will come to the party.']],
+]
+
+export const punctU = (g: G): Generator => (rng, level) => {
+  const rows = forGrade(PUNCT, g)
+  const [right, wrong] = rng.pick(level <= 2 ? rows.filter(([r]) => !r.includes('"')) : rows)
+  if (level <= 3) return q(level, 'Which sentence is punctuated correctly?', right, wrong)
+  const [mark, sentence] = rng.pick<[string, string]>([
+    ['?', 'How old are you'],
+    ['!', 'Oh no, the pot is burning'],
+    ['.', 'The sun rises in the east'],
+    ['?', 'Did you see the eclipse'],
+    ['!', 'What a lovely surprise'],
+    ['.', 'Please close the window'],
+  ])
+  return q(level, `Which punctuation mark should end this sentence?\n${sentence} ___`, mark, ['?', '!', '.', ','].filter((x) => x !== mark), mark === '?' ? 'It asks a question.' : mark === '!' ? 'It shows strong feeling.' : 'It is a statement or polite request.')
+}
+
+// ── Sentences ───────────────────────────────────────────────────────────────
+
+const ORDERED: [G, string][] = [
+  [4, 'The farmer planted maize in the long rains.'],
+  [4, 'My sister reads a story every evening.'],
+  [4, 'We clean our classroom on Friday afternoon.'],
+  [4, 'The children played happily in the field.'],
+  [5, 'Although it was late, the boys finished their work.'],
+  [5, 'The doctor who treated me is very kind.'],
+  [5, 'If you work hard, you will pass your exams.'],
+  [6, 'Not only did she sing, but she also danced.'],
+  [6, 'The parcel was delivered by a young messenger.'],
+  [6, 'Having finished his homework, Otieno went out to play.'],
+]
+const TAGS: [string, string][] = [
+  ['You are coming,', "aren't you?"],
+  ['She can swim,', "can't she?"],
+  ['They were late,', "weren't they?"],
+  ['He does not eat meat,', 'does he?'],
+  ['We have finished,', "haven't we?"],
+  ['Juma went home,', "didn't he?"],
+  ["It isn't raining,", 'is it?'],
+  ['Let us go,', 'shall we?'],
+]
+const REPORTED: [string, string, string[]][] = [
+  ['"I am tired," said Wanjiru.', 'Wanjiru said that she was tired.', ['Wanjiru said that I am tired.', 'Wanjiru said that she is tired.', 'Wanjiru says that she was tired.']],
+  ['"We are going home," the boys said.', 'The boys said that they were going home.', ['The boys said that we are going home.', 'The boys said they are going home.', 'The boys said that we were going home.']],
+  ['"I will help you," said Kamau.', 'Kamau said that he would help me.', ['Kamau said that I will help you.', 'Kamau said that he will help you.', 'Kamau says that he would help me.']],
+  ['"I like mangoes," said Halima.', 'Halima said that she liked mangoes.', ['Halima said that I like mangoes.', 'Halima said she likes mango.', 'Halima says that she liked mangoes.']],
+]
+
+export const sentencesU = (g: G): Generator => (rng, level) => {
+  if (level <= 2 || (g === 4 && level !== 5)) {
+    const pool = forGrade(ORDERED, g).filter(([s]) => new Set(s.split(' ')).size === s.split(' ').length)
+    const [s] = rng.pick(pool)
+    const words = s.split(' ')
+    const o: OrderQuestion = { id: uid('ue'), type: 'order', level, prompt: 'Arrange the words to make a correct sentence.', tiles: rng.shuffle(words), answer: words, joiner: ' ' }
+    return o
+  }
+  if (level === 3 || g === 4) {
+    const [a, joined, wrong] = rng.pick<[string, string, string[]]>([
+      ['Juma was sick. He did not go to school.', 'Juma did not go to school because he was sick.', ['Juma was sick because he did not go to school.', 'Juma did not go to school but he was sick.', 'Juma was sick so he went to school.']],
+      ['I met a man. The man sells fish.', 'I met a man who sells fish.', ['I met a man which sells fish.', 'I met a man whose sells fish.', 'I met a man and fish.']],
+      ['It was raining. We played outside.', 'Although it was raining, we played outside.', ['Because it was raining, we played outside.', 'It was raining so we played outside.', 'Unless it was raining, we played outside.']],
+      ['The girl won a prize. Her mother is a nurse.', 'The girl whose mother is a nurse won a prize.', ['The girl who mother is a nurse won a prize.', 'The girl which mother is a nurse won a prize.', 'The girl won a prize whose nurse.']],
+    ])
+    return q(level, `Join the sentences correctly:\n${a}`, joined, wrong)
+  }
+  if (level === 4 && g === 6) {
+    const [first, tag] = rng.pick(TAGS)
+    return q(level, `Choose the correct question tag: ${first} ___`, tag, TAGS.map(([, t]) => t).filter((t) => t !== tag).slice(0, 3), 'A positive sentence takes a negative tag, and a negative sentence takes a positive tag.')
+  }
+  const [direct, reported, wrong] = rng.pick(REPORTED)
+  return q(level, `Change into reported speech: ${direct}`, reported, wrong, 'Change the pronoun and move the tense back: am → was, will → would, like → liked.')
+}
+
+// ── Spelling ────────────────────────────────────────────────────────────────
+
+const SPELL: [G, string, string[]][] = [
+  [4, 'beautiful', ['beautifull', 'beutiful', 'beatiful']],
+  [4, 'Wednesday', ['Wensday', 'Wednsday', 'Wedensday']],
+  [4, 'friend', ['freind', 'frend', 'friennd']],
+  [4, 'because', ['becouse', 'becuase', 'beacause']],
+  [4, 'February', ['Febuary', 'Febrary', 'Februery']],
+  [4, 'tomorrow', ['tommorow', 'tomorow', 'tommorrow']],
+  [5, 'necessary', ['neccessary', 'necesary', 'nesessary']],
+  [5, 'receive', ['recieve', 'receeve', 'resieve']],
+  [5, 'believe', ['beleive', 'belive', 'beleave']],
+  [5, 'separate', ['seperate', 'separete', 'saperate']],
+  [5, 'government', ['goverment', 'governmant', 'govenment']],
+  [5, 'library', ['libary', 'liberary', 'librery']],
+  [6, 'accommodation', ['accomodation', 'acommodation', 'accommadation']],
+  [6, 'embarrass', ['embarass', 'embarras', 'embbarass']],
+  [6, 'occasion', ['occassion', 'ocasion', 'occation']],
+  [6, 'environment', ['enviroment', 'envirnment', 'enviranment']],
+  [6, 'committee', ['commitee', 'comittee', 'committe']],
+  [6, 'conscience', ['concience', 'conscence', 'consience']],
+  [6, 'privilege', ['priviledge', 'privelege', 'privilage']],
+  [6, 'definitely', ['definately', 'definitly', 'defenitely']],
+]
+
+export const spellU = (g: G): Generator => (rng, level) => {
+  const rows = forGrade(SPELL, g)
+  // Short words first; the top levels lean on the grade's newest, hardest words.
+  const pool = level <= 2 ? rows.filter(([w]) => w.length <= 9) : level >= 4 ? rows.slice(-12) : rows
+  const [right, wrong] = rng.pick(pool)
+  return q(level, 'Which word is spelt correctly?', right, wrong)
+}
+
+// ── Cloze and comprehension (shared pool; levels set difficulty) ────────────
+
+/** A cloze passage: the text has (1), (2)… where words are missing. */
+function cloze(level: Level, title: string, text: string, blanks: [string, string[]][]): BankQuestion[] {
+  return blanks.map(([ans, wrong], i) => ({
+    type: 'choice' as const,
+    level,
+    prompt: `Read the passage. Which word best fills blank (${i + 1})?`,
+    say: `Which word best fills blank ${i + 1}?`,
+    visual: { kind: 'passage' as const, title, text },
+    options: opts([ans, ...wrong]),
+    answer: ans,
+  }))
+}
+function comp(level: Level, title: string, text: string, qs: [string, string, string[]][]): BankQuestion[] {
+  return qs.map(([prompt, ans, wrong], i) => ({
+    type: 'choice' as const,
+    level: (i === 0 && level > 1 ? level - 1 : level) as Level,
+    prompt,
+    say: `${text} ${prompt}`,
+    visual: { kind: 'passage' as const, title, text },
+    options: opts([ans, ...wrong]),
+    answer: ans,
+  }))
+}
+
+export const CLOZE_U: BankQuestion[] = [
+  ...cloze(1, 'Market Day', 'Every Saturday, my mother (1) to the market. She (2) vegetables and fruit. I always go (3) her to help carry the basket. The market is very (4) on Saturdays. We (5) home before noon.', [
+    ['goes', ['go', 'going', 'gone']],
+    ['buys', ['buy', 'buying', 'bought it']],
+    ['with', ['by', 'at', 'from']],
+    ['busy', ['busily', 'business', 'busied']],
+    ['return', ['returns', 'returning', 'returned it']],
+  ]),
+  ...cloze(1, 'My Pet', 'I have a cat (1) Simba. Simba is black (2) white. She likes to sleep (3) the sun. Every morning I give (4) some milk. Simba is my (5) friend.', [
+    ['called', ['call', 'calling', 'calls']],
+    ['and', ['but', 'or', 'so']],
+    ['in', ['on', 'at', 'into']],
+    ['her', ['she', 'hers', 'herself']],
+    ['best', ['better', 'good', 'well']],
+  ]),
+  ...cloze(2, 'The Rainy Season', 'The long rains (1) in March. Farmers prepare (2) land early. When the rain (3), they plant maize and beans. The crops grow (4) because the soil is wet. By July, the farmers are (5) to harvest.', [
+    ['begin', ['begins', 'began it', 'beginning']],
+    ['their', ['there', 'they', "they're"]],
+    ['falls', ['fall', 'fell down', 'falling']],
+    ['quickly', ['quick', 'quicker', 'quickest']],
+    ['ready', ['readily', 'readiness', 'readied']],
+  ]),
+  ...cloze(2, 'A Visit to the Zoo', 'Last term, our class (1) the Nairobi National Park. We (2) many animals. The lions were (3) under a tree. A giraffe stretched (4) long neck to eat leaves. It was the (5) trip I have ever had.', [
+    ['visited', ['visit', 'visits', 'visiting']],
+    ['saw', ['see', 'seen', 'seeing']],
+    ['sleeping', ['sleep', 'slept', 'sleeps']],
+    ['its', ["it's", 'it', 'their']],
+    ['best', ['good', 'better', 'well']],
+  ]),
+  ...cloze(3, 'Clean Water', 'Water is life, (1) many people do not have clean water. Dirty water can cause diseases (2) cholera and typhoid. We should (3) water before drinking it. We must also keep our water sources (4). Everyone has a duty to (5) water.', [
+    ['but', ['and', 'so', 'because']],
+    ['such as', ['so as', 'like as', 'as such']],
+    ['boil', ['boiling', 'boiled', 'boils']],
+    ['clean', ['cleanly', 'cleaning', 'cleanness']],
+    ['conserve', ['conserving', 'conserved', 'conservation']],
+  ]),
+  ...cloze(3, 'Sports Day', 'Sports day is (1) favourite day of the year. Learners take part (2) many races. Last year, Chebet (3) the 400 metres race. Everyone cheered (4) she crossed the line. She was given a medal (5) the head teacher.', [
+    ['my', ['mine', 'me', 'I']],
+    ['in', ['on', 'at', 'with']],
+    ['won', ['win', 'wins', 'winning']],
+    ['as', ['so', 'but', 'unless']],
+    ['by', ['from', 'with', 'of']],
+  ]),
+  ...cloze(4, 'The Honest Boy', 'Baraka found a wallet (1) the road. (2) he opened it, he saw a lot of money and an identity card. He did not keep the money. (3), he took the wallet to the police station. The owner was (4) grateful that he gave Baraka a reward. Baraka\'s honesty was praised by (5).', [
+    ['along', ['among', 'between', 'over']],
+    ['When', ['Unless', 'Although', 'Because of']],
+    ['Instead', ['Therefore', 'Besides', 'Moreover']],
+    ['so', ['such', 'too', 'very']],
+    ['everyone', ['every one of', 'each', 'anybody of']],
+  ]),
+  ...cloze(4, 'Planting Trees', 'Our school started a tree planting project. Each learner was asked to (1) a seedling. We dug holes, (2) the seedlings and watered them. Trees are important (3) they give us shade and clean air. They also (4) soil erosion. If we care for them, they will (5) for many years.', [
+    ['bring', ['brought', 'bringing', 'brings']],
+    ['planted', ['plant', 'planting', 'plants']],
+    ['because', ['although', 'unless', 'but']],
+    ['prevent', ['prevents', 'prevention', 'preventing']],
+    ['grow', ['grew', 'grown', 'growth']],
+  ]),
+  ...cloze(5, 'The Drought', 'The drought that hit the north was the worst (1) years. Rivers dried (2) and many animals struggled to find water. The government, (3) with well-wishers, sent food and water. Pastoralists had to move (4) long distances in search of pasture. Experts warn that such droughts will become more (5) unless we protect the environment.', [
+    ['in', ['since', 'for', 'at']],
+    ['up', ['out of', 'off', 'down to']],
+    ['together', ['along', 'combined', 'joined']],
+    ['over', ['across to', 'by', 'upon']],
+    ['frequent', ['frequently', 'frequency', 'frequents']],
+  ]),
+  ...cloze(5, 'Technology in School', 'Computers have changed the way we learn. Learners can (1) information on almost any topic within seconds. (2), we must use technology wisely. Spending too many hours on screens can (3) our eyes and our sleep. Teachers advise us to (4) a balance between screen time and outdoor play. Used well, technology is a (5) tool.', [
+    ['access', ['excess', 'assess', 'accessed']],
+    ['However', ['Therefore', 'Because', 'Unless']],
+    ['harm', ['harmful', 'harmed', 'harmless']],
+    ['strike', ['struck', 'striking', 'strikes']],
+    ['valuable', ['value', 'valued', 'valuation']],
+  ]),
+  ...cloze(5, 'A Kind Neighbour', 'Mrs Njeri is the (1) person on our street. Whenever someone is sick, she is the first to visit. Last month, she (2) a meal for an old man who lived alone. She does not expect (3) in return. (4) she is not rich, she shares what she has. We all look up (5) her.', [
+    ['kindest', ['kinder', 'kind', 'most kindest']],
+    ['cooked', ['cook', 'cooks', 'cooking']],
+    ['anything', ['nothing', 'something', 'everything']],
+    ['Although', ['Because', 'Unless', 'Therefore']],
+    ['to', ['at', 'on', 'for']],
+  ]),
+  ...cloze(3, 'Road Safety', 'Many accidents happen (1) road users are careless. Pedestrians should use zebra crossings and look both ways (2) crossing. Drivers must not (3) the speed limit. Passengers should always (4) their seat belts. If we all follow the rules, our roads will be (5).', [
+    ['because', ['although', 'unless', 'so']],
+    ['before', ['after', 'while', 'until']],
+    ['exceed', ['excess', 'access', 'exceeded']],
+    ['fasten', ['fastened', 'fastening', 'fasten up']],
+    ['safer', ['safest', 'safely', 'safety']],
+  ]),
+]
+
+export const COMP_U: BankQuestion[] = [
+  ...comp(1, 'Grandmother\'s Farm', 'During the holidays, Otieno visited his grandmother in Siaya. She has a small farm with cows, goats and hens. Every morning Otieno helped to milk the cows. In the afternoon he fed the hens and collected eggs. He was sad when the holidays ended.', [
+    ['Where does Otieno\'s grandmother live?', 'in Siaya', ['in Nairobi', 'in Mombasa', 'in Nakuru']],
+    ['What did Otieno do every morning?', 'He helped to milk the cows.', ['He fed the hens.', 'He went to school.', 'He collected firewood.']],
+    ['When did he collect eggs?', 'in the afternoon', ['in the morning', 'at night', 'on Sunday']],
+    ['How did Otieno feel when the holidays ended?', 'sad', ['happy', 'angry', 'excited']],
+  ]),
+  ...comp(2, 'The New Library', 'Our school opened a new library last month. It has more than two thousand books, tables and comfortable chairs. Learners can borrow two books at a time and must return them within a week. The librarian, Mrs Wairimu, is always ready to help us find books. Since the library opened, many learners have started reading during break time.', [
+    ['When was the library opened?', 'last month', ['last year', 'last week', 'yesterday']],
+    ['How many books can a learner borrow at a time?', 'two', ['one', 'three', 'four']],
+    ['Who is Mrs Wairimu?', 'the librarian', ['the head teacher', 'a learner', 'a cook']],
+    ['What change has the library brought?', 'More learners read during break.', ['Learners stopped reading.', 'Break time was cancelled.', 'Learners buy more books.']],
+    ['Which word in the passage means "give back"?', 'return', ['borrow', 'help', 'open']],
+  ]),
+  ...comp(3, 'The Clever Hare', 'Long ago, a hare and an elephant were friends. One dry season, the river near their home dried up. The elephant, who was very strong, said he would dig a well. The hare promised to bring food while the elephant dug. But every day the hare ate the food on the way. After three days, the elephant discovered the trick. He was so angry that he ended the friendship. From that day, the hare has always run away when he sees an elephant.', [
+    ['Why did the animals need a well?', 'The river had dried up.', ['They wanted to swim.', 'The elephant was bored.', 'It was raining.']],
+    ['What did the hare promise to do?', 'bring food', ['dig the well', 'find water', 'build a house']],
+    ['How did the hare cheat the elephant?', 'He ate the food on the way.', ['He dug a hole.', 'He hid the water.', 'He ran away from home.']],
+    ['Which word best describes the hare?', 'dishonest', ['hard-working', 'generous', 'brave']],
+    ['What lesson does the story teach?', 'Dishonesty can destroy friendship.', ['Elephants are strong.', 'Wells are deep.', 'Hares are fast.']],
+  ]),
+  ...comp(3, 'Saving Water', 'In many parts of Kenya, water is scarce. Families walk long distances to fetch it. At our school, we have learnt simple ways of saving water. We close taps after use and report any leaks. Water from washing hands is collected and used to water the school garden. Our head teacher says that every drop counts.', [
+    ['What does "scarce" mean in the passage?', 'not enough', ['very cold', 'too much', 'dirty']],
+    ['What do learners do after using taps?', 'close them', ['leave them open', 'clean them', 'break them']],
+    ['How is water from washing hands used?', 'to water the school garden', ['for drinking', 'for cooking', 'it is thrown away']],
+    ['What does "every drop counts" mean?', 'Even a little water is important.', ['We must count water.', 'Water drops are heavy.', 'Rain falls drop by drop.']],
+  ]),
+  ...comp(4, 'The Science Fair', 'Amina and her friend Kiprono spent three weeks preparing for the county science fair. Their project showed how to make a simple water filter using sand, charcoal and gravel. On the day of the fair, the judges asked many questions. Kiprono was nervous, but Amina explained each step clearly. When the results were announced, their project came second out of forty. Their teacher, Mr Mutua, was proud of them and promised to help them prepare for the national fair.', [
+    ['How long did the friends prepare?', 'three weeks', ['three days', 'one month', 'two weeks']],
+    ['What did their project show?', 'how to make a water filter', ['how to grow maize', 'how to make bricks', 'how to cook rice']],
+    ['How did Kiprono feel in front of the judges?', 'nervous', ['angry', 'bored', 'sleepy']],
+    ['In what position did their project come?', 'second', ['first', 'third', 'fortieth']],
+    ['What will Mr Mutua help them do next?', 'prepare for the national fair', ['buy new sand', 'judge the fair', 'teach the class']],
+  ]),
+  ...comp(4, 'Letter to a Friend', 'Dear Neema, I hope you are well. I am writing to tell you about our trip to Mombasa. We travelled by the new train and arrived in five hours. We visited Fort Jesus, which was built by the Portuguese more than four hundred years ago. In the evening we walked along the beach and ate roasted maize. I wish you had been with us. Please write back soon. Your friend, Zawadi.', [
+    ['Who wrote the letter?', 'Zawadi', ['Neema', 'the Portuguese', 'a teacher']],
+    ['How did they travel to Mombasa?', 'by train', ['by bus', 'by plane', 'by car']],
+    ['Who built Fort Jesus?', 'the Portuguese', ['the British', 'the Arabs', 'Kenyans']],
+    ['What did they eat on the beach?', 'roasted maize', ['fish', 'mangoes', 'ice cream']],
+    ['What does Zawadi wish?', 'that Neema had been with them', ['to live in Mombasa', 'to build a fort', 'to travel by plane']],
+  ]),
+  ...comp(5, 'The Importance of Forests', 'Forests cover about seven per cent of Kenya\'s land. They are often called the "lungs of the earth" because trees take in carbon dioxide and give out oxygen. Forests such as the Mau and Mount Kenya are water towers: rain falls on them and feeds the rivers that millions of people depend on. Sadly, forests are being cleared for farming, charcoal and settlement. When forests disappear, rivers dry up, rainfall becomes unreliable and wild animals lose their homes. The government has banned logging in some forests and encourages every Kenyan to plant trees.', [
+    ['Why are forests called "the lungs of the earth"?', 'Trees take in carbon dioxide and give out oxygen.', ['They are shaped like lungs.', 'Animals breathe in them.', 'They are very large.']],
+    ['What is a "water tower" in the passage?', 'a forest that feeds rivers', ['a tank on a tower', 'a tall building', 'a type of tree']],
+    ['Which of these is NOT given as a reason for clearing forests?', 'tourism', ['farming', 'charcoal', 'settlement']],
+    ['What happens when forests disappear?', 'Rivers dry up and rainfall becomes unreliable.', ['More rain falls.', 'Animals get more homes.', 'Rivers flood every day.']],
+    ['What is the best title for this passage?', 'Why We Must Protect Our Forests', ['How to Make Charcoal', 'The Mau Forest Animals', 'Farming in Kenya']],
+  ]),
+  ...comp(5, 'A Lesson in Patience', 'Mutua wanted a bicycle more than anything. His father told him that if he saved half the money, he would pay the rest. Mutua began to sell boiled eggs at the bus stage every Saturday. Some weeks he sold everything; other weeks it rained and few people came. Twice he was tempted to spend his savings on sweets, but he remembered his goal. After eight months, he counted his money: he had saved four thousand shillings, exactly half the price. His father kept his promise. Today, Mutua rides to school, and he says the bicycle feels special because he worked for it.', [
+    ['What did Mutua\'s father promise?', 'to pay the other half', ['to buy sweets', 'to sell eggs', 'to build a shop']],
+    ['How did Mutua raise money?', 'by selling boiled eggs', ['by washing cars', 'by begging', 'by selling sweets']],
+    ['What was the full price of the bicycle?', '8,000 shillings', ['4,000 shillings', '2,000 shillings', '6,000 shillings']],
+    ['Why did he sometimes sell few eggs?', 'It rained and few people came.', ['He was sick.', 'The eggs were bad.', 'He was at school.']],
+    ['Which word best describes Mutua?', 'determined', ['lazy', 'careless', 'greedy']],
+  ]),
+  ...comp(2, 'Kenya\'s Flag', 'The Kenyan flag has four colours: black, red, green and white. Black stands for the people of Kenya. Red stands for the sacrifices made in the struggle for independence. Green stands for our land and natural wealth, and white stands for peace. In the middle there is a shield and two spears, which show that we are ready to defend our freedom. The flag is raised every Monday at school assembly.', [
+    ['How many colours are on the Kenyan flag?', 'four', ['three', 'five', 'two']],
+    ['What does green stand for?', 'our land and natural wealth', ['peace', 'the people', 'freedom']],
+    ['What do the shield and spears show?', 'readiness to defend our freedom', ['hunting', 'farming', 'peace']],
+    ['When is the flag raised at school?', 'every Monday', ['every Friday', 'once a year', 'every evening']],
+  ]),
+  ...comp(1, 'A Rainy Morning', 'It rained heavily on Monday morning. Wanjiru put on her raincoat and gumboots. Her father carried her to the gate under a big umbrella. At school, the teacher asked the learners to hang their wet coats outside. By ten o\'clock, the sun was shining again.', [
+    ['On which day did it rain heavily?', 'Monday', ['Sunday', 'Friday', 'Tuesday']],
+    ['What did Wanjiru wear on her feet?', 'gumboots', ['sandals', 'slippers', 'socks only']],
+    ['Who carried Wanjiru to the gate?', 'her father', ['her mother', 'her teacher', 'her brother']],
+    ['When did the sun shine again?', 'by ten o\'clock', ['at night', 'at noon', 'in the evening']],
+  ]),
+]
+
+export function upperEnglishGenerators(): Record<string, Generator> {
+  const out: Record<string, Generator> = {}
+  for (const g of [4, 5, 6] as G[]) {
+    const p = `u${g}e-`
+    out[`${p}vocab`] = vocabU(g)
+    out[`${p}nouns`] = nounsU(g)
+    out[`${p}pron`] = pronounsU(g)
+    out[`${p}verbs`] = verbsU(g)
+    out[`${p}adj`] = adjU(g)
+    out[`${p}prep`] = prepU(g)
+    out[`${p}punct`] = punctU(g)
+    out[`${p}sentences`] = sentencesU(g)
+    out[`${p}spell`] = spellU(g)
+  }
+  return out
+}
+
+export function upperEnglishBanks(): Record<string, BankQuestion[]> {
+  const out: Record<string, BankQuestion[]> = {}
+  for (const g of [4, 5, 6]) {
+    out[`u${g}e-comp`] = COMP_U
+    out[`u${g}e-cloze`] = CLOZE_U
+  }
+  return out
+}
+

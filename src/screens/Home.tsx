@@ -13,7 +13,7 @@ import { areaStars, useProgress } from '../state/progress'
 import { activePlan, useSubscription } from '../state/subscription'
 import './home.css'
 
-const SOON = ['PP1', 'PP2', '4', '5', '6', '7', '8', '9']
+const SOON = ['PP1', 'PP2', '7', '8', '9']
 
 function greeting(): string {
   const h = new Date().getHours()

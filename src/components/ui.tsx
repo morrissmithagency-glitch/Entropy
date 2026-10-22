@@ -13,6 +13,9 @@ export const SCENE_FOR: Record<AreaKind, SceneId> = {
   kiswahili: 'coast-sunset',
   creative: 'flamingo-lake',
   cre: 'golden-hills',
+  science: 'lake-dusk',
+  agriculture: 'tea-hills',
+  social: 'savanna-dawn',
 }
 
 const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }

@@ -16,7 +16,8 @@ const key = {
 } as const
 
 /** Big-key number pad. Also listens to the keyboard. */
-export function NumberPad({ disabled, onSubmit }: { disabled: boolean; onSubmit: (n: number) => void }) {
+/** maxDigits is 3 for younger grades; upper primary answers can be up to 8 digits, shown with commas. */
+export function NumberPad({ disabled, onSubmit, maxDigits = 3 }: { disabled: boolean; onSubmit: (n: number) => void; maxDigits?: number }) {
   const [value, setValue] = useState('')
 
   const press = (k: string) => {
@@ -25,7 +26,7 @@ export function NumberPad({ disabled, onSubmit }: { disabled: boolean; onSubmit:
     if (k === '⌫') setValue((v) => v.slice(0, -1))
     else if (k === 'ok') {
       if (value !== '') onSubmit(Number(value))
-    } else setValue((v) => (v.length >= 3 ? v : v === '0' ? k : v + k))
+    } else setValue((v) => (v.length >= maxDigits ? v : v === '0' ? k : v + k))
   }
 
   useEffect(() => {
@@ -43,11 +44,11 @@ export function NumberPad({ disabled, onSubmit }: { disabled: boolean; onSubmit:
       <div
         aria-live="polite"
         className="display"
-        style={{ width: 170, height: 72, borderRadius: 22, background: 'var(--card)', color: 'var(--ink)', display: 'grid', placeItems: 'center', fontSize: 40, fontWeight: 400, boxShadow: '0 16px 30px -20px rgba(3,8,20,.8)', fontVariantNumeric: 'tabular-nums' }}
+        style={{ minWidth: 170, padding: '0 20px', height: 72, borderRadius: 22, background: 'var(--card)', color: 'var(--ink)', display: 'grid', placeItems: 'center', fontSize: 40, fontWeight: 400, boxShadow: '0 16px 30px -20px rgba(3,8,20,.8)', fontVariantNumeric: 'tabular-nums' }}
       >
         <AnimatePresence mode="popLayout">
           <motion.span key={value} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -12, opacity: 0 }}>
-            {value || <span style={{ opacity: 0.25 }}>?</span>}
+            {value ? Number(value).toLocaleString('en-US') : <span style={{ opacity: 0.25 }}>?</span>}
           </motion.span>
         </AnimatePresence>
       </div>

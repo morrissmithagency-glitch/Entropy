@@ -39,7 +39,8 @@ function check(q: Question, where: string) {
   } else if (q.type === 'number') {
     expect(Number.isInteger(q.answer), `${where}: ${q.answer}`).toBe(true)
     expect(q.answer).toBeGreaterThanOrEqual(0)
-    expect(q.answer).toBeLessThanOrEqual(999)
+    // Grades 1–3 type up to 3 digits; Grades 4–6 up to 8.
+    expect(q.answer).toBeLessThanOrEqual(/^u[456]/.test(q.sub ?? '') ? 99_999_999 : 999)
   } else {
     const pool = [...q.tiles]
     for (const a of q.answer) {

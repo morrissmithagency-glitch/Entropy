@@ -15,6 +15,11 @@ import { GRADE2_BANKS, GRADE2_FACT_GENERATORS } from './banks/grade2'
 import { GRADE1_MORE_BANKS, GRADE1_MORE_GENERATORS } from './banks/grade1-more'
 import { GRADE1_ENV_GENERATORS } from './banks/grade1-env'
 import * as G1 from './generators/grade1-extra'
+import { upperMathGenerators } from './generators/upper-math'
+import { upperEnglishBanks, upperEnglishGenerators } from './generators/upper-english'
+import { upperKiswahiliBanks, upperKiswahiliGenerators } from './generators/upper-kiswahili'
+import { UPPER_SCIENCE_BANKS, UPPER_SCIENCE_GENERATORS } from './banks/upper-science'
+import { UPPER_AGRICULTURE_BANKS, UPPER_AGRICULTURE_GENERATORS } from './banks/upper-agriculture'
 import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
 import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
 import { uid } from './helpers'
@@ -50,6 +55,8 @@ mix('k-msamiati', G1.msamiati2, [4, 5])
 mix('k-silabi', G1.silabi2, [1, 4])
 mix('k-kuandika', G1.tahajia2, [3, 4])
 // Bank-only Grade 1 sub-strands gain a question maker; the builder mixes the two.
+Object.assign(GENERATORS, upperMathGenerators(), upperEnglishGenerators(), upperKiswahiliGenerators(), UPPER_SCIENCE_GENERATORS, UPPER_AGRICULTURE_GENERATORS)
+Object.assign(BANKS, upperEnglishBanks(), upperKiswahiliBanks(), UPPER_SCIENCE_BANKS, UPPER_AGRICULTURE_BANKS)
 Object.assign(GENERATORS, GRADE1_ENV_GENERATORS, { 'e-polite': G1.polite1, 'k-salamu': G1.salamu2 })
 BANKS['e-comprehension'] = [...BANKS['e-comprehension'], ...G1.COMP1_MORE]
 BANKS['k-ufahamu'] = [...BANKS['k-ufahamu'], ...G1.UFAHAMU1_MORE]

@@ -33,6 +33,10 @@ export type Visual =
   /** Shillings and cents set out in two columns, as on Kenyan papers. */
   | { kind: 'ledger'; rows: [number, number][]; op: '+' | '−' }
   | { kind: 'position'; art: ArtId; where: 'in' | 'on' | 'under' | 'beside' | 'behind' }
+  /** A small table, first row is the header. */
+  | { kind: 'table'; rows: string[][]; caption?: string }
+  /** A bar graph with labelled bars and a value axis. */
+  | { kind: 'bars'; labels: string[]; values: number[]; title?: string; unit?: string }
 
 export interface Option {
   id: string

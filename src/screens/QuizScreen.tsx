@@ -232,7 +232,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
 
             <div className="q-answer">
               {q.type === 'choice' && <Choices q={q} response={response as string | null} onPick={submit} />}
-              {q.type === 'number' && <NumberPad key={q.id} disabled={answered} onSubmit={submit} />}
+              {q.type === 'number' && <NumberPad key={q.id} disabled={answered} onSubmit={submit} maxDigits={/^u[456]/.test(q.sub ?? '') ? 8 : 3} />}
               {q.type === 'order' && <OrderTiles key={q.id} tiles={q.tiles} slots={q.answer.length} joiner={q.joiner} disabled={answered} onSubmit={submit} />}
             </div>
           </motion.div>

@@ -337,6 +337,80 @@ function Pattern({ items }: { items: (ShapeSpec | null)[] }) {
   )
 }
 
+function Table({ rows, caption }: { rows: string[][]; caption?: string }) {
+  return (
+    <table style={{ borderCollapse: 'collapse', margin: '0 auto', fontSize: 17, color: INK, fontVariantNumeric: 'tabular-nums' }}>
+      {caption && <caption style={{ fontSize: 14, color: '#55607a', paddingBottom: 6 }}>{caption}</caption>}
+      <tbody>
+        {rows.map((r, i) => (
+          <tr key={i} style={{ background: i === 0 ? 'rgba(39,48,74,.08)' : i % 2 ? 'transparent' : 'rgba(39,48,74,.03)' }}>
+            {r.map((c, j) => {
+              const Cell = i === 0 ? 'th' : 'td'
+              return (
+                <Cell key={j} style={{ border: `1.5px solid rgba(39,48,74,.25)`, padding: '6px 12px', textAlign: j === 0 ? 'left' : 'center', fontWeight: i === 0 ? 600 : 400 }}>
+                  {c}
+                </Cell>
+              )
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+/** A clean bar graph: gridlines every step, value axis on the left, labels under the bars. */
+function Bars({ labels, values, title, unit }: { labels: string[]; values: number[]; title?: string; unit?: string }) {
+  const max = Math.max(...values)
+  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000].find((s) => max / s <= 6) ?? 1000
+  const top = Math.ceil(max / step) * step
+  const W = 300
+  const H = 180
+  const left = 40
+  const bw = (W - left - 10) / labels.length
+  const y = (v: number) => 10 + (H - 10) * (1 - v / top)
+  const ticks = Array.from({ length: top / step + 1 }, (_, i) => i * step)
+  return (
+    <svg viewBox={`0 0 ${W} ${H + 40}`} width="100%" style={{ maxWidth: 360 }} role="img" aria-label={title ?? 'bar graph'}>
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={left} x2={W - 6} y1={y(t)} y2={y(t)} stroke={INK} strokeOpacity={t === 0 ? 0.6 : 0.15} strokeWidth={t === 0 ? 2 : 1} />
+          <text x={left - 6} y={y(t) + 4} textAnchor="end" fontSize="11" fill={INK}>
+            {t}
+          </text>
+        </g>
+      ))}
+      {values.map((v, i) => (
+        <motion.rect
+          key={i}
+          x={left + i * bw + bw * 0.18}
+          width={bw * 0.64}
+          y={y(v)}
+          height={y(0) - y(v)}
+          rx={3}
+          fill={['#e0876a', '#5fa39a', '#e9c46a', '#6c8ebf', '#b88bbd', '#7fb069'][i % 6]}
+          stroke={INK}
+          strokeWidth={1.5}
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          transition={{ duration: 0.7, delay: 0.1 * i, ease: [0.22, 1, 0.36, 1] }}
+          style={{ transformOrigin: `0px ${y(0)}px`, transformBox: 'view-box' }}
+        />
+      ))}
+      {labels.map((l, i) => (
+        <text key={l} x={left + i * bw + bw / 2} y={H + 18} textAnchor="middle" fontSize="12" fill={INK}>
+          {l}
+        </text>
+      ))}
+      {unit && (
+        <text x={6} y={8} fontSize="11" fill={INK} opacity={0.7}>
+          {unit}
+        </text>
+      )}
+    </svg>
+  )
+}
+
 function Position({ art, where, size = 150 }: { art: ArtId; where: 'in' | 'on' | 'under' | 'beside' | 'behind'; size?: number }) {
   // An open crate; the object sits relative to it.
   const objPos: Record<string, { x: number; y: number; z: number; s: number }> = {
@@ -501,6 +575,10 @@ export function VisualView({ v, compact = false }: { v: Visual; compact?: boolea
       return <Figure figure={v.figure} />
     case 'ledger':
       return <Ledger rows={v.rows} op={v.op} />
+    case 'table':
+      return <Table rows={v.rows} caption={v.caption} />
+    case 'bars':
+      return <Bars labels={v.labels} values={v.values} title={v.title} unit={v.unit} />
     case 'position':
       return <Position art={v.art} where={v.where} size={compact ? 130 : 180} />
     case 'art':

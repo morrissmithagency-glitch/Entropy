@@ -1,3 +1,4 @@
+import { topicOf } from '../curriculum'
 import { ENGLISH1_LESSONS, MATH1_LESSONS } from './grade1-math-english'
 import { CRE1_LESSONS, CREATIVE1_LESSONS, ENVIRONMENTAL1_LESSONS, KISWAHILI1_LESSONS } from './grade1-more'
 import { ENGLISH2_LESSONS, MATH2_LESSONS } from './grade2-math-english'
@@ -23,4 +24,5 @@ export const LESSONS: Record<string, Lesson> = {
   ...GRADE3_LESSONS,
 }
 
-export const lessonFor = (subId: string): Lesson | undefined => LESSONS[subId]
+/** Upper-primary lessons are written once per topic and shared by every grade that has it. */
+export const lessonFor = (subId: string): Lesson | undefined => LESSONS[subId] ?? LESSONS[topicOf(subId)]
