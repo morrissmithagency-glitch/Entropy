@@ -14,7 +14,7 @@ export interface ShapeSpec {
 export type Visual =
   | { kind: 'count'; art: ArtId; n: number }
   | { kind: 'groups'; groups: { art: ArtId; n: number }[]; joiner?: '+' | '−' | 'vs' }
-  | { kind: 'clock'; hour: number }
+  | { kind: 'clock'; hour: number; minute?: number }
   | { kind: 'money'; values: number[] }
   | { kind: 'shapes'; shapes: ShapeSpec[] }
   | { kind: 'sizes'; art: ArtId; scales: number[]; axis: 'x' | 'y' | 'both'; labels?: string[] }
@@ -27,6 +27,11 @@ export type Visual =
   | { kind: 'lines'; lines: ('straight' | 'curved')[]; variant?: number }
   | { kind: 'pattern'; items: (ShapeSpec | null)[] }
   | { kind: 'art'; art: ArtId[] }
+  | { kind: 'fraction'; parts: number; shaded: number; shape?: 'bar' | 'circle' }
+  /** A figure with lines inside it, for "how many triangles?" questions. */
+  | { kind: 'figure'; figure: 'tri4' | 'tri3' | 'tri2' | 'rect-diag' | 'rect-cross' }
+  /** Shillings and cents set out in two columns, as on Kenyan papers. */
+  | { kind: 'ledger'; rows: [number, number][]; op: '+' | '−' }
   | { kind: 'position'; art: ArtId; where: 'in' | 'on' | 'under' | 'beside' | 'behind' }
 
 export interface Option {

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { CurtainProvider, useCurtain } from './components/Curtain'
-import type { AreaId } from './curriculum/grade1'
+import type { AreaId } from './curriculum'
 import type { Level } from './engine/types'
 import { Home } from './screens/Home'
 import { MapScreen } from './screens/MapScreen'

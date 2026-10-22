@@ -5,7 +5,7 @@ import { Art, type ArtId } from '../components/art/objects'
 import { GlassPane } from '../components/Glass'
 import { Scene, type SceneVariant } from '../components/Scene'
 import { Chip, Icon, SettingsButtons, TopBar } from '../components/ui'
-import { GRADE1, type AreaId } from '../curriculum/grade1'
+import { GRADE1, type AreaId } from '../curriculum'
 import { areaStars, useProgress } from '../state/progress'
 import './worlds.css'
 

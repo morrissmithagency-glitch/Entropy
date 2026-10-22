@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { findStrand, type AreaId, GRADE1 } from '../curriculum/grade1'
+import { findArea, findStrand, type AreaId } from '../curriculum'
 import type { Level } from '../engine/types'
 
 const KEY = 'cbc-helper:v1'
@@ -120,7 +120,7 @@ export function challengeUnlocked(p: Progress, strandId: string): boolean {
 }
 
 export function areaStars(p: Progress, areaId: AreaId): { earned: number; total: number } {
-  const area = GRADE1.find((a) => a.id === areaId)!
+  const area = findArea(areaId)
   let earned = 0
   let total = 0
   for (const strand of area.strands) {
@@ -140,7 +140,7 @@ export function areaStars(p: Progress, areaId: AreaId): { earned: number; total:
  * level goes first, so all its stops grow together.
  */
 export function nextStop(p: Progress, areaId: AreaId): { sub: string } | { challenge: string } | null {
-  const area = GRADE1.find((a) => a.id === areaId)!
+  const area = findArea(areaId)
   for (const strand of area.strands) {
     if ((p.challenge[strand.id] ?? 0) >= PASS_STARS) continue
     if (challengeUnlocked(p, strand.id)) return { challenge: strand.id }

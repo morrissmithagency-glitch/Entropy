@@ -1,37 +1,12 @@
 // Grade 1 learning areas, strands and sub-strands, following the rationalised KICD
 // designs (revised 2024). See research/grade1-strands.md for sources and confidence.
 
-export type AreaId = 'math' | 'english' | 'environmental' | 'kiswahili'
-
-export interface SubStrand {
-  id: string
-  code: string
-  title: string
-  /** One line a child (or parent) can read. */
-  blurb: string
-}
-
-export interface Strand {
-  id: string
-  code: string
-  title: string
-  subStrands: SubStrand[]
-}
-
-export interface LearningArea {
-  id: AreaId
-  title: string
-  /** Name of this area's "world" on the adventure map. */
-  world: string
-  tagline: string
-  strands: Strand[]
-}
-
-export const LEVEL_NAMES = ['Seed', 'Sprout', 'Sapling', 'Acacia', 'Baobab'] as const
+import type { LearningArea } from './types'
 
 export const GRADE1: LearningArea[] = [
   {
     id: 'math',
+    kind: 'math',
     title: 'Mathematical Activities',
     world: 'Number Savanna',
     tagline: 'Count, add and measure your way across the plains',
@@ -72,6 +47,7 @@ export const GRADE1: LearningArea[] = [
   },
   {
     id: 'english',
+    kind: 'english',
     title: 'English Language Activities',
     world: 'Story Forest',
     tagline: 'Listen, read and write with the forest friends',
@@ -119,6 +95,7 @@ export const GRADE1: LearningArea[] = [
   },
   {
     id: 'environmental',
+    kind: 'environmental',
     title: 'Environmental Activities',
     world: 'Village & Wild',
     tagline: 'Explore home, school, the sky and the shamba',
@@ -159,6 +136,7 @@ export const GRADE1: LearningArea[] = [
   },
   {
     id: 'kiswahili',
+    kind: 'kiswahili',
     title: 'Kiswahili Language Activities',
     world: 'Bustani ya Maneno',
     tagline: 'Sikiliza, soma na andika kwa Kiswahili',
@@ -190,21 +168,3 @@ export const GRADE1: LearningArea[] = [
     ],
   },
 ]
-
-export function findArea(id: AreaId): LearningArea {
-  const area = GRADE1.find((a) => a.id === id)
-  if (!area) throw new Error(`Unknown area ${id}`)
-  return area
-}
-
-export function findSubStrand(id: string): { area: LearningArea; strand: Strand; sub: SubStrand } {
-  for (const area of GRADE1)
-    for (const strand of area.strands)
-      for (const sub of strand.subStrands) if (sub.id === id) return { area, strand, sub }
-  throw new Error(`Unknown sub-strand ${id}`)
-}
-
-export function findStrand(id: string): { area: LearningArea; strand: Strand } {
-  for (const area of GRADE1) for (const strand of area.strands) if (strand.id === id) return { area, strand }
-  throw new Error(`Unknown strand ${id}`)
-}
