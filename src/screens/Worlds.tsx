@@ -3,6 +3,7 @@ import { useNav } from '../App'
 import { sfx } from '../audio/sfx'
 import { NatureScene } from '../components/NatureScene'
 import { ReviewCard } from '../components/ReviewCard'
+import { CountUp } from '../components/motion'
 import { Breath, Chip, Icon, SCENE_FOR, SettingsButtons, TopBar } from '../components/ui'
 import { findGrade, findSubStrand, findStrand, LEVEL_NAMES, type GradeId } from '../curriculum'
 import { areaStars, levelReached, nextStop, useProgress } from '../state/progress'
@@ -37,7 +38,9 @@ export function Worlds({ grade }: { grade: GradeId }) {
                   {Icon.flame} {p.streak.days}
                 </Chip>
               )}
-              <Chip>★ {totals}</Chip>
+              <Chip>
+                ★ <CountUp to={totals} delay={0.6} />
+              </Chip>
               <SettingsButtons />
             </div>
           }

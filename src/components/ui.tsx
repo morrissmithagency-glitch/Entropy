@@ -70,33 +70,34 @@ export const Icon = {
 }
 
 /** Five growth stages drawn as fine gold line-art: Seed, Sprout, Sapling, Acacia, Baobab. */
-export function LevelGlyph({ level, size = 28, dim = false }: { level: number; size?: number; dim?: boolean }) {
+/** Pass draw to have the glyph draw itself in, line by line. */
+export function LevelGlyph({ level, size = 28, dim = false, draw = false }: { level: number; size?: number; dim?: boolean; draw?: boolean }) {
   const paths = [
     <>
-      <path d="M4 24h24" />
-      <ellipse cx="16" cy="19" rx="4" ry="5.5" transform="rotate(-20 16 19)" />
+      <path pathLength={100} d="M4 24h24" />
+      <ellipse pathLength={100} cx="16" cy="19" rx="4" ry="5.5" transform="rotate(-20 16 19)" />
     </>,
     <>
-      <path d="M4 24h24M16 24V15" />
-      <path d="M16 17c-1-4-5-6-8-4 2 3 5 4 8 4zM16 15c1-4 5-6 8-4-2 3-5 4-8 4z" />
+      <path pathLength={100} d="M4 24h24M16 24V15" />
+      <path pathLength={100} d="M16 17c-1-4-5-6-8-4 2 3 5 4 8 4zM16 15c1-4 5-6 8-4-2 3-5 4-8 4z" />
     </>,
     <>
-      <path d="M4 26h24M16 26V8" />
-      <path d="M16 12c-3-3-7-3-8-1 2 3 5 3 8 1zM16 9c3-3 7-3 8-1-2 3-5 3-8 1zM16 18c-3-2-6-2-7 0 2 2 5 2 7 0zM16 17c3-2 6-2 7 0-2 2-5 2-7 0z" />
+      <path pathLength={100} d="M4 26h24M16 26V8" />
+      <path pathLength={100} d="M16 12c-3-3-7-3-8-1 2 3 5 3 8 1zM16 9c3-3 7-3 8-1-2 3-5 3-8 1zM16 18c-3-2-6-2-7 0 2 2 5 2 7 0zM16 17c3-2 6-2 7 0-2 2-5 2-7 0z" />
     </>,
     <>
-      <path d="M3 27h26M16 27v-9c-2-2-5-3-7-3M16 18c2-2 5-4 7-4" />
-      <path d="M4 12c2-4 8-6 12-6s10 2 12 6c0 1-1 2-3 2H7c-2 0-3-1-3-2z" />
+      <path pathLength={100} d="M3 27h26M16 27v-9c-2-2-5-3-7-3M16 18c2-2 5-4 7-4" />
+      <path pathLength={100} d="M4 12c2-4 8-6 12-6s10 2 12 6c0 1-1 2-3 2H7c-2 0-3-1-3-2z" />
     </>,
     <>
-      <path d="M3 28h26" />
-      <path d="M12 28c1-5 1-11 0-15h8c-1 4-1 10 0 15" />
-      <path d="M12 13l-5-6M14 13l-2-8M18 13l2-8M20 13l5-6" />
-      <path d="M5 7c1-2 3-2 4-1M23 6c1-1 3-1 4 1M11 5c0-2 2-2 3-1M18 4c1-1 3-1 3 1" />
+      <path pathLength={100} d="M3 28h26" />
+      <path pathLength={100} d="M12 28c1-5 1-11 0-15h8c-1 4-1 10 0 15" />
+      <path pathLength={100} d="M12 13l-5-6M14 13l-2-8M18 13l2-8M20 13l5-6" />
+      <path pathLength={100} d="M5 7c1-2 3-2 4-1M23 6c1-1 3-1 4 1M11 5c0-2 2-2 3-1M18 4c1-1 3-1 3 1" />
     </>,
   ]
   return (
-    <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden {...line} strokeWidth={1.6} style={{ color: dim ? 'rgba(255,255,255,.3)' : 'var(--gold)' }}>
+    <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden className={draw ? 'draw-in' : undefined} {...line} strokeWidth={1.6} style={{ color: dim ? 'rgba(255,255,255,.3)' : 'var(--gold)' }}>
       {paths[level - 1]}
     </svg>
   )

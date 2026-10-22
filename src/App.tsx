@@ -1,3 +1,4 @@
+import { MotionConfig } from 'framer-motion'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { CurtainProvider, useCurtain } from './components/Curtain'
 import type { AreaId, GradeId } from './curriculum'
@@ -106,10 +107,12 @@ function Router() {
 
 export default function App() {
   return (
-    <div style={{ minHeight: '100%' }}>
-      <CurtainProvider>
-        <Router />
-      </CurtainProvider>
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div style={{ minHeight: '100%' }}>
+        <CurtainProvider>
+          <Router />
+        </CurtainProvider>
+      </div>
+    </MotionConfig>
   )
 }

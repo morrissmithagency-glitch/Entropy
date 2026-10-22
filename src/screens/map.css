@@ -71,6 +71,20 @@
   bottom: 30px;
   width: 1px;
   background: linear-gradient(180deg, rgba(241, 207, 135, 0.5), rgba(255, 255, 255, 0.12));
+  transform-origin: top;
+  animation: thread 1.8s var(--ease-out) 0.3s both;
+}
+
+@keyframes thread {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline::before {
+    animation: none;
+  }
 }
 
 .stop {

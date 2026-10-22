@@ -4,6 +4,7 @@ import { useNav, type QuizTarget } from '../App'
 import { canSpeak, sfx, speak, stopSpeaking } from '../audio/sfx'
 import { Art } from '../components/art/objects'
 import { Kobe, type Mood } from '../components/Kobe'
+import { Bloom, haptic } from '../components/motion'
 import { NatureScene } from '../components/NatureScene'
 import { Breath, Icon, LevelGlyph, SCENE_FOR } from '../components/ui'
 import { NumberPad, OrderTiles } from '../components/widgets/Inputs'
@@ -126,6 +127,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
       if (like) setItems((xs) => [...xs.slice(0, idx + 1), { q: like, practice: true }, ...xs.slice(idx + 1)])
     }
     const pick = (xs: string[]) => xs[Math.floor(Math.random() * xs.length)]
+    if (settings.sound) haptic(ok ? 'right' : 'wrong')
     if (ok) {
       sfx.correct()
       setMood(Math.random() < 0.4 ? 'cheer' : 'happy')
@@ -225,6 +227,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
                   <VisualView v={q.visual} />
                 </div>
               )}
+              {correct && q.type !== 'choice' && <Bloom />}
             </article>
 
             <div className="q-answer">
@@ -317,6 +320,7 @@ function Choices({ q, response, onPick }: { q: Extract<Question, { type: 'choice
                 <Label text={o.label} />
               </span>
             )}
+            {state === 'right' && picked && <Bloom />}
             {state === 'right' && (
               <motion.span className="choice-tick" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 18 }}>
                 {Icon.check}

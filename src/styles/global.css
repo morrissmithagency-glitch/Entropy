@@ -192,6 +192,40 @@ button:focus-visible,
   padding-right: var(--gutter-r);
 }
 
+/* Line drawings that draw themselves in. Paths carry pathLength="100". */
+.draw-in path,
+.draw-in ellipse {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: draw-in 1.4s var(--ease-out) forwards;
+}
+
+.draw-in path:nth-child(2),
+.draw-in ellipse:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.draw-in path:nth-child(n + 3) {
+  animation-delay: 0.5s;
+}
+
+@keyframes draw-in {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-in path,
+  .draw-in ellipse {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .progress span::after {
+    display: none;
+  }
+}
+
 @keyframes breathe {
   0%,
   100% {

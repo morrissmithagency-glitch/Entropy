@@ -35,13 +35,16 @@ function Ring({ reached, size = 56 }: { reached: number; size?: number }) {
         const a0 = ((-90 + i * 72 + 5) * Math.PI) / 180
         const a1 = ((-90 + i * 72 + 67) * Math.PI) / 180
         return (
-          <path
+          <motion.path
             key={i}
             d={`M${28 + R * Math.cos(a0)} ${28 + R * Math.sin(a0)} A${R} ${R} 0 0 1 ${28 + R * Math.cos(a1)} ${28 + R * Math.sin(a1)}`}
             fill="none"
             stroke={i < reached ? 'var(--gold)' : 'rgba(255,255,255,.16)'}
             strokeWidth="2.4"
             strokeLinecap="round"
+            initial={i < reached ? { pathLength: 0 } : false}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 + i * 0.12, ease: 'easeOut' }}
             style={i < reached ? { filter: 'drop-shadow(0 0 4px rgba(241,207,135,.7))' } : undefined}
           />
         )

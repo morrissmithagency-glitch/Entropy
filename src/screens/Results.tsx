@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNav, type QuizTarget } from '../App'
 import { sfx, speak } from '../audio/sfx'
 import { Kobe } from '../components/Kobe'
+import { CountUp } from '../components/motion'
 import { NatureScene } from '../components/NatureScene'
 import { LevelGlyph, SCENE_FOR, Star } from '../components/ui'
 import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
@@ -147,7 +148,9 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
             />
           </svg>
           <div className="res-score">
-            <span className="display">{correct}</span>
+            <span className="display">
+              <CountUp to={correct} delay={0.8} duration={1.4} />
+            </span>
             <span>of {total}</span>
           </div>
         </motion.div>
@@ -171,7 +174,7 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
           <motion.div className="res-grow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4, duration: 1 }}>
             <LevelGlyph level={target.level} size={30} />
             <span className="res-line" />
-            <LevelGlyph level={target.level + 1} size={38} />
+            <LevelGlyph level={target.level + 1} size={38} draw />
             <span>
               You grew to <b>{nextName}</b>
             </span>

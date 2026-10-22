@@ -6,6 +6,7 @@ import { GlassPane } from '../components/Glass'
 import { Kobe } from '../components/Kobe'
 import { NatureScene } from '../components/NatureScene'
 import { ReviewCard } from '../components/ReviewCard'
+import { CountUp } from '../components/motion'
 import { Icon, SettingsButtons, TopBar } from '../components/ui'
 import { GRADES } from '../curriculum'
 import { areaStars, useProgress } from '../state/progress'
@@ -77,7 +78,9 @@ export function Home() {
                   <span className="display gc-num">{g.number}</span>
                   <span className="gc-text">
                     <span className="gc-title">{g.label}</span>
-                    <span className="gc-sub">{g.areas.length} worlds · {earned} ★</span>
+                    <span className="gc-sub">
+                      {g.areas.length} worlds · <CountUp to={earned} delay={1 + i * 0.12} /> ★
+                    </span>
                   </span>
                   <span className="gc-go">{Icon.play}</span>
                 </GlassPane>

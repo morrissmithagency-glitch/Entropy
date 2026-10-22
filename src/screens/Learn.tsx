@@ -111,8 +111,11 @@ export function Learn({ area: areaId, sub: subId }: { area: AreaId; sub: string 
                 )}
                 {step.example && (
                   <div className="learn-example" aria-label={sw ? 'Mfano' : 'Example'}>
+                    {/* Worked steps appear one at a time, the way a teacher writes them. */}
                     {step.example.map((line, i) => (
-                      <div key={i}>{rich(line)}</div>
+                      <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.5 + i * 0.35, ease: [0.22, 1, 0.36, 1] }}>
+                        {rich(line)}
+                      </motion.div>
                     ))}
                   </div>
                 )}
@@ -121,7 +124,9 @@ export function Learn({ area: areaId, sub: subId }: { area: AreaId; sub: string 
 
             {last && (
               <div className="learn-welcome">
-                <span className="learn-seed">{Icon.leaf}</span>
+                <motion.span className="learn-seed" initial={{ scale: 0.4, rotate: -30, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 14, delay: 0.25 }}>
+                  {Icon.leaf}
+                </motion.span>
                 <p className="learn-remember">{rich(lesson.remember)}</p>
               </div>
             )}
