@@ -181,6 +181,15 @@ export const sub3: Generator = (rng, level) => {
       return num(level, 'Subtract.', a - b, { visual: { kind: 'sum', a, b, op: '−', result: null, vertical: true }, explain: `Borrow where the top digit is smaller: ${a} − ${b} = ${a - b}.` })
     }
     default: {
+      if (rng.next() < 0.4) {
+        // Borrowing across a zero, the hardest Grade 3 subtraction (604 − 287).
+        const a = rng.int(3, 9) * 100 + rng.int(0, 4)
+        const b = rng.int(1, Math.floor(a / 100) - 1) * 100 + rng.int(1, 9) * 10 + rng.int((a % 10) + 1, 9)
+        return num(level, 'Subtract.', a - b, {
+          visual: { kind: 'sum', a, b, op: '−', result: null, vertical: true },
+          explain: `The tens digit is 0, so borrow from the hundreds first, then from the tens: ${a} − ${b} = ${a - b}.`,
+        })
+      }
       const [a, b] = subPair(rng, true)
       const story = rng.pick([
         `A farmer had ${a} chickens. He sold ${b} of them. How many chickens were left?`,
@@ -565,7 +574,150 @@ export const shapes3: Generator = (rng, level) => {
   }
 }
 
+
+// ── Number concept ──────────────────────────────────────────────────────────
+
+const ORD = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth', 'twentieth']
+const ROW_ART: ArtId[] = ['goat', 'cow', 'hen', 'fish', 'bird', 'tree', 'ball', 'drum', 'book', 'cup', 'mango']
+const artOpts = (ids: ArtId[]): Option[] => ids.map((a) => ({ id: a, art: a, label: a }))
+
+function compareOptions(): Option[] {
+  return ['<', '>', '='].map((x) => ({ id: x, label: x }))
+}
+
+export const concept3: Generator = (rng, level) => {
+  switch (level) {
+    case 1: {
+      const a = rng.int(20, 99)
+      let b = rng.int(20, 99)
+      while (b === a) b = rng.int(20, 99)
+      const ans = a > b ? '>' : '<'
+      return choice('m3', level, `Choose the sign: ${a} ___ ${b}`, compareOptions(), ans, { explain: `${a} is ${a > b ? 'greater' : 'less'} than ${b}, so we write ${a} ${ans} ${b}.` })
+    }
+    case 2: {
+      const row = rng.sample(ROW_ART, 5)
+      const i = rng.int(0, 4)
+      const fromRight = rng.next() < 0.4
+      const target = fromRight ? row[4 - i] : row[i]
+      const opts = rng.shuffle([target, ...rng.sample(row.filter((x) => x !== target), 2)])
+      return choice('m3', level, `Which picture is ${ORD[i]} from the ${fromRight ? 'right' : 'left'}?`, artOpts(opts), target, {
+        visual: { kind: 'art', art: row },
+        explain: `Count from the ${fromRight ? 'right' : 'left'}: the ${ORD[i]} one is the ${target}.`,
+      })
+    }
+    case 3: {
+      if (rng.next() < 0.5) {
+        const a = rng.int(100, 999)
+        const swap = Math.floor(a / 100) * 100 + (a % 10) * 10 + (Math.floor(a / 10) % 10)
+        const b = swap === a ? (a >= 990 ? a - 10 : a + 10) : swap
+        const ans = a > b ? '>' : a < b ? '<' : '='
+        return choice('m3', level, `Choose the sign: ${a} ___ ${b}`, compareOptions(), ans, { explain: `The hundreds are the same, so compare the tens: ${a} ${ans} ${b}.` })
+      }
+      const n = rng.int(6, 10)
+      const k = rng.int(1, n)
+      return num(level, `Children stand in a line of ${n}. Kendi is ${ORD[k - 1]} from the front. How many children are in front of her?`, k - 1, { explain: `If she is ${ORD[k - 1]}, there are ${k - 1} children before her.` })
+    }
+    case 4: {
+      if (rng.next() < 0.5) {
+        const h = rng.int(1, 9) * 100
+        const t = rng.int(1, 9) * 10
+        const o = rng.int(1, 9)
+        const n = h + t + o
+        const other = rng.next() < 0.4 ? n : n + rng.pick([-10, 10, 1, -1, 100])
+        const ans = n > other ? '>' : n < other ? '<' : '='
+        return choice('m3', level, `Choose the sign: ${h} + ${t} + ${o} ___ ${other}`, compareOptions(), ans, { explain: `${h} + ${t} + ${o} = ${n}, so ${n} ${ans} ${other}.` })
+      }
+      const n = rng.int(12, 20)
+      const k = rng.int(5, n - 2)
+      return num(level, `In a race of ${n} runners, Kiprotich finished ${ORD[k - 1]}. How many runners finished after him?`, n - k, { explain: `${n} − ${k} = ${n - k} runners came after him.` })
+    }
+    default: {
+      if (rng.next() < 0.5) {
+        const n = rng.int(12, 20)
+        const k = rng.int(3, n - 3)
+        return num(level, `There are ${n} learners in a line. Amina is ${ORD[k - 1]} from the front. What is her position from the back? (Write the number)`, n - k + 1, {
+          explain: `From the back: ${n} − ${k} + 1 = ${n - k + 1}.`,
+        })
+      }
+      const d = rng.sample([1, 2, 3, 4, 5, 6, 7, 8, 9], 3)
+      const nums = [d[0] * 100 + d[1] * 10 + d[2], d[0] * 100 + d[2] * 10 + d[1], d[1] * 100 + d[0] * 10 + d[2], d[2] * 100 + d[1] * 10 + d[0]]
+      return {
+        id: uid('m3'),
+        type: 'order' as const,
+        level,
+        prompt: 'The numbers use the same digits. Arrange them from the largest to the smallest.',
+        tiles: rng.shuffle(nums.map(String)),
+        answer: [...nums].sort((a, b) => b - a).map(String),
+        joiner: ', ',
+        explain: 'Compare the hundreds first, then the tens, then the ones.',
+      }
+    }
+  }
+}
+
+// ── Position and direction ──────────────────────────────────────────────────
+
+// Facing order when turning right in a classroom: blackboard → door → back wall → window.
+const ROOM = ['the blackboard', 'the door', 'the back wall', 'the window']
+
+export const position3: Generator = (rng, level) => {
+  switch (level) {
+    case 1: {
+      const row = rng.sample(ROW_ART, 3)
+      const left = rng.next() < 0.5
+      const ans = left ? row[0] : row[2]
+      return choice('m3', level, `Look at the row. Which picture is on the ${left ? 'LEFT' : 'RIGHT'} of the ${row[1]}?`, artOpts(rng.shuffle(row)), ans, {
+        visual: { kind: 'art', art: row },
+        explain: `Your ${left ? 'left' : 'right'} hand side is the ${left ? 'first' : 'last'} one in the row.`,
+      })
+    }
+    case 2: {
+      const row = rng.sample(ROW_ART, 5)
+      const i = rng.int(1, 3)
+      const opts = rng.shuffle([row[i], row[i - 1], row[i + 1]])
+      return choice('m3', level, `Which picture is between the ${row[i - 1]} and the ${row[i + 1]}?`, artOpts(opts), row[i], {
+        visual: { kind: 'art', art: row },
+        explain: `The ${row[i]} is between the ${row[i - 1]} and the ${row[i + 1]}.`,
+      })
+    }
+    case 3: {
+      const start = rng.int(0, 3)
+      const right = rng.next() < 0.5
+      const ans = ROOM[(start + (right ? 1 : 3)) % 4]
+      return choice('m3', level, `In our classroom the blackboard is in front, the door is on the right, the window is on the left and the back wall is behind. You face ${ROOM[start]} and turn ${right ? 'right' : 'left'}. What do you face now?`, ROOM.map((r) => ({ id: r, label: r })), ans, {
+        explain: `A quarter turn to the ${right ? 'right' : 'left'} from ${ROOM[start]} faces ${ans}.`,
+      })
+    }
+    case 4: {
+      const start = rng.int(0, 3)
+      const kind = rng.pick(['half', 'full', 'two-right'] as const)
+      const steps = kind === 'half' || kind === 'two-right' ? 2 : 4
+      const ans = ROOM[(start + steps) % 4]
+      const words = kind === 'half' ? 'make a half turn' : kind === 'full' ? 'make a full turn' : 'turn right two times'
+      return choice('m3', level, `The blackboard is in front, the door on the right, the window on the left, the back wall behind. You face ${ROOM[start]} and ${words}. What do you face now?`, ROOM.map((r) => ({ id: r, label: r })), ans, {
+        explain: kind === 'full' ? 'A full turn brings you back to where you started.' : 'Two quarter turns make a half turn: you face the opposite side.',
+      })
+    }
+    default: {
+      if (rng.next() < 0.5) {
+        const start = rng.int(0, 3)
+        const ans = ROOM[(start + 3) % 4]
+        return choice('m3', level, `Blackboard in front, door on the right, window on the left, back wall behind. You face ${ROOM[start]} and turn RIGHT three times. What do you face now?`, ROOM.map((r) => ({ id: r, label: r })), ans, {
+          explain: 'Three right turns end in the same place as one left turn.',
+        })
+      }
+      const n = rng.int(6, 9)
+      const k = rng.int(2, n - 1)
+      return num(level, `${n} pots stand in a row. A red pot is ${ORD[k - 1]} from the left. What is its position from the right? (Write the number)`, n - k + 1, {
+        explain: `${n} − ${k} + 1 = ${n - k + 1}.`,
+      })
+    }
+  }
+}
+
 export const MATH3_GENERATORS: Record<string, Generator> = {
+  't-concept': concept3,
+  't-position': position3,
   't-whole': whole3,
   't-add': add3,
   't-sub': sub3,

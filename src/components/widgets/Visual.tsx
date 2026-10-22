@@ -505,10 +505,11 @@ export function VisualView({ v, compact = false }: { v: Visual; compact?: boolea
       return <Position art={v.art} where={v.where} size={compact ? 130 : 180} />
     case 'art':
       return (
-        <div style={{ ...row, gap: 18 }}>
+        // A row of pictures is read left to right, so it never wraps.
+        <div style={{ ...row, flexWrap: 'nowrap', gap: v.art.length > 3 ? 'clamp(4px, 2vw, 18px)' : 18 }}>
           {v.art.map((a, i) => (
-            <motion.div key={i} {...pop(i)}>
-              <Art id={a} size={v.art.length > 2 ? 96 : v.art.length === 2 ? 128 : 150} />
+            <motion.div key={i} {...pop(i)} style={{ flex: '0 1 auto', minWidth: 0 }}>
+              <Art id={a} size={v.art.length > 3 ? 'min(96px, 15vw)' : v.art.length > 2 ? 96 : v.art.length === 2 ? 128 : 150} />
             </motion.div>
           ))}
         </div>

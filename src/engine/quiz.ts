@@ -47,6 +47,11 @@ function fromBank(rng: Rng, bank: BankQuestion[], level: Level, used: Set<BankQu
       used.add(pick)
       const q = { ...pick, id: uid('bank') } as Question
       if (q.type === 'choice') q.options = rng.shuffle(q.options)
+      if (q.type === 'order') {
+        let tiles = rng.shuffle(q.tiles)
+        for (let i = 0; i < 5 && tiles.join() === q.answer.join(); i++) tiles = rng.shuffle(q.tiles)
+        q.tiles = tiles
+      }
       return q
     }
   }

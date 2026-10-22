@@ -65,5 +65,13 @@ True/False, Moses and the burning bush, Jonah and Nineveh, God's likeness, Naama
 (seven times in the Jordan), King Darius and Daniel, Nebuchadnezzar and the three Hebrew men,
 prayer, the Garden of Eden, the extended family.
 
+## Mapping to the strand guide
+
+Every Grade 3 sub-strand in the strand guide has its own quiz. Sub-strands the papers do not
+test directly (Number Concept, Position and Direction, Describing and Joining Words, Building
+Sentences, Cultural Events, Heat, Animals, Maamkuzi, Yeye/Wao, each Creative Activities
+performance skill, My Family and The Life of Jesus) use the same paper formats: fill-in with
+choices, True/False, "which group has only…", word problems and sentence ordering.
+
 IRE also appears in the paper but is not in the app yet: its content should be written or
 reviewed by an IRE teacher.

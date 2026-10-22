@@ -191,6 +191,62 @@ export const MECH3: BankQuestion[] = [
   t(5, 'Which is a full sentence?', 'The children sang a song.', ['The children and.', 'Sang a song.', 'A song the.']),
 ]
 
+
+// ── Describing and joining words ────────────────────────────────────────────
+
+export const ADJ3: BankQuestion[] = [
+  t(1, 'Which word describes the mango?\nThe mango is _sweet_.', 'sweet', ['mango', 'is']),
+  t(1, 'Choose the describing word: The ___ dog barked at night.', 'big', ['run', 'and']),
+  t(1, 'An elephant is ___.', 'big', ['tiny', 'thin']),
+  t(1, 'Ice is ___.', 'cold', ['hot', 'warm']),
+  t(2, 'A giraffe is tall. A man is short. A giraffe is ___ than a man.', 'taller', ['tallest', 'tall']),
+  t(2, 'I like tea ___ I do not like coffee.', 'but', ['and', 'because']),
+  t(2, 'Atieno bought sugar ___ bread.', 'and', ['but', 'because']),
+  t(2, 'Which word describes the hen?\nWe have a _brown_ hen.', 'brown', ['hen', 'have']),
+  t(3, 'Baraka stayed at home ___ he was sick.', 'because', ['but', 'and']),
+  t(3, 'This road is long. That road is longer. The third road is the ___.', 'longest', ['longer', 'long']),
+  t(3, 'Kendi is ___ than her younger sister.', 'older', ['oldest', 'old']),
+  t(3, 'Which word is NOT a describing word?', 'jump', ['soft', 'heavy', 'clean']),
+  t(4, 'A mouse is small. A rat is bigger. Which is the ___ of the two?', 'smaller', ['smallest', 'small', 'more small']),
+  t(4, 'The sun is ___ than the moon.', 'hotter', ['hoter', 'hottest', 'more hot']),
+  t(4, 'We wore sweaters ___ the morning was cold.', 'because', ['but', 'and', 'or']),
+  t(4, 'Wanjiru ran fast ___ she did not win the race.', 'but', ['because', 'and', 'so']),
+  t(5, 'Of all the children in Grade 3, Otieno is the ___.', 'tallest', ['taller', 'more tall', 'tall']),
+  t(5, 'Which sentence is correct?', 'A lion is bigger than a cat.', ['A lion is biggest than a cat.', 'A lion is more big than a cat.', 'A lion is big than a cat.']),
+  t(5, 'Which sentence uses "because" correctly?', 'The grass is wet because it rained.', ['It rained because the grass is wet.', 'The grass is wet because the sun.', 'Because wet the grass is.']),
+  t(5, 'Choose the word that means the same as "very big".', 'huge', ['tiny', 'narrow', 'short']),
+]
+
+// ── Building sentences ──────────────────────────────────────────────────────
+
+const sentence = (level: Level, text: string): BankQuestion => ({
+  type: 'order',
+  level,
+  prompt: 'Arrange the words to make a correct sentence.',
+  tiles: text.split(' '),
+  answer: text.split(' '),
+  joiner: ' ',
+})
+
+export const BUILD3: BankQuestion[] = [
+  sentence(1, 'The cat is sleeping.'),
+  sentence(1, 'I like ripe mangoes.'),
+  t(1, 'Which sentence starts correctly?', 'We go to school.', ['we go to school.', 'WE go to school.']),
+  sentence(2, 'My father drives a lorry.'),
+  sentence(2, 'Birds fly in the sky.'),
+  t(2, 'Which sentence ends correctly?', 'Where is your book?', ['Where is your book.', 'Where is your book']),
+  sentence(3, 'The children are playing football.'),
+  sentence(3, 'Grandmother tells us good stories.'),
+  t(3, 'Which is a complete sentence?', 'The goat is eating grass.', ['eating grass the', 'The goat is', 'grass goat eating']),
+  sentence(4, 'Our teacher reads us a story every Friday.'),
+  sentence(4, 'Zawadi fetched water from the river.'),
+  t(4, 'Which sentence is written correctly?', 'Nekesa lives in Kakamega.', ['nekesa lives in kakamega.', 'Nekesa lives in kakamega', 'nekesa Lives in Kakamega.']),
+  sentence(5, 'We planted trees because the soil was dry.'),
+  sentence(5, 'Mutua was tired but he finished his homework.'),
+  t(5, 'Which sentence is in the correct order?', 'Yesterday we visited our grandparents.', ['We grandparents visited yesterday our.', 'Visited yesterday we our grandparents.', 'Our yesterday grandparents we visited.']),
+  t(5, 'Join the sentences: "Juma was hungry. He ate ugali."', 'Juma was hungry so he ate ugali.', ['Juma was hungry but he ate ugali.', 'Juma ate ugali because hungry.', 'Juma hungry was he ate ugali.']),
+]
+
 export const COMP3: BankQuestion[] = [
   ...passage(1, 'The New Bicycle', 'Halima got a new bicycle on her birthday. It was blue with a small bell. She rode it to her grandmother\'s house.', [
     ['What did Halima get?', 'a bicycle', ['a doll', 'a book']],
@@ -230,6 +286,27 @@ export const COMP3: BankQuestion[] = [
     ['What can be made from the bark?', 'rope', ['a drink', 'nests', 'powder']],
     ['Which sentence is TRUE?', 'Birds build nests in the baobab.', ['The baobab lives for one year.', 'The fruit makes a sweet cake.', 'The baobab is a small tree.']],
   ]),
+  ...passage(3, 'The Lost Goat', 'Wambui looked after her family\'s three goats. One evening she counted them and found only two. She looked behind the house and in the maize field. At last she heard a loud bleat near the river. The little goat was stuck in the mud. Wambui called her brother, and together they pulled it out.', [
+    ['How many goats did the family have?', '3', ['2', '4', '1']],
+    ['When did Wambui count the goats?', 'in the evening', ['in the morning', 'at noon', 'at night']],
+    ['Where was the lost goat?', 'near the river', ['in the maize field', 'behind the house', 'at school']],
+    ['How did Wambui find the goat?', 'She heard it bleat.', ['She saw its footprints.', 'Her brother told her.', 'It came home.']],
+    ['Who helped Wambui?', 'her brother', ['her mother', 'her teacher', 'a neighbour']],
+  ]),
+  ...passage(4, 'Sports Day', 'On Friday, Mwangaza Primary School held its sports day. Grade 3 ran a sixty-metre race. Chebet came first and Hassan came second. In the sack race, Hassan fell twice but he did not give up. The head teacher gave the winners exercise books and pencils. Everybody clapped for Hassan because he finished the race.', [
+    ['On which day was sports day?', 'Friday', ['Monday', 'Saturday', 'Sunday']],
+    ['Who won the sixty-metre race?', 'Chebet', ['Hassan', 'the head teacher', 'Grade 3']],
+    ['How many times did Hassan fall?', '2', ['1', '3', '4']],
+    ['What did the winners get?', 'exercise books and pencils', ['money and sweets', 'shoes', 'a ball']],
+    ['Why did everybody clap for Hassan?', 'He did not give up.', ['He came first.', 'He fell down.', 'He was the head teacher.']],
+  ]),
+  ...passage(5, 'Rain Water', 'Last year the rains were short and the family tank was empty for many weeks. Father decided to collect rain water from the roof. He fixed gutters along the edges of the roof and joined them to a pipe. This year, when it rained, the tank filled up in four days. Now Mama uses the water for cooking, and the children use the water from washing clothes to water the kitchen garden.', [
+    ['Why was the tank empty last year?', 'The rains were short.', ['The tank was broken.', 'They used too much water.', 'The pipe was stolen.']],
+    ['Where did Father fix the gutters?', 'along the edges of the roof', ['in the kitchen', 'inside the tank', 'in the garden']],
+    ['How long did the tank take to fill this year?', 'four days', ['many weeks', 'one day', 'a year']],
+    ['What do the children use to water the kitchen garden?', 'water from washing clothes', ['clean drinking water', 'water from the river', 'milk']],
+    ['What lesson does the story teach?', 'We should collect and re-use water.', ['We should waste water.', 'Gutters are not useful.', 'Rain is bad.']],
+  ]),
 ]
 
 export const ENGLISH3_GENERATORS: Record<string, Generator> = {
@@ -245,4 +322,6 @@ export const ENGLISH3_BANKS: Record<string, BankQuestion[]> = {
   'te-pron': PRON3,
   'te-mech': MECH3,
   'te-comp': COMP3,
+  'te-adj': ADJ3,
+  'te-build': BUILD3,
 }

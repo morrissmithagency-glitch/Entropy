@@ -22,7 +22,9 @@ unlocks: 10 mixed questions at levels 4–5.
 
 Six worlds, each with its own painted landscape: Golden Plains (Maths), Kakamega Forest
 (English), Tea Hills (Environmental), Pwani ya Lamu (Kiswahili), Flamingo Lake (Creative
-Activities) and Morning Hills (CRE). Question types and difficulty follow Grade 3 end-term
+Activities) and Morning Hills (CRE). Strands and sub-strands follow the Grade 3 strand guide
+(the rationalised KICD designs): 14 maths, 11 English, 12 environmental, 9 Kiswahili,
+11 creative and 5 CRE sub-strands. Question types and difficulty follow Grade 3 end-term
 papers; see [`research/grade3-papers.md`](research/grade3-papers.md).
 
 ## What's in Grade 1
