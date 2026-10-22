@@ -228,7 +228,13 @@ export const division = (g: UGrade): Generator => (rng, level) => {
     }
     case 2: {
       if (g === 6) {
-        const p = rng.pick([12, 18, 20, 24, 30, 36, 40, 48])
+        if (rng.next() < 0.4) {
+          const primes = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+          const prime = rng.pick(primes)
+          const composite = rng.sample([21, 27, 33, 39, 49, 51, 57, 63, 69, 77, 81, 87, 91, 93].filter((x) => Math.abs(x - prime) < 40), 3)
+          return pickQ(level, 'Which of these is a prime number?', String(prime), composite.map(String), 'A prime number has exactly two factors: 1 and itself.')
+        }
+        const p = rng.pick([12, 16, 18, 20, 24, 28, 30, 32, 36, 40, 42, 45, 48, 50, 54, 60, 64, 72])
         const fs = Array.from({ length: p }, (_, i) => i + 1).filter((x) => p % x === 0)
         return num(level, `How many factors does ${p} have?`, fs.length, { explain: `The factors of ${p} are ${fs.join(', ')}.` })
       }
@@ -407,7 +413,9 @@ export const decimals = (g: UGrade): Generator => (rng, level) => {
     switch (level) {
       case 1: {
         const t = rng.int(1, 9)
-        return pickQ(level, `Write ${t}/10 as a decimal.`, `0.${t}`, [`${t}.0`, `0.0${t}`, `${t}.10`], `${t} tenths = 0.${t}`)
+        if (rng.next() < 0.5) return pickQ(level, `Write ${t}/10 as a decimal.`, `0.${t}`, [`${t}.0`, `0.0${t}`, `${t}.10`], `${t} tenths = 0.${t}`)
+        const w = rng.int(1, 9)
+        return pickQ(level, `In ${w}.${t}, what is the value of the digit ${t}?`, `${t} tenths`, [`${t} ones`, `${t} hundredths`, `${t} tens`], `The first digit after the point is tenths.`)
       }
       case 2: {
         const h = rng.int(11, 99)
@@ -498,18 +506,18 @@ export const decimals = (g: UGrade): Generator => (rng, level) => {
 export const percentages = (): Generator => (rng, level) => {
   switch (level) {
     case 1: {
-      const [n, d] = rng.pick([[1, 2], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [1, 10], [7, 10], [1, 20], [9, 20], [3, 25], [1, 50]])
-      return num(level, `Express ${n}/${d} as a percentage. (Write the number only)`, (n / d) * 100, { explain: `${n}/${d} × 100 = ${(n / d) * 100}%` })
+      const [n, d] = rng.pick([[1, 2], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [4, 5], [1, 10], [3, 10], [7, 10], [9, 10], [1, 20], [9, 20], [13, 20], [3, 25], [7, 25], [12, 25], [1, 50], [17, 50], [3, 2], [5, 4]])
+      return num(level, `Express ${n}/${d} as a percentage. (Write the number only)`, (n * 100) / d, { explain: `${n}/${d} × 100 = ${(n * 100) / d}%` })
     }
     case 2: {
-      const p = rng.pick([10, 20, 25, 40, 50, 60, 75, 80, 15, 35, 45, 65])
+      const p = rng.pick([10, 20, 25, 40, 50, 60, 75, 80, 15, 35, 45, 65, 5, 12, 24, 30, 36, 44, 55, 70, 85, 90, 95, 8])
       const ans = frac(p, 100, false)
       return pickQ(level, `Write ${p}% as a fraction in its simplest form.`, ans, [`${p}/10`, `${p}/100` === ans ? `${p + 5}/100` : `${p}/100`, frac(100 - p, 100, false)])
     }
     case 3: {
       const p = rng.pick([10, 20, 25, 30, 40, 50, 75, 15, 5])
       const q = rng.pick([200, 400, 600, 800, 1200, 1600, 2000, 2400])
-      return num(level, `What is ${p}% of ${fmt(q)}?`, (p / 100) * q, { explain: `${p}/100 × ${fmt(q)} = ${fmt((p / 100) * q)}` })
+      return num(level, `What is ${p}% of ${fmt(q)}?`, (p * q) / 100, { explain: `${p}/100 × ${fmt(q)} = ${fmt((p * q) / 100)}` })
     }
     case 4: {
       const total = rng.pick([20, 40, 60, 80, 100])
@@ -546,8 +554,8 @@ export const lengthU = (g: UGrade): Generator => (rng, level) => {
     }
     case 3: {
       if (g === 6) {
-        const d = 7 * rng.int(1, 10)
-        return num(level, `Find the circumference of a circle of diameter ${d} cm. (Take π = 22/7)`, (22 / 7) * d, { explain: `C = πd = 22/7 × ${d} = ${(22 / 7) * d} cm` })
+        const d = 7 * rng.int(1, 20)
+        return num(level, `Find the circumference of a circle of diameter ${d} cm. (Take π = 22/7)`, (22 * d) / 7, { explain: `C = πd = 22/7 × ${d} = ${(22 * d) / 7} cm` })
       }
       const a = [rng.int(1, 6), rng.int(10, 90)]
       const b = [rng.int(1, 6), rng.int(20, 95)]
@@ -556,8 +564,8 @@ export const lengthU = (g: UGrade): Generator => (rng, level) => {
     }
     case 4: {
       if (g === 6) {
-        const r = 7 * rng.int(1, 5)
-        return num(level, `A circular flower bed has a radius of ${r} m. What is its circumference? (Take π = 22/7)`, 2 * (22 / 7) * r, { explain: `C = 2πr = 2 × 22/7 × ${r} = ${2 * (22 / 7) * r} m` })
+        const r = 7 * rng.int(1, 15)
+        return num(level, `A circular flower bed has a radius of ${r} m. What is its circumference? (Take π = 22/7)`, (44 * r) / 7, { explain: `C = 2πr = 2 × 22/7 × ${r} = ${(44 * r) / 7} m` })
       }
       const p = 2 * rng.int(20, 90)
       const l = rng.int(Math.ceil(p / 4) + 1, p / 2 - 2)
@@ -582,8 +590,10 @@ export const areaU = (g: UGrade): Generator => (rng, level) => {
         const h = rng.int(4, 20)
         return num(level, `Find the area of a triangle with base ${b} cm and height ${h} cm. (cm²)`, (b * h) / 2, { explain: `½ × ${b} × ${h} = ${(b * h) / 2} cm²` })
       }
-      const s = rng.int(3, 15)
-      return num(level, `Find the area of a square of side ${s} cm. (cm²)`, s * s, { explain: `${s} × ${s} = ${s * s} cm²` })
+      const s = rng.int(2, 20)
+      return rng.next() < 0.6
+        ? num(level, `Find the area of a square of side ${s} cm. (cm²)`, s * s, { explain: `${s} × ${s} = ${s * s} cm²` })
+        : num(level, `A square has an area of ${s * s} cm². How long is each side? (cm)`, s, { explain: `${s} × ${s} = ${s * s}` })
     }
     case 2: {
       const l = rng.int(5, 30)
@@ -618,8 +628,10 @@ export const areaU = (g: UGrade): Generator => (rng, level) => {
 export const volumeU = (g: UGrade): Generator => (rng, level) => {
   switch (level) {
     case 1: {
-      const s = rng.int(2, 12)
-      return num(level, `Find the volume of a cube of side ${s} cm. (cm³)`, s ** 3, { explain: `${s} × ${s} × ${s} = ${s ** 3} cm³` })
+      const s = rng.int(2, 15)
+      return rng.next() < 0.6
+        ? num(level, `Find the volume of a cube of side ${s} cm. (cm³)`, s ** 3, { explain: `${s} × ${s} × ${s} = ${s ** 3} cm³` })
+        : num(level, `A cube has a volume of ${fmt(s ** 3)} cm³. How long is each edge? (cm)`, s, { explain: `${s} × ${s} × ${s} = ${s ** 3}` })
     }
     case 2: {
       const [l, w, h] = [rng.int(5, 20), rng.int(3, 12), rng.int(2, 10)]
@@ -664,8 +676,8 @@ export const capacityU = (g: UGrade): Generator => (rng, level) => {
       return pickQ(level, `${a[0]} l ${a[1]} ml + ${b[0]} l ${b[1]} ml =`, `${Math.floor(t / 1000)} l ${t % 1000} ml`, [`${a[0] + b[0]} l ${a[1] + b[1]} ml`, `${Math.floor(t / 1000) + 1} l ${t % 1000} ml`])
     }
     case 4: {
-      const cup = rng.pick([200, 250, 500])
-      const l = rng.int(2, g === 4 ? 5 : 12)
+      const cup = rng.pick([100, 200, 250, 500])
+      const l = rng.int(2, g === 4 ? 9 : 15)
       return num(level, `How many ${cup} ml cups can be filled from ${l} litres of juice?`, (l * 1000) / cup, { explain: `${l} l = ${fmt(l * 1000)} ml; ÷ ${cup} = ${(l * 1000) / cup}` })
     }
     default: {
@@ -846,76 +858,168 @@ export const moneyU = (g: UGrade): Generator => (rng, level) => {
 
 // ── Angles and shapes ───────────────────────────────────────────────────────
 
+const COMPASS8 = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west']
+const kindOf = (a: number) => (a < 90 ? 'acute' : a === 90 ? 'right' : a < 180 ? 'obtuse' : a === 180 ? 'straight' : 'reflex')
+/** Angle between the hands of a clock at an exact hour. */
+const clockAngle = (h: number) => 30 * Math.min(h % 12, 12 - (h % 12))
+
+function turnQ(rng: Rng, level: Level, g: UGrade): ChoiceQuestion {
+  const from = rng.int(0, 7)
+  const step = rng.pick(g === 4 ? [2, 4, 6] : [1, 2, 3, 4, 5, 6])
+  const clockwise = rng.next() < 0.5
+  const to = COMPASS8[(from + (clockwise ? step : 8 - step)) % 8]
+  return pickQ(level, `${name(rng)} faces ${COMPASS8[from]} and turns ${clockwise ? 'clockwise' : 'anticlockwise'} through ${step * 45}°. Which direction does the learner now face?`, to, rng.sample(COMPASS8.filter((d) => d !== to), 3), `${step * 45}° is ${step} eighth${step > 1 ? 's' : ''} of a full turn.`)
+}
+
 export const anglesU = (g: UGrade): Generator => (rng, level) => {
-  const kindOf = (a: number) => (a < 90 ? 'acute' : a === 90 ? 'right' : a < 180 ? 'obtuse' : a === 180 ? 'straight' : 'reflex')
   switch (level) {
     case 1: {
-      const a = rng.pick([30, 45, 60, 75, 90, 110, 135, 150, 180, ...(g >= 5 ? [200, 270, 300] : [])])
-      return pickQ(level, `What kind of angle is ${a}°?`, kindOf(a), ['acute', 'right', 'obtuse', 'straight', ...(g >= 5 ? ['reflex'] : [])].filter((k) => k !== kindOf(a)))
+      const a = rng.next() < 0.15 ? rng.pick([90, 180]) : g === 4 ? rng.int(5, 175) : rng.int(5, 355)
+      const kinds = ['acute', 'right', 'obtuse', 'straight', ...(g >= 5 ? ['reflex'] : [])]
+      return pickQ(level, `What kind of angle is ${a}°?`, kindOf(a), rng.sample(kinds.filter((k) => k !== kindOf(a)), 3), 'Acute < 90° < obtuse < 180° < reflex.')
     }
     case 2: {
-      const turns = rng.pick([['a quarter turn', 90], ['a half turn', 180], ['three quarter turns', 270], ['a full turn', 360]] as const)
-      return num(level, `How many degrees are there in ${turns[0]}?`, turns[1])
+      if (rng.next() < 0.5) return turnQ(rng, level, g)
+      const h = rng.int(1, 11)
+      return num(level, `What is the smaller angle between the hands of a clock at ${h} o'clock?`, clockAngle(h), { explain: `Each hour mark is 30° apart: ${Math.min(h, 12 - h)} × 30° = ${clockAngle(h)}°` })
     }
     case 3: {
       if (g === 4) {
-        const [desc, ans] = rng.pick([
-          ['Lines that never meet, like railway lines, are', 'parallel'],
-          ['Lines that meet at a right angle are', 'perpendicular'],
-          ['A line that goes straight across, like the horizon, is', 'horizontal'],
-          ['A line that goes straight up, like a flag pole, is', 'vertical'],
-        ] as const)
-        return pickQ(level, `${desc} ___.`, ans, ['parallel', 'perpendicular', 'horizontal', 'vertical'].filter((x) => x !== ans))
+        if (rng.next() < 0.4) {
+          const [desc, ans] = rng.pick([
+            ['Lines that never meet, like railway lines, are', 'parallel'],
+            ['Lines that meet at a right angle are', 'perpendicular'],
+            ['A line that goes straight across, like the horizon, is', 'horizontal'],
+            ['A line that goes straight up, like a flag pole, is', 'vertical'],
+            ['Two lines that cross each other are', 'intersecting'],
+          ] as const)
+          return pickQ(level, `${desc} ___.`, ans, ['parallel', 'perpendicular', 'horizontal', 'vertical', 'intersecting'].filter((x) => x !== ans).slice(0, 3))
+        }
+        const r = rng.int(1, 3)
+        const extra = rng.pick([0, 30, 45, 60])
+        return num(level, `An angle is made of ${r} right angle${r > 1 ? 's' : ''}${extra ? ` and ${extra}°` : ''}. How many degrees is it?`, 90 * r + extra)
       }
-      const a = rng.int(20, 160)
-      return num(level, `Two angles on a straight line add up to 180°. One is ${a}°. What is the other?`, 180 - a)
+      const a = rng.int(15, 165)
+      return num(level, `Two angles on a straight line add up to 180°. One is ${a}°. What is the other?`, 180 - a, { explain: `180 − ${a} = ${180 - a}°` })
     }
     case 4: {
       if (g === 4) {
-        const [shape, n] = rng.pick([['triangle', 3], ['square', 4], ['pentagon', 5], ['hexagon', 6], ['octagon', 8], ['rectangle', 4]] as const)
-        return num(level, `How many sides does a ${shape} have?`, n)
+        if (rng.next() < 0.5) return turnQ(rng, level, 5)
+        const [turn, n] = rng.pick([['a half turn', 2], ['a full turn', 4], ['three quarter turns', 3], ['two full turns', 8], ['one and a half turns', 6]] as const)
+        return num(level, `How many right angles are there in ${turn}?`, n, { explain: `A quarter turn is one right angle (90°).` })
       }
-      const a = rng.int(30, 90)
-      const b = rng.int(20, 150 - a)
+      const a = rng.int(25, 100)
+      const b = rng.int(20, 155 - a)
       return num(level, `Two angles of a triangle are ${a}° and ${b}°. What is the third angle?`, 180 - a - b, { explain: `Angles in a triangle add up to 180°: 180 − ${a} − ${b} = ${180 - a - b}°` })
     }
     default: {
       if (g === 4) {
-        const [shape, n] = rng.pick([['square', 4], ['rectangle', 2], ['equilateral triangle', 3], ['regular hexagon', 6], ['regular pentagon', 5]] as const)
-        return num(level, `How many lines of symmetry does a ${shape} have?`, n)
+        const h1 = rng.int(1, 11)
+        const turnsTo = rng.int(1, 5)
+        return num(level, `The minute hand of a clock is on 12. How many degrees does the hour hand turn from ${h1} o'clock to ${((h1 + turnsTo - 1) % 12) + 1} o'clock?`, turnsTo * 30, { explain: `Each hour, the hour hand turns 30°: ${turnsTo} × 30 = ${turnsTo * 30}°` })
       }
-      const a = rng.int(40, 140)
-      const b = rng.int(30, 300 - a - 30)
-      return num(level, `Three angles meet at a point. Two are ${a}° and ${b}°. What is the third? (Angles at a point add up to 360°.)`, 360 - a - b)
+      const form = rng.int(0, g === 6 ? 2 : 1)
+      if (form === 0) {
+        const a = rng.int(40, 150)
+        const b = rng.int(30, 300 - a - 30)
+        return num(level, `Three angles meet at a point. Two are ${a}° and ${b}°. What is the third? (Angles at a point add up to 360°.)`, 360 - a - b)
+      }
+      if (form === 1) {
+        const a = rng.int(20, 80)
+        const b = rng.int(20, 170 - a - 10)
+        return num(level, `Three angles lie on a straight line. Two of them are ${a}° and ${b}°. What is the third?`, 180 - a - b)
+      }
+      const base = rng.int(25, 80)
+      return rng.next() < 0.5
+        ? num(level, `An isosceles triangle has two equal base angles of ${base}° each. What is the third angle?`, 180 - 2 * base, { explain: `180 − 2 × ${base} = ${180 - 2 * base}°` })
+        : num(level, `The top angle of an isosceles triangle is ${180 - 2 * base}°. What is the size of each base angle?`, base, { explain: `(180 − ${180 - 2 * base}) ÷ 2 = ${base}°` })
     }
   }
 }
 
+// [name, sides, lines of symmetry (regular or usual form)]
+const POLYGONS: [string, number][] = [
+  ['triangle', 3],
+  ['quadrilateral', 4],
+  ['pentagon', 5],
+  ['hexagon', 6],
+  ['heptagon', 7],
+  ['octagon', 8],
+  ['nonagon', 9],
+  ['decagon', 10],
+]
+const SYMMETRY: [string, number][] = [
+  ['square', 4],
+  ['rectangle', 2],
+  ['rhombus', 2],
+  ['kite', 1],
+  ['isosceles triangle', 1],
+  ['equilateral triangle', 3],
+  ['parallelogram', 0],
+  ['scalene triangle', 0],
+  ['regular pentagon', 5],
+  ['regular hexagon', 6],
+  ['regular octagon', 8],
+]
+const PROPERTIES: [string, string][] = [
+  ['square', 'four equal sides and four right angles'],
+  ['rectangle', 'opposite sides equal and four right angles'],
+  ['rhombus', 'four equal sides but no right angles'],
+  ['trapezium', 'only one pair of parallel sides'],
+  ['parallelogram', 'two pairs of parallel sides but no right angles'],
+  ['kite', 'two pairs of equal sides that are next to each other'],
+]
+// [solid, faces, edges, vertices]
+const SOLIDS: [string, number, number, number][] = [
+  ['cube', 6, 12, 8],
+  ['cuboid', 6, 12, 8],
+  ['triangular prism', 5, 9, 6],
+  ['square-based pyramid', 5, 8, 5],
+  ['triangular pyramid', 4, 6, 4],
+]
+
 export const shapesU = (): Generator => (rng, level) => {
-  const SHAPES: [string, number, number][] = [
-    ['triangle', 3, 3],
-    ['square', 4, 4],
-    ['rectangle', 4, 2],
-    ['pentagon', 5, 5],
-    ['hexagon', 6, 6],
-    ['octagon', 8, 8],
-  ]
-  const [s, sides, sym] = rng.pick(SHAPES)
   switch (level) {
-    case 1:
-      return num(level, `How many sides does a ${s} have?`, sides)
-    case 2: {
-      const ans = SHAPES.find(([, n]) => n === sides)![0]
-      return pickQ(level, `Which shape has ${sides} sides?`, ans, SHAPES.map(([x]) => x).filter((x) => x !== ans && !(sides === 4 && (x === 'square' || x === 'rectangle'))))
+    case 1: {
+      const [s, n] = rng.pick(POLYGONS)
+      return rng.next() < 0.5 ? num(level, `How many sides does a ${s} have?`, n) : num(level, `How many corners (vertices) does a ${s} have?`, n)
     }
-    case 3:
-      return num(level, `How many corners (vertices) does a ${s} have?`, sides)
-    case 4:
-      return num(level, `How many lines of symmetry does a ${s === 'triangle' ? 'equilateral triangle' : s === 'pentagon' || s === 'hexagon' || s === 'octagon' ? `regular ${s}` : s} have?`, sym)
+    case 2: {
+      if (rng.next() < 0.5) {
+        const [ans, n] = rng.pick(POLYGONS)
+        return pickQ(level, `Which shape has ${n} sides?`, ans, rng.sample(POLYGONS.map(([x]) => x).filter((x) => x !== ans), 3))
+      }
+      const [s, n] = rng.pick(POLYGONS)
+      const k = rng.int(2, 6)
+      return num(level, `How many sides do ${k} ${s}s have altogether?`, k * n)
+    }
+    case 3: {
+      const [s, prop] = rng.pick(PROPERTIES)
+      return rng.next() < 0.5
+        ? pickQ(level, `Which shape has ${prop}?`, s, rng.sample(PROPERTIES.map(([x]) => x).filter((x) => x !== s), 3))
+        : pickQ(level, `Which describes a ${s}?`, prop, rng.sample(PROPERTIES.map(([, x]) => x).filter((x) => x !== prop), 3))
+    }
+    case 4: {
+      if (rng.next() < 0.5) {
+        const [s, n] = rng.pick(SYMMETRY)
+        return num(level, `How many lines of symmetry does a ${s} have?`, n)
+      }
+      const [s, f, e, v] = rng.pick(SOLIDS)
+      const [what, ans] = rng.pick([['faces', f], ['edges', e], ['vertices', v]] as const)
+      return num(level, `How many ${what} does a ${s} have?`, ans)
+    }
     default: {
+      if (rng.next() < 0.5) {
+        const [s, n] = rng.pick(POLYGONS.filter(([x]) => x !== 'quadrilateral'))
+        const side = rng.int(3, 25)
+        return rng.next() < 0.5
+          ? num(level, `A regular ${s} has sides of ${side} cm. What is its perimeter? (cm)`, n * side, { explain: `${n} × ${side} = ${n * side} cm` })
+          : num(level, `A regular ${s} has a perimeter of ${n * side} cm. How long is each side? (cm)`, side, { explain: `${n * side} ÷ ${n} = ${side} cm` })
+      }
       const k = rng.int(2, 5)
-      const [s2, n2] = rng.pick(SHAPES.filter(([x]) => x !== s))
-      return num(level, `What is the total number of sides of ${k} ${s}s and one ${s2}?`, k * sides + n2, { explain: `${k} × ${sides} + ${n2}` })
+      const [s, n] = rng.pick(POLYGONS)
+      const [s2, n2] = rng.pick(POLYGONS.filter(([x]) => x !== s))
+      return num(level, `What is the total number of sides of ${k} ${s}s and one ${s2}?`, k * n + n2, { explain: `${k} × ${n} + ${n2}` })
     }
   }
 }

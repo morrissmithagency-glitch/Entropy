@@ -163,6 +163,12 @@ export const ngeliU = (g: G): Generator => (rng, level) => {
 // ── Vivumishi ───────────────────────────────────────────────────────────────
 
 const AINA: [G, string, string, string][] = [
+  [4, 'Kikombe _kidogo_ kimevunjika.', 'kidogo', 'kivumishi cha sifa'],
+  [4, 'Nina dada _wawili_.', 'wawili', 'kivumishi cha idadi'],
+  [4, 'Nyumba _yetu_ ni safi.', 'yetu', 'kivumishi kimilikishi'],
+  [4, 'Kiti _hiki_ ni changu.', 'hiki', 'kivumishi kionyeshi'],
+  [4, 'Maembe _matamu_ yameiva.', 'matamu', 'kivumishi cha sifa'],
+  [4, 'Kalamu _zile_ ni za mwalimu.', 'zile', 'kivumishi kionyeshi'],
   // [min grade, phrase, underlined word, aina]
   [4, 'Mtoto _mrefu_ anacheza.', 'mrefu', 'kivumishi cha sifa'],
   [4, 'Nyumba _nzuri_ imejengwa.', 'nzuri', 'kivumishi cha sifa'],
@@ -315,6 +321,14 @@ export const nyakatiU = (g: G): Generator => (rng, level) => {
         [`Mvua ___, tutapanda mahindi.`, 'ikinyesha', ['ilinyesha', 'inanyesha', 'imenyesha']],
         [`Kama wangejua, ___ mapema.`, 'wangekuja', ['watakuja', 'walikuja', 'wanakuja']],
         [`Mkulima ___ mbegu bora, atapata mavuno mengi.`, 'akipanda', ['alipanda', 'anapanda', 'amepanda']],
+        [`Kama ningejua jibu, ___ mkono.`, 'ningeinua', ['nitainua', 'niliinua', 'ninainua']],
+        [`Ukimwona Juma, ___ salamu zangu.`, 'mpe', ['ulimpa', 'ungempa', 'umempa']],
+        [`Kama mvua ingenyesha, mimea ___ vizuri.`, 'ingemea', ['itamea', 'ilimea', 'inamea']],
+        [`Tukifanya kazi pamoja, ___ haraka.`, 'tutamaliza', ['tulimaliza', 'tungemaliza zamani', 'tumemaliza']],
+        [`Kama angalisoma, ___ mtihani.`, 'angalipita', ['atapita', 'alipita', 'anapita']],
+        [`Wanafunzi ___ mapema, watapata viti vya mbele.`, 'wakifika', ['walifika', 'wanafika', 'wamefika']],
+        [`Kama tungekuwa na basi, ___ Mombasa.`, 'tungesafiri', ['tutasafiri', 'tulisafiri', 'tunasafiri']],
+        [`Ukipanda mti leo, ___ kivuli kesho.`, 'utapata', ['ulipata', 'ungepata jana', 'umepata']],
       ])
       return q(level, `Jaza pengo kwa kitenzi sahihi:\n${s}`, right, wrong, '-nge- huonyesha masharti yasiyowezekana; -ki- huonyesha masharti yanayowezekana.')
     }
@@ -324,6 +338,14 @@ export const nyakatiU = (g: G): Generator => (rng, level) => {
 // ── Viunganishi ─────────────────────────────────────────────────────────────
 
 const VIUNGANISHI: [G, string, string, string[]][] = [
+  [4, 'Ninapenda chai ___ mandazi.', 'na', ['wala', 'ili', 'lakini']],
+  [4, 'Nilichelewa ___ basi liliharibika.', 'kwa sababu', ['ili', 'au', 'na']],
+  [4, 'Soma kwa bidii ___ upite mtihani.', 'ili', ['lakini', 'au', 'wala']],
+  [4, 'Alikuwa na njaa ___ hakula chochote.', 'lakini', ['ili', 'au', 'kwa sababu']],
+  [4, 'Utakula wali ___ ugali?', 'au', ['na', 'lakini', 'ili']],
+  [4, 'Nawa mikono ___ kula.', 'kabla ya', ['ili', 'wala', 'lakini']],
+  [4, 'Tutacheza ___ kumaliza kazi.', 'baada ya', ['wala', 'au', 'ili']],
+  [4, 'Juma ___ Amina ni marafiki.', 'na', ['au', 'ili', 'lakini']],
   [4, 'Nilinunua mkate ___ maziwa.', 'na', ['lakini', 'wala', 'ili']],
   [4, 'Juma alichelewa ___ mvua ilikuwa ikinyesha.', 'kwa sababu', ['lakini', 'ili', 'au']],
   [4, 'Nilimpigia simu ___ hakupokea.', 'lakini', ['kwa sababu', 'na', 'ili']],
@@ -344,7 +366,7 @@ const VIUNGANISHI: [G, string, string, string[]][] = [
 
 export const viunganishiU = (g: G): Generator => (rng, level) => {
   const rows = forGrade(VIUNGANISHI, g)
-  const pool = level <= 2 ? rows.slice(0, 6) : level >= 4 ? rows.slice(-8) : rows
+  const pool = level <= 2 ? rows.slice(0, 14) : level >= 4 ? rows.slice(-14) : rows
   const [s, right, wrong] = rng.pick(pool)
   return q(level, `Chagua kiunganishi kifaacho:\n${s}`, right, wrong)
 }
@@ -363,6 +385,12 @@ const ALAMA: [G, string, string][] = [
   [6, '( )', 'mabano'],
 ]
 const SAHIHI: [G, string, string[]][] = [
+  [4, 'Jina langu ni Baraka.', ['jina langu ni Baraka.', 'Jina langu ni baraka.', 'Jina langu ni Baraka']],
+  [4, 'Je, umekula?', ['Je, umekula.', 'je, umekula?', 'Je umekula!']],
+  [4, 'Tutaenda Kisumu mwezi Aprili.', ['Tutaenda kisumu mwezi Aprili.', 'Tutaenda Kisumu mwezi aprili.', 'tutaenda Kisumu mwezi Aprili.']],
+  [4, 'Ala! Mvua imeanza kunyesha!', ['Ala? Mvua imeanza kunyesha?', 'ala! mvua imeanza kunyesha!', 'Ala. Mvua imeanza kunyesha.']],
+  [4, 'Mama alinunua sukari, chumvi na mafuta.', ['Mama alinunua sukari chumvi na mafuta.', 'mama alinunua sukari, chumvi na mafuta.', 'Mama alinunua, sukari, chumvi, na, mafuta.']],
+  [4, 'Bwana Otieno ni mwalimu wetu.', ['bwana Otieno ni mwalimu wetu.', 'Bwana otieno ni mwalimu wetu.', 'Bwana Otieno ni mwalimu wetu?']],
   [4, 'Unaenda wapi?', ['Unaenda wapi.', 'unaenda wapi?', 'Unaenda wapi!']],
   [4, 'Lo! Umevunja kikombe!', ['Lo. Umevunja kikombe.', 'Lo? umevunja kikombe?', 'lo! umevunja kikombe']],
   [4, 'Nilinunua maembe, machungwa na ndizi.', ['Nilinunua maembe machungwa na ndizi.', 'nilinunua maembe, machungwa na ndizi.', 'Nilinunua, maembe, machungwa, na, ndizi.']],
@@ -373,14 +401,31 @@ const SAHIHI: [G, string, string[]][] = [
   [6, 'Mama aliuliza, "Umemaliza kazi yako?"', ['Mama aliuliza, "Umemaliza kazi yako."', 'Mama aliuliza "umemaliza kazi yako?"', 'Mama aliuliza, Umemaliza kazi yako?']],
 ]
 
+const MATUMIZI: [G, string, string][] = [
+  [4, 'kumaliza sentensi ya kawaida', '.'],
+  [4, 'kumaliza swali', '?'],
+  [4, 'kuonyesha hisia kama mshangao au furaha', '!'],
+  [4, 'kutenganisha vitu katika orodha', ','],
+  [5, 'kuonyesha sauti ya ng\' kama katika ng\'ombe', "'"],
+  [5, 'kutanguliza orodha ya vitu', ':'],
+  [6, 'kunukuu maneno halisi ya msemaji', '" "'],
+  [6, 'kuunganisha maneno kama mama-mkwe', '-'],
+  [6, 'kuzingira maelezo ya ziada', '( )'],
+]
+
 export const uakifishajiU = (g: G): Generator => (rng, level) => {
-  if (level <= 2) {
+  const endMark = level === 3 || (level === 1 && rng.next() < 0.4)
+  if (!endMark && level <= 2 && rng.next() < 0.5) {
+    const [kazi, mark] = rng.pick(forGrade(MATUMIZI, g))
+    return q(level, `Ni alama gani hutumika ${kazi}?`, mark, rng.sample(forGrade(MATUMIZI, g).map(([, m]) => m).filter((m) => m !== mark), 3))
+  }
+  if (!endMark && level <= 2) {
     const [mark, jina] = rng.pick(forGrade(ALAMA, g))
     const all = forGrade(ALAMA, g).map(([, j]) => j)
     if (level === 1 || rng.next() < 0.5) return q(level, `Alama hii inaitwaje?  ${mark}`, jina, rng.sample(all.filter((j) => j !== jina), 3))
     return q(level, `Ni alama gani inayoitwa "${jina}"?`, mark, rng.sample(forGrade(ALAMA, g).map(([m]) => m).filter((m) => m !== mark), 3))
   }
-  if (level === 3) {
+  if (endMark) {
     const [s, mark] = rng.pick<[string, string]>([
       ['Jina lako ni nani', '?'],
       ['Ala! Umefika mapema', '!'],
@@ -388,6 +433,14 @@ export const uakifishajiU = (g: G): Generator => (rng, level) => {
       ['Unaishi wapi', '?'],
       ['Lo! Mtoto ameanguka', '!'],
       ['Tafadhali funga mlango', '.'],
+      ['Umetoka wapi', '?'],
+      ['Hongera! Umeshinda', '!'],
+      ['Ng\'ombe hula nyasi', '.'],
+      ['Je, umemaliza kazi yako', '?'],
+      ['Ajabu! Ndege huyu ni mkubwa', '!'],
+      ['Shule hufunguliwa Januari', '.'],
+      ['Kwa nini unacheka', '?'],
+      ['Ole wangu! Nimesahau kitabu', '!'],
     ])
     return q(level, `Sentensi hii inafaa kumalizwa kwa alama gani?\n${s} ___`, mark, ['?', '!', '.', ','].filter((m) => m !== mark))
   }
@@ -399,6 +452,21 @@ export const uakifishajiU = (g: G): Generator => (rng, level) => {
 
 // [min grade, first half, second half, meaning]
 const METHALI: [G, string, string, string][] = [
+  [4, 'Mwenda pole', 'hajikwai', 'Anayefanya mambo kwa uangalifu hapati matatizo.'],
+  [4, 'Akili ni nywele', 'kila mtu ana zake', 'Kila mtu ana mawazo na uwezo wake.'],
+  [4, 'Kupotea njia', 'ndiko kujua njia', 'Makosa hutufunza kufanya vizuri zaidi.'],
+  [4, 'Damu nzito', 'kuliko maji', 'Uhusiano wa jamaa ni wenye nguvu.'],
+  [4, 'Tone na tone', 'huwa mchirizi', 'Vitu vidogo vikikusanywa huwa vingi.'],
+  [4, 'Fuata nyuki', 'ule asali', 'Ukiandamana na watu wema utapata mema.'],
+  [4, 'Nyumba njema', 'si mlango', 'Usihukumu kitu kwa sura yake ya nje.'],
+  [4, 'Mtoto umleavyo', 'ndivyo akuavyo', 'Malezi ya mtoto huonekana katika tabia yake.'],
+  [5, 'Chovya chovya', 'humaliza buyu la asali', 'Kutumia kidogo kidogo bila kuongeza humaliza kila kitu.'],
+  [5, 'Mchagua jembe', 'si mkulima', 'Mfanyakazi halisi hafanyi visingizio.'],
+  [5, 'Asiyekubali kushindwa', 'si mshindani', 'Mshindani mwema hukubali matokeo.'],
+  [5, 'Mwenye kelele', 'hana neno', 'Anayepiga kelele nyingi mara nyingi hana jambo la maana.'],
+  [6, 'Siri ya mtungi', 'aijuaye kata', 'Mambo ya ndani hujulikana na walio karibu.'],
+  [6, 'Jogoo la shamba', 'haliwiki mjini', 'Sifa za mtu nyumbani huenda zisijulikane kwingine.'],
+  [6, 'Ngoja ngoja', 'huumiza matumbo', 'Kungoja muda mrefu mno huleta hasara.'],
   [4, 'Haraka haraka', 'haina baraka', 'Jambo linalofanywa kwa haraka huharibika.'],
   [4, 'Pole pole', 'ndio mwendo', 'Kufanya mambo taratibu huleta mafanikio.'],
   [4, 'Haba na haba', 'hujaza kibaba', 'Kidogo kidogo hukusanyika kuwa kingi.'],
@@ -425,7 +493,7 @@ const METHALI: [G, string, string, string][] = [
 
 export const methaliU = (g: G): Generator => (rng, level) => {
   const rows = forGrade(METHALI, g)
-  const [a, b, maana] = rng.pick(level >= 4 ? rows.slice(-12) : rows)
+  const [a, b, maana] = rng.pick(level >= 4 ? rows.slice(-20) : rows)
   const others = rows.filter(([x]) => x !== a)
   if (level <= 2) return q(level, `Kamilisha methali: "${a} ___"`, b, rng.sample(others.map(([, y]) => y), 3), `${a} ${b}.`)
   if (level === 3) return q(level, `Kamilisha methali: "___ ${b}"`, a, rng.sample(others.map(([x]) => x), 3), `${a} ${b}.`)
@@ -454,6 +522,16 @@ const VISAWE: [G, string, string][] = [
   [6, 'mwalimu', 'mkufunzi'],
 ]
 const VINYUME: [G, string, string][] = [
+  [4, 'kulala', 'kuamka'],
+  [4, 'kufika', 'kuondoka'],
+  [4, 'mbele', 'nyuma'],
+  [4, 'ndani', 'nje'],
+  [4, 'karibu', 'mbali'],
+  [4, 'kuvaa', 'kuvua'],
+  [4, 'kuwasha', 'kuzima'],
+  [4, 'safi', 'chafu'],
+  [4, 'mwanzo', 'mwisho'],
+  [4, 'asubuhi', 'jioni'],
   [4, 'kununua', 'kuuza'],
   [4, 'kucheka', 'kulia'],
   [4, 'kufungua', 'kufunga'],
@@ -634,6 +712,34 @@ export const CLOZE_K: BankQuestion[] = [
     ['hilo', ['hiyo', 'huo', 'hicho']],
     ['hurudi', ['hurudia', 'mrudi', 'kurudi']],
   ]),
+  ...cloze(1, 'Familia Yangu', 'Familia yangu (1) watu watano. Baba yangu ni (2). Mama yangu ni muuguzi (3) hospitali ya Kitale. Nina kaka mmoja (4) dada mmoja. Sisi sote (5) upendo.', [
+    ['ina', ['kina', 'lina', 'wana']],
+    ['mkulima', ['kulima', 'kilimo', 'shamba']],
+    ['katika', ['juu', 'chini', 'nyuma']],
+    ['na', ['wala', 'ili', 'lakini']],
+    ['tuna', ['una', 'ana', 'kina']],
+  ]),
+  ...cloze(2, 'Kuweka Akiba', 'Neema ana kibweta (1) huweka akiba yake. Kila (2) anapopata sarafu, huitia ndani. Mwezi uliopita alihesabu pesa (3) akapata shilingi mia mbili. Alizitumia kununua kitabu cha (4). Sasa anaweka akiba (5) kununua viatu.', [
+    ['ambamo', ['ambaye', 'ambao', 'ambacho']],
+    ['mara', ['siku', 'wakati', 'saa']],
+    ['zake', ['yake', 'wake', 'lake']],
+    ['hadithi', ['hadithia', 'kuhadithia', 'mhadithi']],
+    ['ili', ['lakini', 'wala', 'au']],
+  ]),
+  ...cloze(4, 'Fainali ya Kandanda', 'Mechi ya fainali kati ya shule ya Moi na Tumaini (1) Jumamosi. Katika kipindi cha kwanza, hakuna timu (2) bao. Dakika kumi baada ya mapumziko, Otieno (3) bao zuri. Mashabiki walishangilia (4) sana. Wachezaji wa Moi walipewa kombe na walijivunia (5) yao.', [
+    ['ilichezwa', ['alichezwa', 'kilichezwa', 'zilichezwa']],
+    ['iliyofunga', ['aliyefunga', 'kilichofunga', 'lililofunga']],
+    ['alifunga', ['walifunga', 'ilifunga', 'kilifunga']],
+    ['kwa nguvu', ['kwa nguvuni', 'nguvu za', 'nguvuni']],
+    ['juhudi', ['juhudisha', 'kujuhudi', 'mjuhudi']],
+  ]),
+  ...cloze(5, 'Nyuki na Wakulima', 'Nyuki ni (1) ya wadudu wenye manufaa makubwa duniani. Wanapotoka ua moja hadi jingine, hubeba chavua (2) husaidia mimea kutoa matunda. Bila nyuki, mazao mengi (3) kidogo. Wakulima wanaofuga nyuki pia hupata asali na nta. (4), nyuki wako hatarini kutokana na matumizi mabaya ya dawa. Kwa hivyo wakulima wanashauriwa kunyunyizia dawa (5) inapohitajika tu.', [
+    ['baadhi', ['mmoja', 'kila', 'wote']],
+    ['ambayo', ['ambaye', 'ambao', 'ambacho']],
+    ['yangezaa', ['litazaa', 'kingezaa', 'angezaa']],
+    ['Hata hivyo', ['Kwa sababu', 'Ili', 'Wala']],
+    ['pale', ['mahali', 'ndani', 'juu']],
+  ]),
 ]
 
 export const UFAHAMU_K: BankQuestion[] = [
@@ -701,6 +807,32 @@ export const UFAHAMU_K: BankQuestion[] = [
     ['Paka huyo ana rangi gani?', 'nyeupe', ['nyeusi', 'kahawia', 'kijivu']],
     ['Neema humpa paka nini kila asubuhi?', 'maziwa', ['nyama', 'maji', 'mkate']],
     ['Pamba alirudi na vitoto vingapi?', 'vitatu', ['viwili', 'vinne', 'kimoja']],
+  ]),
+  ...ufahamu(1, 'Bustani ya Shule', 'Shule yetu ina bustani ndogo. Tunapanda sukumawiki, spinachi na karoti. Kila Jumanne tunamwagilia mimea na kung\'oa magugu. Wiki iliyopita tulivuna sukumawiki nyingi. Mpishi aliipika kwa chakula cha mchana.', [
+    ['Shule ina nini?', 'bustani ndogo', ['shamba la chai', 'ziwa', 'msitu']],
+    ['Wanafunzi humwagilia mimea siku gani?', 'Jumanne', ['Ijumaa', 'Jumamosi', 'Jumapili']],
+    ['Walivuna nini wiki iliyopita?', 'sukumawiki', ['karoti', 'mahindi', 'ndizi']],
+    ['Nani alipika sukumawiki?', 'mpishi', ['mwalimu mkuu', 'mzazi', 'mwanafunzi']],
+  ]),
+  ...ufahamu(3, 'Kiongozi wa Darasa', 'Zawadi alichaguliwa kuwa kiongozi wa darasa la tano. Alikuwa mwanafunzi mwadilifu na mcheshi. Kila asubuhi, alihakikisha darasa limefagiliwa na madawati yamepangwa vizuri. Wenzake walipogombana, aliwasikiliza wote wawili kisha akawapatanisha. Mwalimu wao alisema kwamba Zawadi alikuwa mfano mzuri wa uongozi bora.', [
+    ['Zawadi alichaguliwa kuwa nini?', 'kiongozi wa darasa', ['mwalimu', 'mpishi', 'mlinzi']],
+    ['Zawadi alihakikisha nini kila asubuhi?', 'darasa limefagiliwa na madawati yamepangwa', ['wanafunzi wamelala', 'mlango umefungwa', 'mwalimu amefika']],
+    ['Zawadi alifanya nini wenzake walipogombana?', 'aliwasikiliza na kuwapatanisha', ['aliwacheka', 'aliondoka', 'aliwapiga kelele']],
+    ['Neno "mwadilifu" lina maana gani?', 'mwenye tabia njema', ['mvivu', 'mkorofi', 'mgonjwa']],
+  ]),
+  ...ufahamu(4, 'Safari ya Lamu', 'Wakati wa likizo ya Desemba, familia ya Bwana Hamisi ilisafiri hadi kisiwa cha Lamu. Walipanda basi kutoka Malindi hadi Mokowe, kisha wakavuka bahari kwa mashua. Lamu ni mji wa kale wenye barabara nyembamba na nyumba za mawe. Hakuna magari mengi; watu hutembea au kupanda punda. Watoto walifurahia kuona mafundi wakitengeneza majahazi kwa mikono. Kabla ya kurudi, walinunua zawadi za vikapu vilivyosukwa kwa ukindu.', [
+    ['Familia ilisafiri lini?', 'wakati wa likizo ya Desemba', ['mwezi Aprili', 'wakati wa mvua', 'wiki iliyopita']],
+    ['Walivuka bahari kwa nini?', 'kwa mashua', ['kwa ndege', 'kwa basi', 'kwa punda']],
+    ['Watu wa Lamu husafiri vipi mjini?', 'hutembea au hupanda punda', ['hupanda magari mengi', 'hupanda treni', 'hupanda ndege']],
+    ['Watoto walifurahia kuona nini?', 'mafundi wakitengeneza majahazi', ['magari mengi', 'theluji', 'ndege angani']],
+    ['Vikapu walivyonunua vilisukwa kwa nini?', 'ukindu', ['plastiki', 'chuma', 'karatasi']],
+  ]),
+  ...ufahamu(5, 'Nishati ya Jua', 'Miaka miwili iliyopita, kijiji chetu hakikuwa na umeme. Familia nyingi zilitumia taa za mafuta taa ambazo zilitoa moshi na zilikuwa ghali. Kisha kikundi cha wanakijiji kiliweka paneli za sola kwenye paa za shule na zahanati. Sasa wanafunzi husoma jioni kwa mwangaza mzuri, na zahanati huhifadhi chanjo katika jokofu linalotumia nguvu za jua. Wazee husema kwamba nishati safi imeleta mwangaza na matumaini. Hata hivyo, paneli hizo lazima zisafishwe mara kwa mara ili ziendelee kufanya kazi vizuri.', [
+    ['Familia zilitumia nini kabla ya sola?', 'taa za mafuta taa', ['balbu za umeme', 'mishumaa pekee', 'jiko la gesi']],
+    ['Taa za mafuta taa zilikuwa na tatizo gani?', 'zilitoa moshi na zilikuwa ghali', ['zilikuwa angavu sana', 'zilikuwa bure', 'zilihitaji jua']],
+    ['Zahanati imefaidika vipi?', 'huhifadhi chanjo katika jokofu la sola', ['ina madaktari wengi', 'imefungwa', 'huuza simu']],
+    ['Neno "ghali" lina maana gani?', 'bei ya juu', ['rahisi', 'safi', 'nzito']],
+    ['Ni nini kifanyike ili paneli ziendelee kufanya kazi?', 'zisafishwe mara kwa mara', ['zifunikwe kwa udongo', 'zizimwe', 'ziwekwe ndani ya nyumba']],
   ]),
 ]
 

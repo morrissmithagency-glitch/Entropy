@@ -23,6 +23,23 @@ const forGrade = <T extends unknown[]>(rows: [G, ...T][], g: G): T[] => rows.fil
 // ── Vocabulary ──────────────────────────────────────────────────────────────
 
 const SYNONYMS: [G, string, string][] = [
+  [4, 'angry', 'cross'],
+  [4, 'tidy', 'neat'],
+  [4, 'sick', 'ill'],
+  [4, 'correct', 'right'],
+  [4, 'quiet', 'silent'],
+  [4, 'centre', 'middle'],
+  [4, 'aid', 'help'],
+  [4, 'enormous', 'huge'],
+  [4, 'cry', 'weep'],
+  [4, 'look', 'see'],
+  [5, 'famous', 'well-known'],
+  [5, 'damp', 'wet'],
+  [5, 'error', 'mistake'],
+  [5, 'reply', 'answer'],
+  [6, 'commence', 'begin'],
+  [6, 'feeble', 'weak'],
+  [6, 'evident', 'clear'],
   [4, 'big', 'large'],
   [4, 'begin', 'start'],
   [4, 'quick', 'fast'],
@@ -49,6 +66,21 @@ const SYNONYMS: [G, string, string][] = [
   [6, 'diligent', 'hard-working'],
 ]
 const ANTONYMS: [G, string, string][] = [
+  [4, 'early', 'late'],
+  [4, 'heavy', 'light'],
+  [4, 'empty', 'full'],
+  [4, 'loud', 'quiet'],
+  [4, 'strong', 'weak'],
+  [4, 'win', 'lose'],
+  [4, 'buy', 'sell'],
+  [4, 'remember', 'forget'],
+  [4, 'push', 'pull'],
+  [4, 'borrow', 'lend'],
+  [5, 'question', 'answer'],
+  [5, 'entrance', 'exit'],
+  [5, 'increase', 'decrease'],
+  [6, 'ancestor', 'descendant'],
+  [6, 'majority', 'minority'],
   [4, 'ancient', 'modern'],
   [4, 'arrive', 'depart'],
   [4, 'cheap', 'expensive'],
@@ -73,6 +105,15 @@ const ANTONYMS: [G, string, string][] = [
   [6, 'ignorance', 'knowledge'],
 ]
 const COLLECTIVE: [G, string, string][] = [
+  [4, 'flowers', 'bunch'],
+  [4, 'keys', 'bunch'],
+  [4, 'goats', 'herd'],
+  [4, 'birds', 'flock'],
+  [5, 'books', 'pile'],
+  [5, 'people', 'crowd'],
+  [5, 'musicians', 'band'],
+  [6, 'islands', 'group'],
+  [6, 'mountains', 'range'],
   [4, 'cattle', 'herd'],
   [4, 'sheep', 'flock'],
   [4, 'bees', 'swarm'],
@@ -103,13 +144,59 @@ export const vocabU = (g: G): Generator => (rng, level) => {
     const wrong = rng.sample(syn.map(([, b]) => b).concat(ant.filter(([x]) => x !== w).map(([, b]) => b)), 3)
     return q(level, `Which word is the opposite of "${w}"?`, a, wrong, `The opposite of "${w}" is "${a}".`)
   }
+  if (rng.next() < 0.5) {
+    const [s, right, wrong] = rng.pick(forGrade(HOMOPHONES, g))
+    return q(level, `Choose the correct word:\n${s}`, right, [wrong], `"${right}" and "${wrong}" sound alike but mean different things.`)
+  }
   const [thing, coll] = rng.pick(forGrade(COLLECTIVE, g))
   return q(level, `Choose the right word: a ___ of ${thing}`, coll, rng.sample([...new Set(forGrade(COLLECTIVE, g).map(([, c]) => c))].filter((c) => c !== coll), 3))
 }
 
+// [min grade, sentence, right word, sound-alike]
+const HOMOPHONES: [G, string, string, string][] = [
+  [4, 'I will ___ a letter to my aunt.', 'write', 'right'],
+  [4, 'We ___ the match on Friday.', 'won', 'one'],
+  [4, 'The wind ___ the papers away.', 'blew', 'blue'],
+  [4, 'I can ___ the drums from here.', 'hear', 'here'],
+  [4, 'The children ate ___ lunch under a tree.', 'their', 'there'],
+  [4, 'Please wait for me ___.', 'here', 'hear'],
+  [4, 'The ___ is shining brightly.', 'sun', 'son'],
+  [4, 'My father has one ___ and two daughters.', 'son', 'sun'],
+  [4, 'There are seven days in a ___.', 'week', 'weak'],
+  [4, 'The old man felt ___ after his illness.', 'weak', 'week'],
+  [4, 'I ___ the answer to that question.', 'know', 'no'],
+  [4, 'I can ___ a bird in the tree.', 'see', 'sea'],
+  [4, 'The fishermen sailed out to ___.', 'sea', 'see'],
+  [5, 'May I have a ___ of cake?', 'piece', 'peace'],
+  [5, 'Our country is at ___.', 'peace', 'piece'],
+  [5, 'She has ___ her homework already.', 'passed', 'past'],
+  [5, 'We walked ___ the school gate.', 'past', 'passed'],
+  [5, 'The farmer kept the animals in a ___.', 'barn', 'born'],
+  [5, 'The baby was ___ in March.', 'born', 'barn'],
+  [6, 'He ___ the ball over the fence.', 'threw', 'through'],
+  [6, 'We walked ___ the forest.', 'through', 'threw'],
+  [6, 'The weather will ___ our plans for the trip.', 'affect', 'effect'],
+  [6, 'Rain had a good ___ on the crops.', 'effect', 'affect'],
+  [6, 'The ___ of the school spoke at assembly.', 'principal', 'principle'],
+  [6, 'Honesty is an important ___.', 'principle', 'principal'],
+  [6, 'Please be ___ in the library.', 'quiet', 'quite'],
+]
+
 // ── Nouns ───────────────────────────────────────────────────────────────────
 
 const PLURALS: [G, string, string, string[]][] = [
+  [4, 'man', 'men', ['mans', 'mens']],
+  [4, 'child', 'children', ['childs', 'childrens']],
+  [4, 'foot', 'feet', ['foots', 'feets']],
+  [4, 'mouse', 'mice', ['mouses', 'mices']],
+  [4, 'bus', 'buses', ['buss', 'busies']],
+  [4, 'church', 'churches', ['churchs', 'churchies']],
+  [4, 'lady', 'ladies', ['ladys', 'ladyes']],
+  [4, 'wife', 'wives', ['wifes', 'wifs']],
+  [4, 'potato', 'potatoes', ['potatos', 'potatose']],
+  [5, 'loaf', 'loaves', ['loafs', 'loafes']],
+  [5, 'radio', 'radios', ['radioes', 'radioss']],
+  [5, 'key', 'keys', ['keies', 'kies']],
   [4, 'knife', 'knives', ['knifes', 'knive']],
   [4, 'leaf', 'leaves', ['leafs', 'leafes']],
   [4, 'baby', 'babies', ['babys', 'babyes']],
@@ -119,7 +206,6 @@ const PLURALS: [G, string, string, string[]][] = [
   [4, 'goose', 'geese', ['gooses', 'geeses']],
   [5, 'ox', 'oxen', ['oxes', 'oxs']],
   [5, 'thief', 'thieves', ['thiefs', 'thiefes']],
-  [5, 'potato', 'potatoes', ['potatos', 'potatoe']],
   [5, 'sheep', 'sheep', ['sheeps', 'sheepes']],
   [5, 'deer', 'deer', ['deers', 'deeres']],
   [5, 'woman', 'women', ['womans', 'womens']],
@@ -131,6 +217,18 @@ const PLURALS: [G, string, string, string[]][] = [
   [6, 'chief', 'chiefs', ['chieves', 'chiefes']],
 ]
 const KINDS: [G, string, string, string][] = [
+  [4, 'The _River Nzoia_ flows into Lake Victoria.', 'River Nzoia', 'proper noun'],
+  [4, 'My _pencil_ is on the desk.', 'pencil', 'common noun'],
+  [4, 'A _flock_ of birds flew over the school.', 'flock', 'collective noun'],
+  [4, 'We visited _Kisumu_ in April.', 'Kisumu', 'proper noun'],
+  [4, 'The _choir_ sang beautifully.', 'choir', 'collective noun'],
+  [4, 'The _doctor_ checked my teeth.', 'doctor', 'common noun'],
+  [4, 'Our school is closed in _December_.', 'December', 'proper noun'],
+  [4, 'A _herd_ of zebras grazed nearby.', 'herd', 'collective noun'],
+  [4, 'She carried the _basket_ on her head.', 'basket', 'common noun'],
+  [4, 'The _audience_ clapped loudly.', 'audience', 'collective noun'],
+  [5, 'He was filled with _joy_.', 'joy', 'abstract noun'],
+  [5, '_Patience_ is a virtue we all need.', 'Patience', 'abstract noun'],
   // [min grade, sentence, underlined noun, kind]
   [4, 'Wanjiku lives in _Nakuru_.', 'Nakuru', 'proper noun'],
   [4, 'The _dog_ barked at the visitor.', 'dog', 'common noun'],
@@ -148,6 +246,11 @@ const KINDS: [G, string, string, string][] = [
   [6, 'We crossed the _River Tana_ by boat.', 'River Tana', 'proper noun'],
 ]
 const ABSTRACT: [G, string, string, string[]][] = [
+  [5, 'angry', 'anger', ['angrily', 'angrier', 'angryness']],
+  [5, 'proud', 'pride', ['proudly', 'prouder', 'proudness']],
+  [6, 'long', 'length', ['longly', 'longer', 'longness']],
+  [6, 'wide', 'width', ['widely', 'wider', 'wideness']],
+  [6, 'curious', 'curiosity', ['curiously', 'curiouser', 'curiousness']],
   [5, 'happy', 'happiness', ['happily', 'happier', 'happyness']],
   [5, 'brave', 'bravery', ['bravely', 'braver', 'braveness']],
   [5, 'kind', 'kindness', ['kindly', 'kinder', 'kindful']],
@@ -160,6 +263,25 @@ const ABSTRACT: [G, string, string, string[]][] = [
   [6, 'friend', 'friendship', ['friendly', 'friendlier', 'friendness']],
 ]
 
+const GENDER: [string, string][] = [
+  ['king', 'queen'],
+  ['prince', 'princess'],
+  ['uncle', 'aunt'],
+  ['nephew', 'niece'],
+  ['husband', 'wife'],
+  ['son', 'daughter'],
+  ['bull', 'cow'],
+  ['cock', 'hen'],
+  ['ram', 'ewe'],
+  ['lion', 'lioness'],
+  ['waiter', 'waitress'],
+  ['host', 'hostess'],
+  ['headmaster', 'headmistress'],
+  ['grandfather', 'grandmother'],
+  ['bridegroom', 'bride'],
+  ['gentleman', 'lady'],
+]
+
 export const nounsU = (g: G): Generator => (rng, level) => {
   if (level <= 2) {
     const [one, many, wrong] = rng.pick(forGrade(PLURALS, g))
@@ -169,6 +291,14 @@ export const nounsU = (g: G): Generator => (rng, level) => {
     const [s, , kind] = rng.pick(forGrade(KINDS, g))
     return q(level, `What kind of noun is underlined?\n${s}`, kind, ['proper noun', 'common noun', 'collective noun', ...(g >= 5 ? ['abstract noun'] : [])].filter((k) => k !== kind))
   }
+  if (level === 5 && g === 4) {
+    const [m, f] = rng.pick(GENDER)
+    return q(level, `What is the feminine of "${m}"?`, f, rng.sample(GENDER.map(([, b]) => b).filter((x) => x !== f), 3))
+  }
+  if (level === 4 && rng.next() < 0.4) {
+    const [m, f] = rng.pick(GENDER)
+    return q(level, `What is the masculine of "${f}"?`, m, rng.sample(GENDER.map(([a]) => a).filter((x) => x !== m), 3))
+  }
   if (level === 4 || g === 4) {
     const owner = rng.pick([
       ['the boy', "the boy's", ['the boys', "the boys'"]],
@@ -177,8 +307,20 @@ export const nounsU = (g: G): Generator => (rng, level) => {
       ['James', "James's", ['Jameses', "James'es"]],
       ['the teacher', "the teacher's", ['the teachers', "the teacher'"]],
       ['the men', "the men's", ["the mens'", 'the mens']],
+      ['the farmer', "the farmer's", ['the farmers', "the farmers's"]],
+      ['the pupils', "the pupils'", ["the pupil's", "the pupils's"]],
+      ['the women', "the women's", ["the womens'", 'the womens']],
+      ['my sister', "my sister's", ['my sisters', "my sisters's"]],
+      ['the nurses', "the nurses'", ["the nurse's", "the nurses's"]],
+      ['Baraka', "Baraka's", ['Barakas', "Barakas'"]],
     ] as const)
     return q(level, `Choose the correct form: These are ___ books. (books belonging to ${owner[0]})`, owner[1], [...owner[2]], 'Add \'s to show who owns something; a plural ending in s takes only \'.')
+  }
+  if (rng.next() < 0.5) {
+    const [m, f] = rng.pick(GENDER)
+    const male = rng.next() < 0.5
+    const [from, to] = male ? [m, f] : [f, m]
+    return q(level, `What is the ${male ? 'feminine' : 'masculine'} of "${from}"?`, to, rng.sample(GENDER.flatMap(([a, b]) => [a, b]).filter((x) => x !== to && x !== from), 3))
   }
   const [adj, noun, wrong] = rng.pick(forGrade(ABSTRACT, g))
   return q(level, `Which noun is formed from the word "${adj}"?`, noun, wrong, `The noun form of "${adj}" is "${noun}".`)
@@ -195,6 +337,16 @@ const REFLEX: [string, string][] = [
   ['They', 'themselves'],
 ]
 const RELATIVE: [string, string][] = [
+  ['The boy ___ sits next to me is kind.', 'who'],
+  ['The cow ___ gives the most milk is brown.', 'which'],
+  ['I know the woman ___ son won the race.', 'whose'],
+  ['Here is the pen ___ I borrowed.', 'which'],
+  ['The doctor ___ treated me is my aunt.', 'who'],
+  ['That is the girl ___ bag was lost.', 'whose'],
+  ['The bus ___ takes us to school is new.', 'which'],
+  ['The farmer ___ grows tea lives nearby.', 'who'],
+  ['He is the pupil ___ drawing won a prize.', 'whose'],
+  ['The tree ___ we planted has grown tall.', 'which'],
   ['This is the girl ___ won the race.', 'who'],
   ['That is the man ___ car was stolen.', 'whose'],
   ['I found the book ___ you lost.', 'which'],
@@ -214,6 +366,18 @@ export const pronounsU = (g: G): Generator => (rng, level) => {
       ['___ are going to the farm.', 'They', ['Them', 'Their', 'Theirs']],
       ['Mother gave ___ a new dress.', 'her', ['she', 'hers', 'herself']],
       ['Between you and ___, the test was easy.', 'me', ['I', 'mine', 'myself']],
+      ['Wanjiru and ___ are in the same class.', 'I', ['me', 'my', 'mine']],
+      ['The coach praised ___ for winning.', 'them', ['they', 'their', 'theirs']],
+      ['Amani told ___ a funny story.', 'us', ['we', 'our', 'ours']],
+      ['___ is my best friend.', 'She', ['Her', 'Hers', 'Herself']],
+      ['Please help ___ to carry this box.', 'me', ['I', 'my', 'mine']],
+      ['Our neighbours invited ___ for lunch.', 'us', ['we', 'our', 'ours']],
+      ['___ were late because of the rain.', 'We', ['Us', 'Our', 'Ours']],
+      ['The prize was given to Atieno and ___.', 'him', ['he', 'his', 'himself']],
+      ['___ and his brother planted the trees.', 'He', ['Him', 'His', 'Himself']],
+      ['Grandmother waved to ___ from the gate.', 'them', ['they', 'their', 'theirs']],
+      ['Is this pen ___?', 'yours', ['your', "your's", 'you']],
+      ['Mother cooked supper for my brother and ___.', 'me', ['I', 'my', 'myself']],
     ])
     return q(level, `Choose the correct pronoun:\n${s}`, ans, wrong)
   }
@@ -226,11 +390,12 @@ export const pronounsU = (g: G): Generator => (rng, level) => {
       ['you', 'yours'],
       ['him', 'his'],
     ])
-    return q(level, `This bag belongs to ${owner}. It is ___.`, poss, ['mine', 'ours', 'theirs', 'hers', 'yours', 'his'].filter((x) => x !== poss).slice(0, 3))
+    const thing = rng.pick(['bag', 'book', 'ball', 'umbrella', 'bicycle', 'cup', 'jacket'])
+    return q(level, `This ${thing} belongs to ${owner}. It is ___.`, poss, ['mine', 'ours', 'theirs', 'hers', 'yours', 'his'].filter((x) => x !== poss).slice(0, 3))
   }
   if (level === 3) {
     const [subj, ref] = rng.pick(REFLEX)
-    const verb = rng.pick(['hurt', 'washed', 'enjoyed', 'blamed', 'taught'])
+    const verb = rng.pick(['washed', 'enjoyed', 'taught', 'dressed', 'helped', 'introduced'])
     return q(level, `${subj} ${verb} ___ .`, ref, REFLEX.map(([, r]) => r).filter((r) => r !== ref).slice(0, 3), `${subj} → ${ref}`)
   }
   const [s, ans] = rng.pick(RELATIVE)
@@ -242,6 +407,18 @@ export const pronounsU = (g: G): Generator => (rng, level) => {
 
 // [min grade, base, past, past participle, continuation]
 const IRREG: [G, string, string, string, string][] = [
+  [4, 'come', 'came', 'come', 'home early'],
+  [4, 'see', 'saw', 'seen', 'a giraffe'],
+  [4, 'give', 'gave', 'given', 'her a gift'],
+  [4, 'run', 'ran', 'run', 'to the shop'],
+  [4, 'make', 'made', 'made', 'a kite'],
+  [4, 'find', 'found', 'found', 'the key'],
+  [4, 'sleep', 'slept', 'slept', 'early'],
+  [5, 'throw', 'threw', 'thrown', 'the ball'],
+  [5, 'fly', 'flew', 'flown', 'over the hills'],
+  [5, 'draw', 'drew', 'drawn', 'a map'],
+  [6, 'shake', 'shook', 'shaken', 'hands'],
+  [6, 'hide', 'hid', 'hidden', 'the gift'],
   [4, 'go', 'went', 'gone', 'to Kisumu'],
   [4, 'eat', 'ate', 'eaten', 'all the food'],
   [4, 'write', 'wrote', 'written', 'a letter'],
@@ -281,6 +458,15 @@ export const verbsU = (g: G): Generator => (rng, level) => {
         ['Everyone in the class', 'was'],
         ['The news', 'was'],
         ['A herd of cattle', 'was'],
+        ['The boys and the girls', 'were'],
+        ['Either Juma or Otieno', 'was'],
+        ['My friends', 'were'],
+        ['The teacher', 'was'],
+        ['Both of my sisters', 'were'],
+        ['Nobody', 'was'],
+        ['The team', 'was'],
+        ['The visitors from Kisumu', 'were'],
+        ['One of the pupils', 'was'],
       ] as const)
       return q(level, `${subj[0]} ___ at the meeting.`, subj[1], [subj[1] === 'was' ? 'were' : 'was', 'is being', 'be'], subj[1] === 'was' ? 'The subject is singular, so "was".' : 'The subject is plural, so "were".')
     }
@@ -292,6 +478,16 @@ export const verbsU = (g: G): Generator => (rng, level) => {
         ['She ___ in Mombasa since 2020.', 'has lived', ['lives', 'is living', 'lived']],
         ['Tomorrow I ___ my grandmother.', 'will visit', ['visited', 'have visited', 'visiting']],
         ['Every morning, Juma ___ to school.', 'walks', ['walk', 'walking', 'is walked']],
+        ['Listen! The birds ___.', 'are singing', ['sing', 'sang', 'have sing']],
+        ['Yesterday at noon, I ___ my lunch.', 'was eating', ['am eating', 'eat', 'will eat']],
+        ['We ___ our homework already.', 'have finished', ['finish', 'are finishing', 'will finished']],
+        ['Next week, the class ___ the museum.', 'will visit', ['visited', 'visits', 'has visited']],
+        ['She ___ the piano every evening.', 'plays', ['play', 'playing', 'is play']],
+        ['They ___ in Kitale for five years now.', 'have lived', ['live', 'lived', 'are live']],
+        ['When the bell rang, the pupils ___ out.', 'ran', ['run', 'are running', 'runs']],
+        ['Right now, mother ___ supper.', 'is cooking', ['cooks', 'cooked', 'has cook']],
+        ['By the time we arrived, the bus ___.', 'had left', ['leaves', 'has leave', 'is leaving']],
+        ['If it rains, we ___ indoors.', 'will play', ['played', 'had played', 'plays']],
       ] as const)
       return q(level, time[0], time[1], [...time[2]])
     }
@@ -302,10 +498,20 @@ export const verbsU = (g: G): Generator => (rng, level) => {
           ['Wanjiku wrote the letter.', 'The letter was written by Wanjiku.', ['The letter wrote Wanjiku.', 'The letter is written by Wanjiku.', 'Wanjiku was written by the letter.']],
           ['The farmers planted trees.', 'Trees were planted by the farmers.', ['Trees planted the farmers.', 'Trees was planted by the farmers.', 'The farmers were planted by trees.']],
           ['The teacher marks our books.', 'Our books are marked by the teacher.', ['Our books were marked by the teacher.', 'Our books is marked by the teacher.', 'The teacher is marked by our books.']],
+          ['Mother cooked the food.', 'The food was cooked by mother.', ['The food cooked mother.', 'The food is cooked by mother.', 'Mother was cooked by the food.']],
+          ['The pupils cleaned the classroom.', 'The classroom was cleaned by the pupils.', ['The classroom cleaned the pupils.', 'The classroom were cleaned by the pupils.', 'The pupils were cleaned by the classroom.']],
+          ['A carpenter made this desk.', 'This desk was made by a carpenter.', ['This desk made a carpenter.', 'This desk is made by a carpenter.', 'A carpenter was made by this desk.']],
+          ['The wind blew the papers away.', 'The papers were blown away by the wind.', ['The papers blew the wind away.', 'The papers was blown away by the wind.', 'The papers were blew away by the wind.']],
+          ['Kamau painted the gate.', 'The gate was painted by Kamau.', ['The gate painted Kamau.', 'The gate is painted by Kamau.', 'Kamau was painted by the gate.']],
+          ['The farmers harvest the maize.', 'The maize is harvested by the farmers.', ['The maize was harvested by the farmers.', 'The maize are harvested by the farmers.', 'The farmers are harvested by the maize.']],
         ] as const)
         return q(level, `Change to the passive: "${pas[0]}"`, pas[1], [...pas[2]], 'The object becomes the subject, and we use "was/were/is/are" + past participle.')
       }
       const [b2, p2, pp2, r2] = rng.pick(rows)
+      if (rng.next() < 0.5) {
+        const who = name(rng)
+        return q(level, `Choose the correct sentence.`, `${who} ${p2} ${r2} and then went home.`, [`${who} ${pp2 === p2 ? `${b2}s` : pp2} ${r2} and then went home.`, `${who} ${b2} ${r2} and then went home.`, `${who} ${b2}ing ${r2} and then went home.`])
+      }
       return q(level, `Choose the correct sentence.`, `We had ${pp2} ${r2} before the bell rang.`, [`We had ${p2 === pp2 ? `${b2}ed` : p2} ${r2} before the bell rang.`, `We had ${b2} ${r2} before the bell rang.`, `We have ${b2}ing ${r2} before the bell rang.`])
     }
   }
@@ -314,6 +520,19 @@ export const verbsU = (g: G): Generator => (rng, level) => {
 // ── Adjectives and adverbs ──────────────────────────────────────────────────
 
 const COMPARE: [G, string, string, string][] = [
+  [4, 'small', 'smaller', 'smallest'],
+  [4, 'long', 'longer', 'longest'],
+  [4, 'hot', 'hotter', 'hottest'],
+  [4, 'heavy', 'heavier', 'heaviest'],
+  [4, 'fast', 'faster', 'fastest'],
+  [4, 'old', 'older', 'oldest'],
+  [4, 'strong', 'stronger', 'strongest'],
+  [4, 'clean', 'cleaner', 'cleanest'],
+  [4, 'busy', 'busier', 'busiest'],
+  [4, 'thin', 'thinner', 'thinnest'],
+  [4, 'kind', 'kinder', 'kindest'],
+  [5, 'famous', 'more famous', 'most famous'],
+  [5, 'honest', 'more honest', 'most honest'],
   [4, 'tall', 'taller', 'tallest'],
   [4, 'big', 'bigger', 'biggest'],
   [4, 'happy', 'happier', 'happiest'],
@@ -328,6 +547,14 @@ const COMPARE: [G, string, string, string][] = [
   [6, 'comfortable', 'more comfortable', 'most comfortable'],
 ]
 const ADVERBS: [string, string, string[]][] = [
+  ['neat', 'neatly', ['neat', 'neater', 'neatness']],
+  ['polite', 'politely', ['polite', 'politer', 'politeness']],
+  ['brave', 'bravely', ['brave', 'braver', 'bravery']],
+  ['soft', 'softly', ['soft', 'softer', 'softness']],
+  ['angry', 'angrily', ['angry', 'angrier', 'anger']],
+  ['busy', 'busily', ['busy', 'busier', 'business']],
+  ['loud', 'loudly', ['loud', 'louder', 'loudness']],
+  ['sad', 'sadly', ['sad', 'sadder', 'sadness']],
   ['quick', 'quickly', ['quick', 'quicker', 'quickness']],
   ['careful', 'carefully', ['careful', 'more careful', 'carefulness']],
   ['happy', 'happily', ['happy', 'happier', 'happiness']],
@@ -338,6 +565,12 @@ const ADVERBS: [string, string, string[]][] = [
   ['silent', 'silently', ['silent', 'silence', 'more silent']],
 ]
 const ORDER: [string, string[], string[]][] = [
+  ['Father bought ___ shirt.', ['a', 'new', 'blue', 'cotton'], ['a cotton blue new', 'a blue new cotton', 'a new cotton blue']],
+  ['She wore ___ shoes.', ['beautiful', 'black', 'leather'], ['black beautiful leather', 'leather black beautiful', 'beautiful leather black']],
+  ['We sat under ___ tree.', ['a', 'tall', 'old', 'mango'], ['a mango old tall', 'an old tall mango', 'a tall mango old']],
+  ['He has ___ cat.', ['a', 'small', 'white'], ['a white small']],
+  ['They live in ___ hut.', ['a', 'round', 'grass'], ['a grass round']],
+  ['She drank from ___ cup.', ['a', 'large', 'plastic'], ['a plastic large']],
   ['She bought ___ dress.', ['a', 'beautiful', 'long', 'red'], ['a red long beautiful', 'a long beautiful red', 'a beautiful red long']],
   ['We saw ___ elephants.', ['two', 'huge', 'grey'], ['grey two huge', 'huge two grey', 'two grey huge']],
   ['He has ___ car.', ['a', 'new', 'Japanese'], ['a Japanese new']],
@@ -356,7 +589,8 @@ export const adjU = (g: G): Generator => (rng, level) => {
       return q(level, `She is the ___ girl in our class. (${base})`, est, [base, er, `most ${est}`], 'Comparing three or more: the superlative form.')
     case 3: {
       const [adj, adv, wrong] = rng.pick(ADVERBS)
-      return q(level, `The old man walked ___ across the road. (${adj})`, adv, wrong, `Adverbs tell how: ${adj} → ${adv}.`)
+      const who = rng.pick(['The old man walked', 'The pupils sang', 'Grandmother spoke', 'The girl wrote', 'The boys worked'])
+      return q(level, `${who} ___ . (${adj})`, adv, wrong, `Adverbs tell how: ${adj} → ${adv}.`)
     }
     case 4: {
       if (g === 4) {
@@ -367,6 +601,15 @@ export const adjU = (g: G): Generator => (rng, level) => {
           ['A cheetah runs ___ than a lion.', 'faster', ['fastest', 'more fast', 'fast']],
           ['Today is ___ than yesterday.', 'hotter', ['hottest', 'hoter', 'more hot']],
           ['Kendi is the ___ of the three sisters.', 'youngest', ['younger', 'young', 'most young']],
+          ['An elephant is ___ than a rhino.', 'heavier', ['heaviest', 'heavyer', 'more heavy']],
+          ['This is the ___ road in our village.', 'longest', ['longer', 'most long', 'long']],
+          ['My bag is ___ than yours.', 'bigger', ['biger', 'biggest', 'more big']],
+          ['Nairobi is the ___ city in Kenya.', 'busiest', ['busier', 'busyest', 'most busy']],
+          ['Of the two pens, this one is ___.', 'better', ['best', 'gooder', 'more good']],
+          ['Mount Kenya is ___ than Mount Elgon.', 'higher', ['highest', 'more high', 'most high']],
+          ['Today the classroom is ___ than it was yesterday.', 'cleaner', ['cleanest', 'more clean', 'clean']],
+          ['Grandfather is the ___ person in our family.', 'oldest', ['older', 'most old', 'old']],
+          ['A leopard is ___ than a tortoise.', 'faster', ['fastest', 'more fast', 'fast']],
         ])
         return q(level, `Choose the correct word: ${s}`, ans, wrong)
       }
@@ -382,6 +625,15 @@ export const adjU = (g: G): Generator => (rng, level) => {
         ['The baby slept ___ after the meal.', 'soundly', ['sound', 'sounder', 'soundness']],
         ['There is ___ water in the tank than yesterday.', 'less', ['fewer', 'little', 'least']],
         ['There are ___ pupils in class today than yesterday.', 'fewer', ['less', 'little', 'least']],
+        ['She sings ___ than her sister.', 'better', ['good', 'best', 'more good']],
+        ['He answered the question ___.', 'correctly', ['correct', 'correctness', 'more correct']],
+        ['This is the ___ day of the year.', 'hottest', ['hotter', 'hotest', 'most hot']],
+        ['The tortoise moved very ___.', 'slowly', ['slow', 'slower', 'slowness']],
+        ['Of all the pupils, Amani writes the ___.', 'most neatly', ['neater', 'more neat', 'neatest']],
+        ['Kiprono is ___ than his cousin.', 'taller', ['tallest', 'more tall', 'most tall']],
+        ['The baby smiled ___ at her mother.', 'happily', ['happy', 'happier', 'happiness']],
+        ['My sister is ___ at Maths than I am.', 'better', ['good', 'best', 'well']],
+        ['That was the ___ film I have watched.', 'most interesting', ['interestingest', 'more interesting', 'interesting']],
       ])
       return q(level, `Choose the correct word: ${s}`, ans, wrong)
     }
@@ -391,6 +643,19 @@ export const adjU = (g: G): Generator => (rng, level) => {
 // ── Prepositions and conjunctions ───────────────────────────────────────────
 
 const PREPS: [G, string, string, string[]][] = [
+  [4, 'The book is ___ the table.', 'on', ['in', 'among', 'by']],
+  [4, 'He jumped ___ the river.', 'across', ['among', 'into', 'at']],
+  [4, 'The dog ran ___ the house.', 'around', ['among', 'between', 'at']],
+  [4, 'We walked ___ the hill to the school.', 'up', ['into', 'among', 'between']],
+  [4, 'Put the milk ___ the fridge.', 'in', ['on', 'at', 'among']],
+  [4, 'The bird flew ___ the trees.', 'over', ['in', 'on', 'at']],
+  [4, 'My birthday is ___ 5th May.', 'on', ['in', 'at', 'by']],
+  [4, 'The cat hid ___ the bed.', 'under', ['over', 'among', 'at']],
+  [4, 'Sit ___ Amani and Neema.', 'between', ['among', 'at', 'in']],
+  [4, 'We arrived ___ Kisumu at noon.', 'in', ['on', 'at', 'to']],
+  [5, 'He is afraid ___ the dark.', 'of', ['from', 'with', 'by']],
+  [5, 'She was born ___ 2014.', 'in', ['on', 'at', 'by']],
+  [6, 'He is proud ___ his school.', 'of', ['for', 'with', 'at']],
   [4, 'We go to church ___ Sunday.', 'on', ['in', 'at', 'by']],
   [4, 'School opens ___ January.', 'in', ['on', 'at', 'by']],
   [4, 'The bell rings ___ eight o\'clock.', 'at', ['on', 'in', 'by']],
@@ -409,6 +674,18 @@ const PREPS: [G, string, string, string[]][] = [
   [6, 'She insisted ___ paying the bill.', 'on', ['in', 'at', 'for']],
 ]
 const CONJ: [G, string, string, string[]][] = [
+  [4, 'I like mangoes ___ oranges.', 'and', ['but', 'or', 'so']],
+  [4, 'She was tired, ___ she kept working.', 'but', ['so', 'or', 'because']],
+  [4, 'It was raining, ___ we carried umbrellas.', 'so', ['but', 'or', 'because']],
+  [4, 'He did not come ___ he was sick.', 'because', ['so', 'and', 'or']],
+  [4, 'You can have rice ___ chapati.', 'or', ['and', 'but', 'so']],
+  [4, 'Wash your hands ___ you eat.', 'before', ['after', 'because', 'so']],
+  [4, 'We went home ___ school ended.', 'after', ['before', 'because', 'or']],
+  [4, 'Wait here ___ I come back.', 'until', ['because', 'or', 'but']],
+  [4, 'I will help you ___ you ask me.', 'if', ['but', 'so', 'or']],
+  [4, 'He sang ___ she played the drum.', 'while', ['or', 'but', 'so']],
+  [5, 'She was late ___ she missed the bus.', 'because', ['although', 'unless', 'but']],
+  [6, 'He was ___ tired ___ he could not walk.', 'so … that', ['such … that', 'too … to', 'either … or']],
   [4, 'I wanted to play, ___ it was raining.', 'but', ['and', 'so', 'because']],
   [4, 'He was hungry, ___ he ate some bread.', 'so', ['but', 'or', 'although']],
   [4, 'We stayed indoors ___ it was cold.', 'because', ['but', 'or', 'so']],
@@ -432,6 +709,18 @@ export const prepU = (g: G): Generator => (rng, level) => {
 // ── Punctuation ─────────────────────────────────────────────────────────────
 
 const PUNCT: [G, string, string[]][] = [
+  [4, 'My name is Neema.', ['my name is Neema.', 'My name is neema.', 'My name is Neema']],
+  [4, 'Can you help me?', ['Can you help me.', 'can you help me?', 'Can you help me!']],
+  [4, 'We will travel to Mombasa in April.', ['We will travel to mombasa in April.', 'We will travel to Mombasa in april.', 'we will travel to Mombasa in April.']],
+  [4, 'Oh, what a lovely gift!', ['Oh, what a lovely gift?', 'oh, what a lovely gift!', 'Oh what a lovely gift.']],
+  [4, 'I have a cat, a dog and a goat.', ['I have a cat a dog and a goat.', 'I have, a cat, a dog, and, a goat.', 'i have a cat, a dog and a goat.']],
+  [4, 'Mr Kamau is our teacher.', ['mr Kamau is our teacher.', 'Mr kamau is our teacher.', 'Mr Kamau is our teacher']],
+  [4, 'Lake Victoria is very large.', ['lake Victoria is very large.', 'Lake victoria is very large.', 'Lake Victoria is very large']],
+  [4, 'Stop!', ['stop!', 'Stop?', 'Stop,']],
+  [4, 'Is today Monday?', ['Is today monday?', 'is today Monday?', 'Is today Monday.']],
+  [4, 'Juma, please sit down.', ['juma, please sit down.', 'Juma please sit down', 'Juma, please sit down?']],
+  [5, "We'll meet at the market.", ['Well meet at the market.', "We'll meet at the market", "Wel'l meet at the market."]],
+  [5, "The children's toys are new.", ["The childrens toys are new.", "The childrens' toys are new.", "The children's toys are new"]],
   [4, 'Where are you going?', ['Where are you going.', 'where are you going?', 'Where are you going!']],
   [4, 'Kamau, Atieno and Hassan are friends.', ['Kamau Atieno and Hassan are friends.', 'kamau, atieno and hassan are friends.', 'Kamau, Atieno, and, Hassan are friends.']],
   [4, 'We visited Nairobi on Monday.', ['We visited nairobi on monday.', 'we visited Nairobi on Monday.', 'We visited Nairobi on monday.']],
@@ -457,6 +746,17 @@ export const punctU = (g: G): Generator => (rng, level) => {
     ['?', 'Did you see the eclipse'],
     ['!', 'What a lovely surprise'],
     ['.', 'Please close the window'],
+    ['?', 'Where is my pencil'],
+    ['!', 'Hurray, we won the match'],
+    ['.', 'My sister is ten years old'],
+    ['?', 'Who is knocking at the door'],
+    ['!', 'Look, a rainbow'],
+    ['.', 'Cows give us milk'],
+    ['?', 'Have you finished your work'],
+    ['!', 'Wow, what a tall building'],
+    ['.', 'We go to school on weekdays'],
+    ['?', 'Why is the sky blue'],
+    ['!', 'Ouch, that is hot'],
   ])
   return q(level, `Which punctuation mark should end this sentence?\n${sentence} ___`, mark, ['?', '!', '.', ','].filter((x) => x !== mark), mark === '?' ? 'It asks a question.' : mark === '!' ? 'It shows strong feeling.' : 'It is a statement or polite request.')
 }
@@ -464,6 +764,21 @@ export const punctU = (g: G): Generator => (rng, level) => {
 // ── Sentences ───────────────────────────────────────────────────────────────
 
 const ORDERED: [G, string][] = [
+  [4, 'Our teacher reads us a story every Friday.'],
+  [4, 'The cows are grazing near the river.'],
+  [4, 'My brother rides a bicycle to school.'],
+  [4, 'Grandmother grows beans in her garden.'],
+  [4, 'We wash our hands before every meal.'],
+  [4, 'Kamau kicked the ball into the net.'],
+  [4, 'The sun sets in the west.'],
+  [4, 'Please close the door when you leave.'],
+  [4, 'Birds build nests in tall trees.'],
+  [4, 'Neema drew a picture of her family.'],
+  [4, 'They planted trees on Saturday morning.'],
+  [4, 'My father sells vegetables at the market.'],
+  [5, 'When it rains, frogs come out to sing.'],
+  [5, 'She smiled because she had passed the test.'],
+  [6, 'Despite the heavy rain, the match went on.'],
   [4, 'The farmer planted maize in the long rains.'],
   [4, 'My sister reads a story every evening.'],
   [4, 'We clean our classroom on Friday afternoon.'],
@@ -476,6 +791,12 @@ const ORDERED: [G, string][] = [
   [6, 'Having finished his homework, Otieno went out to play.'],
 ]
 const TAGS: [string, string][] = [
+  ['She is your sister,', "isn't she?"],
+  ['They can swim,', "can't they?"],
+  ['You will come,', "won't you?"],
+  ['He was tired,', "wasn't he?"],
+  ["We aren't late,", 'are we?'],
+  ["She didn't call,", 'did she?'],
   ['You are coming,', "aren't you?"],
   ['She can swim,', "can't she?"],
   ['They were late,', "weren't they?"],
@@ -486,6 +807,12 @@ const TAGS: [string, string][] = [
   ['Let us go,', 'shall we?'],
 ]
 const REPORTED: [string, string, string[]][] = [
+  ['"I am hungry," said Otieno.', 'Otieno said that he was hungry.', ['Otieno said that I am hungry.', 'Otieno said that he is hungry.', 'Otieno says that he was hungry.']],
+  ['"We play football every day," said the boys.', 'The boys said that they played football every day.', ['The boys said that we play football every day.', 'The boys said they plays football every day.', 'The boys says that they played football every day.']],
+  ['"I can swim," said Akinyi.', 'Akinyi said that she could swim.', ['Akinyi said that I can swim.', 'Akinyi said that she can swam.', 'Akinyi says that she could swim.']],
+  ['"I have finished my work," said Juma.', 'Juma said that he had finished his work.', ['Juma said that I have finished my work.', 'Juma said that he has finished my work.', 'Juma says that he had finished his work.']],
+  ['"It is raining," said Mother.', 'Mother said that it was raining.', ['Mother said that it is raining.', 'Mother said that it rains.', 'Mother says that it was raining.']],
+  ['"We will visit Lamu," said the pupils.', 'The pupils said that they would visit Lamu.', ['The pupils said that we will visit Lamu.', 'The pupils said that they will visited Lamu.', 'The pupils say that they would visit Lamu.']],
   ['"I am tired," said Wanjiru.', 'Wanjiru said that she was tired.', ['Wanjiru said that I am tired.', 'Wanjiru said that she is tired.', 'Wanjiru says that she was tired.']],
   ['"We are going home," the boys said.', 'The boys said that they were going home.', ['The boys said that we are going home.', 'The boys said they are going home.', 'The boys said that we were going home.']],
   ['"I will help you," said Kamau.', 'Kamau said that he would help me.', ['Kamau said that I will help you.', 'Kamau said that he will help you.', 'Kamau says that he would help me.']],
@@ -506,6 +833,12 @@ export const sentencesU = (g: G): Generator => (rng, level) => {
       ['I met a man. The man sells fish.', 'I met a man who sells fish.', ['I met a man which sells fish.', 'I met a man whose sells fish.', 'I met a man and fish.']],
       ['It was raining. We played outside.', 'Although it was raining, we played outside.', ['Because it was raining, we played outside.', 'It was raining so we played outside.', 'Unless it was raining, we played outside.']],
       ['The girl won a prize. Her mother is a nurse.', 'The girl whose mother is a nurse won a prize.', ['The girl who mother is a nurse won a prize.', 'The girl which mother is a nurse won a prize.', 'The girl won a prize whose nurse.']],
+      ['The bus was full. We waited for the next one.', 'The bus was full, so we waited for the next one.', ['The bus was full, but we waited for the next one.', 'The bus was full because we waited for the next one.', 'The bus was full or we waited for the next one.']],
+      ['I bought a book. The book is about animals.', 'I bought a book which is about animals.', ['I bought a book who is about animals.', 'I bought a book whose is about animals.', 'I bought a book and animals.']],
+      ['She is clever. She is hard-working.', 'She is clever and hard-working.', ['She is clever but hard-working.', 'She is clever or hard-working.', 'She is clever so hard-working.']],
+      ['You may play. Finish your work first.', 'You may play after you finish your work.', ['You may play before you finish your work.', 'You may play because you finish your work.', 'You may play or you finish your work.']],
+      ['The road was muddy. The car got stuck.', 'The car got stuck because the road was muddy.', ['The road was muddy because the car got stuck.', 'The car got stuck but the road was muddy.', 'The car got stuck or the road was muddy.']],
+      ['He ran fast. He missed the bus.', 'Although he ran fast, he missed the bus.', ['Because he ran fast, he missed the bus.', 'He ran fast so he missed the bus.', 'Unless he ran fast, he missed the bus.']],
     ])
     return q(level, `Join the sentences correctly:\n${a}`, joined, wrong)
   }
@@ -520,6 +853,26 @@ export const sentencesU = (g: G): Generator => (rng, level) => {
 // ── Spelling ────────────────────────────────────────────────────────────────
 
 const SPELL: [G, string, string[]][] = [
+  [4, 'school', ['shool', 'scool', 'schol']],
+  [4, 'people', ['peple', 'poeple', 'peopel']],
+  [4, 'family', ['famly', 'familly', 'fammily']],
+  [4, 'island', ['iland', 'islend', 'ilsand']],
+  [4, 'answer', ['anser', 'answar', 'ansewr']],
+  [4, 'Saturday', ['Saterday', 'Saturdy', 'Satuday']],
+  [4, 'January', ['Janury', 'Januery', 'Janaury']],
+  [4, 'colour', ['culour', 'colur', 'coulor']],
+  [4, 'knife', ['nife', 'knif', 'kneif']],
+  [4, 'chicken', ['chiken', 'chickin', 'chikken']],
+  [4, 'garden', ['gardin', 'gardun', 'gaden']],
+  [4, 'pencil', ['pensil', 'pencel', 'pencill']],
+  [5, 'medicine', ['medcine', 'medicin', 'medecine']],
+  [5, 'calendar', ['calender', 'calandar', 'calendur']],
+  [5, 'restaurant', ['resturant', 'restaurent', 'restrant']],
+  [5, 'business', ['bussiness', 'busness', 'buisness']],
+  [6, 'rhythm', ['rythm', 'rhythem', 'rhytm']],
+  [6, 'parliament', ['parliment', 'parlament', 'parlaiment']],
+  [6, 'mischievous', ['mischievious', 'mischevous', 'mischiveous']],
+  [6, 'occurred', ['occured', 'ocurred', 'occurrd']],
   [4, 'beautiful', ['beautifull', 'beutiful', 'beatiful']],
   [4, 'Wednesday', ['Wensday', 'Wednsday', 'Wedensday']],
   [4, 'friend', ['freind', 'frend', 'friennd']],
@@ -545,7 +898,7 @@ const SPELL: [G, string, string[]][] = [
 export const spellU = (g: G): Generator => (rng, level) => {
   const rows = forGrade(SPELL, g)
   // Short words first; the top levels lean on the grade's newest, hardest words.
-  const pool = level <= 2 ? rows.filter(([w]) => w.length <= 9) : level >= 4 ? rows.slice(-12) : rows
+  const pool = level <= 2 ? rows.filter(([w]) => w.length <= 9) : level >= 4 ? rows.slice(-20) : rows
   const [right, wrong] = rng.pick(pool)
   return q(level, 'Which word is spelt correctly?', right, wrong)
 }
@@ -661,6 +1014,34 @@ export const CLOZE_U: BankQuestion[] = [
     ['fasten', ['fastened', 'fastening', 'fasten up']],
     ['safer', ['safest', 'safely', 'safety']],
   ]),
+  ...cloze(1, 'My Family', 'There are five people (1) my family. My father (2) a farmer. My mother is a nurse (3) Kitale. I have one brother (4) one sister. We all love (5) other.', [
+    ['in', ['on', 'at', 'by']],
+    ['is', ['are', 'am', 'be']],
+    ['in', ['on', 'of', 'to']],
+    ['and', ['but', 'or', 'so']],
+    ['each', ['every', 'all', 'some']],
+  ]),
+  ...cloze(2, 'Saving Money', 'Neema (1) a small tin where she keeps her savings. Every time she (2) a coin, she drops it in. Last month she counted her money and found that she (3) saved two hundred shillings. She used (4) to buy a story book. Now she is saving (5) a pair of shoes.', [
+    ['has', ['have', 'having', 'is']],
+    ['gets', ['get', 'getting', 'got it']],
+    ['had', ['has', 'have', 'having']],
+    ['it', ['them', 'they', 'its']],
+    ['for', ['to', 'at', 'by']],
+  ]),
+  ...cloze(4, 'The Football Final', 'The final match between Moi Primary and Tumaini Academy was (1) on Saturday. (2) the first half, neither team scored. Ten minutes into the second half, Otieno (3) a beautiful goal. The fans cheered (4) loudly that the referee had to wait. Moi Primary won the cup, and the players were (5) of their effort.', [
+    ['played', ['play', 'playing', 'plays']],
+    ['In', ['On', 'At', 'By']],
+    ['scored', ['score', 'scoring', 'scores']],
+    ['so', ['such', 'very', 'too']],
+    ['proud', ['pride', 'proudly', 'prouder']],
+  ]),
+  ...cloze(5, 'Bees and Farmers', 'Bees are (1) of the most useful insects on earth. As they move from flower to flower, they carry pollen, (2) helps plants to form fruits and seeds. Without bees, many crops (3) produce less food. Farmers who keep hives also earn money from honey and wax. (4), bees are threatened by the careless use of chemicals. Farmers are therefore encouraged to spray only (5) necessary.', [
+    ['one', ['once', 'only', 'won']],
+    ['which', ['who', 'whose', 'whom']],
+    ['would', ['will be', 'shall', 'did']],
+    ['However', ['Therefore', 'Because', 'Unless']],
+    ['when', ['what', 'which', 'who']],
+  ]),
 ]
 
 export const COMP_U: BankQuestion[] = [
@@ -729,6 +1110,46 @@ export const COMP_U: BankQuestion[] = [
     ['What did Wanjiru wear on her feet?', 'gumboots', ['sandals', 'slippers', 'socks only']],
     ['Who carried Wanjiru to the gate?', 'her father', ['her mother', 'her teacher', 'her brother']],
     ['When did the sun shine again?', 'by ten o\'clock', ['at night', 'at noon', 'in the evening']],
+  ]),
+  ...comp(1, 'The School Garden', 'Our class has a small garden behind the library. We grow kale, spinach and carrots. Every Tuesday, we water the plants and pull out weeds. Last week we harvested a big basket of kale. The cook used it to prepare lunch for the whole school.', [
+    ['Where is the class garden?', 'behind the library', ['next to the gate', 'in the classroom', 'near the river']],
+    ['Which vegetable is NOT grown in the garden?', 'cabbage', ['kale', 'spinach', 'carrots']],
+    ['When do the pupils water the plants?', 'every Tuesday', ['every Friday', 'every day', 'once a month']],
+    ['Who used the kale?', 'the cook', ['the head teacher', 'the pupils at home', 'a farmer']],
+  ]),
+  ...comp(2, 'A Trip to the Museum', 'On Friday, Grade 5 visited the Nairobi National Museum. A guide called Mr Ouma showed them old tools that early people used. The learners also saw stuffed birds and a huge elephant skeleton. Halima drew pictures of the tools in her notebook. On the bus home, everyone agreed it was the best trip of the year.', [
+    ['Which museum did the learners visit?', 'Nairobi National Museum', ['Fort Jesus', 'Kisumu Museum', 'Lamu Museum']],
+    ['Who was the guide?', 'Mr Ouma', ['Halima', 'the driver', 'the head teacher']],
+    ['What did Halima draw?', 'the old tools', ['the bus', 'the guide', 'the birds only']],
+    ['How did the learners feel about the trip?', 'They enjoyed it very much.', ['They were bored.', 'They were angry.', 'They wanted to sleep.']],
+  ]),
+  ...comp(3, 'Kipsang\'s Kite', 'Kipsang wanted to fly a kite like the ones he saw in a book. He collected thin sticks, an old newspaper, some glue and a long string. His first kite was too heavy and would not rise. His sister Chepkoech suggested using lighter sticks and a longer tail. The second kite rose high above the maize field. Kipsang learnt that a good friend\'s advice can turn failure into success.', [
+    ['Where did Kipsang first see kites?', 'in a book', ['on television', 'at the market', 'at school']],
+    ['Why did the first kite fail?', 'It was too heavy.', ['It had no string.', 'It was too small.', 'There was no wind at all.']],
+    ['Who helped Kipsang?', 'his sister Chepkoech', ['his teacher', 'his father', 'a neighbour']],
+    ['Which word in the passage means "go up"?', 'rise', ['collect', 'fail', 'suggest']],
+    ['What lesson did Kipsang learn?', 'Good advice can turn failure into success.', ['Kites are bad.', 'Sticks are heavy.', 'Maize fields are big.']],
+  ]),
+  ...comp(4, 'The Market Chairperson', 'Mama Wanjiku was elected chairperson of the Karatina market traders. The market had no proper drainage, and during the rains it became muddy. She called a meeting where traders agreed to each contribute fifty shillings a week. With the money and help from the county, they dug drains and laid gravel. Within three months, the market was clean and dry, and more customers came. The traders praised her for bringing them together.', [
+    ['What problem did the market have?', 'It became muddy during the rains.', ['It had too many customers.', 'It was too dry.', 'It had no traders.']],
+    ['How much did each trader contribute weekly?', 'fifty shillings', ['five hundred shillings', 'five shillings', 'one hundred shillings']],
+    ['Who else helped the traders?', 'the county', ['a church', 'the police', 'a school']],
+    ['What happened after the drains were dug?', 'More customers came to the market.', ['The market closed.', 'Traders left.', 'The rains stopped.']],
+    ['Which quality best describes Mama Wanjiku?', 'a good leader', ['a lazy person', 'a selfish trader', 'a shy farmer']],
+  ]),
+  ...comp(5, 'Solar Power in Our Village', 'Two years ago, our village had no electricity. Families used paraffin lamps, which gave off smoke and were expensive to refill. Then a community group installed solar panels on the roofs of the school and the health centre. The school now has lights for evening study, and the health centre can store vaccines in a solar fridge. Some families have bought small solar kits that charge phones and light their homes. Elders say that clean energy has brought both light and hope. Still, the panels must be cleaned regularly and protected from damage to keep working well.', [
+    ['What did families use before solar power?', 'paraffin lamps', ['electric bulbs', 'gas cookers', 'candles only']],
+    ['Why were paraffin lamps a problem?', 'They gave off smoke and were expensive.', ['They were too bright.', 'They were free.', 'They needed the sun.']],
+    ['How has solar power helped the health centre?', 'It can keep vaccines cold.', ['It has more doctors.', 'It closed early.', 'It sells phones.']],
+    ['What does "install" mean in the passage?', 'put in place', ['take away', 'paint', 'sell']],
+    ['What must be done to keep the panels working?', 'clean and protect them', ['cover them with soil', 'switch them off', 'move them indoors']],
+  ]),
+  ...comp(5, 'The Library Club', 'When Mr Chege started a library club, only six learners joined. He asked each member to read one book a week and share it with the club. Soon, members were acting out stories and writing their own endings. Other learners became curious and asked to join. By the end of the year, the club had forty members and had raised money to buy fifty new books. The head teacher noticed that the members\' English marks had improved greatly. Mr Chege says the secret was simple: reading should be fun.', [
+    ['How many learners first joined the club?', 'six', ['forty', 'fifty', 'ten']],
+    ['What did each member do every week?', 'read one book and share it', ['write an exam', 'buy a book', 'clean the library']],
+    ['Why did other learners join?', 'They became curious.', ['They were forced.', 'They were paid.', 'They wanted to sleep.']],
+    ['What happened to the members\' English marks?', 'They improved greatly.', ['They dropped.', 'They stayed the same.', 'They were not recorded.']],
+    ['What is the main idea of the passage?', 'Making reading fun helps learners grow.', ['Libraries are always quiet.', 'Books are expensive.', 'Clubs should be small.']],
   ]),
 ]
 

@@ -20,3 +20,17 @@ describe('Grade 1 to 3 depth', () => {
     }
   })
 })
+
+// Grades 4–6: written-sentence formats (passages, joining, reported speech) have smaller
+// pools than the generated ones, so the bar is lower there.
+const UPPER_PASSAGES = /^u[456](e-(comp|cloze)|k-(ufahamu|cloze))$/
+describe('Grade 4 to 6 depth', () => {
+  const subs = [findGrade('g4'), findGrade('g5'), findGrade('g6')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+  it.each(subs.map((s) => [s.id]))('%s has enough different questions at every level', (id) => {
+    for (const level of [1, 2, 3, 4, 5] as Level[]) {
+      const seen = new Set<string>()
+      for (let seed = 1; seed <= 120; seed++) for (const q of buildQuiz(id, level, seed * 7919)) if (q.level === level) seen.add(signature(q))
+      expect(seen.size, `${id} level ${level}`).toBeGreaterThanOrEqual(UPPER_PASSAGES.test(id) ? 8 : 10)
+    }
+  })
+})
