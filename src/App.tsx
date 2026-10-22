@@ -4,6 +4,7 @@ import type { AreaId, GradeId } from './curriculum'
 import type { Level } from './engine/types'
 import { Home } from './screens/Home'
 import { MapScreen } from './screens/MapScreen'
+import { Plans } from './screens/Plans'
 import { QuizScreen } from './screens/QuizScreen'
 import { Results } from './screens/Results'
 import { Worlds } from './screens/Worlds'
@@ -21,6 +22,7 @@ export type Screen =
   | { name: 'home' }
   | { name: 'worlds'; grade: GradeId }
   | { name: 'map'; area: AreaId; open?: string }
+  | { name: 'plans'; from?: AreaId }
   | ({ name: 'quiz' } & QuizTarget)
   | ({ name: 'results'; correct: number; total: number } & QuizTarget)
 
@@ -87,6 +89,7 @@ function Router() {
       {screen.name === 'home' && <Home />}
       {screen.name === 'worlds' && <Worlds key={screen.grade} grade={screen.grade} />}
       {screen.name === 'map' && <MapScreen key={screen.area} area={screen.area} open={screen.open} />}
+      {screen.name === 'plans' && <Plans from={screen.from} />}
       {screen.name === 'quiz' && <QuizScreen key={`${screen.sub ?? screen.strand}:${screen.level}:${screen.paper}`} target={screen} />}
       {screen.name === 'results' && <Results target={screen} correct={screen.correct} total={screen.total} />}
     </NavContext.Provider>

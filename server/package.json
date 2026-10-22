@@ -1,0 +1,8 @@
+{
+  "name": "cbc-helper-payments",
+  "private": true,
+  "type": "module",
+  "description": "M-Pesa STK Push (Daraja) payments for CBC Helper. No dependencies.",
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node server.mjs" }
+}

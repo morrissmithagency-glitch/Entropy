@@ -8,6 +8,7 @@ import { NatureScene } from '../components/NatureScene'
 import { Icon, SettingsButtons, TopBar } from '../components/ui'
 import { GRADES } from '../curriculum'
 import { areaStars, useProgress } from '../state/progress'
+import { activePlan, useSubscription } from '../state/subscription'
 import './home.css'
 
 const SOON = ['PP1', 'PP2', '2', '4', '5', '6', '7', '8', '9']
@@ -23,6 +24,7 @@ function greeting(): string {
 export function Home() {
   const go = useNav()
   const p = useProgress()
+  const plan = activePlan(useSubscription())
   return (
     <main className="home">
       <NatureScene id="lake-dusk" />
@@ -33,7 +35,14 @@ export function Home() {
             CBC <em>Helper</em>
           </span>
         }
-        right={<SettingsButtons />}
+        right={
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="button" className="btn plan-pill" onClick={() => go({ name: 'plans' })}>
+              {plan ? plan.name : 'Plans'}
+            </button>
+            <SettingsButtons />
+          </div>
+        }
       />
 
       <section className="home-hero gutter">

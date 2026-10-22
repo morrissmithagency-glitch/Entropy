@@ -1,0 +1,66 @@
+/* Sheet */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(7, 13, 27, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 var(--gutter-r) env(safe-area-inset-bottom, 0px) var(--gutter-l);
+}
+
+.sheet.glass {
+  width: min(100%, 520px);
+  max-height: 92dvh;
+  overflow: auto;
+  border-radius: 32px 32px 0 0;
+  /* Solid, not see-through: the level list must be easy to read over any landscape. */
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(241, 207, 135, 0.12), rgba(0, 0, 0, 0) 60%),
+    #13203b;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+@media (min-width: 700px) {
+  .sheet-backdrop {
+    align-items: center;
+  }
+  .sheet {
+    border-radius: 32px;
+  }
+}
+
+.sheet .sheet-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+}
+
+.sheet-body {
+  padding: 30px 26px 26px;
+}
+
+.sheet-body h2 {
+  margin: 8px 50px 0 0;
+  font-size: 36px;
+  line-height: 1.05;
+}
+
+.sheet-blurb {
+  margin: 8px 0 0;
+  color: var(--mist-soft);
+}
+
+.sheet-go {
+  width: 100%;
+}
+
+.sheet-note {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mist-soft);
+}

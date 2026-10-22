@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNav } from '../App'
 import { sfx } from '../audio/sfx'
 import { NatureScene } from '../components/NatureScene'
+import { Sheet } from '../components/Sheet'
 import { Breath, Chip, Icon, LevelGlyph, SCENE_FOR, SettingsButtons, Stars, TopBar } from '../components/ui'
 import { findArea, gradeOfArea, LEVEL_NAMES, type AreaId, type Strand, type SubStrand } from '../curriculum'
 import type { Level } from '../engine/types'
@@ -19,6 +20,8 @@ import {
   subStars,
   useProgress,
 } from '../state/progress'
+import { canOpenStrand, useSubscription } from '../state/subscription'
+import { ksh, PLANS } from '../billing/plans'
 import './map.css'
 
 export const LEVEL_HINTS = ['Warm up gently', 'Fewer clues, more thinking', 'Two steps of thinking', 'End-of-term paper level', 'The toughest questions']
@@ -54,9 +57,10 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
   const next = nextStop(p, areaId)
   const nextKey = next ? ('sub' in next ? next.sub : `challenge:${next.challenge}`) : null
   const { earned, total } = areaStars(p, areaId)
-  const [sheet, setSheet] = useState<{ sub: SubStrand } | { strand: Strand } | null>(() => {
+  const subscription = useSubscription()
+  const [sheet, setSheet] = useState<{ sub: SubStrand } | { strand: Strand } | { locked: Strand } | null>(() => {
     if (!open) return null
-    for (const st of area.strands) for (const sub of st.subStrands) if (sub.id === open) return { sub }
+    for (const st of area.strands) for (const sub of st.subStrands) if (sub.id === open) return canOpenStrand(subscription, st.id) ? { sub } : { locked: st }
     return null
   })
   const nextRef = useRef<HTMLLIElement>(null)
@@ -68,6 +72,8 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
   }, [])
 
   const start = (target: { sub?: string; strand?: string; level: Level }) => {
+    const strandId = target.strand ?? area.strands.find((st) => st.subStrands.some((x) => x.id === target.sub))!.id
+    if (!canOpenStrand(subscription, strandId)) return
     const key = target.sub ? `${target.sub}:${target.level}` : `challenge:${target.strand}`
     sfx.select()
     go({ name: 'quiz', area: areaId, ...target, paper: nextPaper(key) })
@@ -96,10 +102,18 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
           const chUnlocked = challengeUnlocked(p, strand.id)
           const chStars = p.challenge[strand.id] ?? 0
           const chNext = nextKey === `challenge:${strand.id}`
+          const open = canOpenStrand(subscription, strand.id)
+          const choose = (s: { sub: SubStrand } | { strand: Strand }) => {
+            sfx.tap()
+            setSheet(open ? s : { locked: strand })
+          }
           return (
-            <section key={strand.id} className="strand">
+            <section key={strand.id} className={`strand ${open ? '' : 'is-locked'}`}>
               <header className="strand-head">
-                <span className="eyebrow">Strand {strand.code}</span>
+                <span className="eyebrow">
+                  Strand {strand.code}
+                  {!open && <span className="strand-lock">{Icon.lock} With a plan</span>}
+                </span>
                 <h2 className="display">{strand.title}</h2>
               </header>
               <ol className="timeline">
@@ -118,10 +132,7 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
                       <button
                         type="button"
                         className={`stop ${isNext ? 'is-next' : ''}`}
-                        onClick={() => {
-                          sfx.tap()
-                          setSheet({ sub })
-                        }}
+                        onClick={() => choose({ sub })}
                       >
                         <span className="node">
                           {isNext && <Breath size={56} color="rgba(241,207,135,.55)" />}
@@ -133,6 +144,7 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
                           <span className="stop-blurb">{sub.blurb}</span>
                         </span>
                         <span className="stop-meta">
+                          {!open && <span style={{ opacity: 0.55 }}>{Icon.lock}</span>}
                           {isNext && <span className="up-next">Up next</span>}
                           {reached > 0 && !isNext && <span className="stop-level">{LEVEL_NAMES[reached - 1]}</span>}
                           {stars > 0 && <span className="stop-stars">★ {stars}</span>}
@@ -145,10 +157,7 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
                   <button
                     type="button"
                     className={`stop challenge ${chUnlocked ? '' : 'locked'} ${chNext ? 'is-next' : ''}`}
-                    onClick={() => {
-                      sfx.tap()
-                      setSheet({ strand })
-                    }}
+                    onClick={() => choose({ strand })}
                   >
                     <span className="node">
                       {chNext && <Breath size={56} color="rgba(241,207,135,.55)" />}
@@ -174,7 +183,9 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
       <AnimatePresence>
         {sheet && (
           <Sheet onClose={() => setSheet(null)}>
-            {'sub' in sheet ? (
+            {'locked' in sheet ? (
+              <LockedSheet strand={sheet.locked} onPlans={() => go({ name: 'plans', from: areaId })} />
+            ) : 'sub' in sheet ? (
               <SubSheet sub={sheet.sub} onStart={(level) => start({ sub: sheet.sub.id, level })} />
             ) : (
               <ChallengeSheet strand={sheet.strand} onStart={() => start({ strand: sheet.strand.id, level: 5 })} />
@@ -186,30 +197,25 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
   )
 }
 
-function Sheet({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+function LockedSheet({ strand, onPlans }: { strand: Strand; onPlans: () => void }) {
+  const cheapest = Math.min(...PLANS.map((p) => p.price))
   return (
-    <motion.div className="sheet-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-      <motion.div
-        role="dialog"
-        aria-modal
-        className="sheet glass"
-        initial={{ y: 60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 40, opacity: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button type="button" className="btn icon sheet-close" aria-label="Close" onClick={onClose}>
-          {Icon.close}
-        </button>
-        {children}
-      </motion.div>
-    </motion.div>
+    <div className="sheet-body">
+      <div className="eyebrow">Strand {strand.code}</div>
+      <h2 className="display">{strand.title}</h2>
+      <p className="sheet-blurb">
+        This strand opens with a plan. The first strand in every world stays free, so keep growing there as long as you like.
+      </p>
+      <ul className="locked-list">
+        {strand.subStrands.map((s) => (
+          <li key={s.id}>{s.title}</li>
+        ))}
+      </ul>
+      <button type="button" className="btn primary sheet-go" onClick={onPlans}>
+        See plans
+      </button>
+      <p className="sheet-note">From {ksh(cheapest)}, paid with M-Pesa.</p>
+    </div>
   )
 }
 

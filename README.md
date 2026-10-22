@@ -40,6 +40,14 @@ The curriculum mapping, sources and confidence levels are in
 [`research/grade1-strands.md`](research/grade1-strands.md). All questions are original:
 commercial papers (JESMA etc.) were used only as a guide to format and difficulty.
 
+## Plans
+
+The first strand in every world is free. Plans open the rest, paid with M-Pesa STK Push:
+Weekly KSh 300, Standard KSh 950 a month (one grade, one child), Pro KSh 1,250 a month
+(every grade, up to 3 children) and Super Pro KSh 3,450 a month (Pro plus parent reports and
+printable papers, both coming soon). The payments server is in [`server/`](server/README.md);
+without it the app runs in a clearly marked test mode.
+
 ## Run it
 
 ```bash
@@ -79,4 +87,5 @@ Dev-only helpers: `?gallery` shows every illustration and widget, and
   `kicd.ac.ke` was blocked from the build environment, so these came from secondary sources.
 * Have a Grade 1 teacher review the written question banks.
 * Replace placeholder art with the original artwork.
-* Add the paywall (M-Pesa) and parent accounts (see the plan).
+* Deploy the payments server and build with `VITE_PAYMENTS_API` (see [`server/README.md`](server/README.md)).
+* Add parent accounts, so a plan follows the family to another phone.

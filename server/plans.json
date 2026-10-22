@@ -1,0 +1,6 @@
+[
+  { "id": "weekly", "name": "Weekly", "price": 300, "days": 7, "children": 1, "allGrades": false },
+  { "id": "standard", "name": "Standard", "price": 950, "days": 30, "children": 1, "allGrades": false },
+  { "id": "pro", "name": "Pro", "price": 1250, "days": 30, "children": 3, "allGrades": true },
+  { "id": "superpro", "name": "Super Pro", "price": 3450, "days": 30, "children": 3, "allGrades": true }
+]
