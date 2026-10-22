@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useNav } from '../App'
 import { sfx } from '../audio/sfx'
 import { NatureScene } from '../components/NatureScene'
+import { ReviewCard } from '../components/ReviewCard'
 import { Breath, Chip, Icon, SCENE_FOR, SettingsButtons, TopBar } from '../components/ui'
 import { findGrade, findSubStrand, findStrand, LEVEL_NAMES, type GradeId } from '../curriculum'
 import { areaStars, levelReached, nextStop, useProgress } from '../state/progress'
@@ -72,6 +73,9 @@ export function Worlds({ grade }: { grade: GradeId }) {
       </section>
 
       <section className="gh-worlds gutter">
+        <div className="gh-review">
+          <ReviewCard />
+        </div>
         <h2 className="display">Worlds to explore</h2>
         <div className="gh-grid">
           {g.areas.map((area, i) => {

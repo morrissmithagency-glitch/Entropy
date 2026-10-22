@@ -5,6 +5,7 @@ import { sfx } from '../audio/sfx'
 import { GlassPane } from '../components/Glass'
 import { Kobe } from '../components/Kobe'
 import { NatureScene } from '../components/NatureScene'
+import { ReviewCard } from '../components/ReviewCard'
 import { Icon, SettingsButtons, TopBar } from '../components/ui'
 import { GRADES } from '../curriculum'
 import { areaStars, useProgress } from '../state/progress'
@@ -84,6 +85,21 @@ export function Home() {
             )
           })}
         </div>
+
+        <div className="home-review">
+          <ReviewCard delay={1.1} />
+        </div>
+
+        <motion.button
+          type="button"
+          className="btn quiet home-parents"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.3, duration: 1 }}
+          onClick={() => go({ name: 'parent' })}
+        >
+          For parents: see how your child is growing
+        </motion.button>
 
         <motion.div className="soon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }}>
           <span className="eyebrow">Coming soon</span>

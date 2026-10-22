@@ -40,6 +40,18 @@ The curriculum mapping, sources and confidence levels are in
 [`research/grade1-strands.md`](research/grade1-strands.md). All questions are original:
 commercial papers (JESMA etc.) were used only as a guide to format and difficulty.
 
+## Teaching, not just testing
+
+* **Lessons.** Every Grade 3 sub-strand has a short, read-aloud lesson with worked examples
+  (`src/lessons/`). A new sub-strand starts with its lesson; the lesson ends on one key
+  idea to remember. Kiswahili lessons are written in Kiswahili.
+* **Mistakes explained.** A wrong answer shows why, then gives one unscored question on the
+  same idea straight away ("Try one like it").
+* **Mistakes review.** Missed questions come back the next day, then after 3 days, then a
+  week, until they stick.
+* **For parents.** Behind a simple grown-ups' sum: what the child is good at, where they are
+  stuck (with the lesson's key idea to go over together) and what to practise this week.
+
 ## Plans
 
 The first strand in every world is free. Plans open the rest, paid with M-Pesa STK Push:

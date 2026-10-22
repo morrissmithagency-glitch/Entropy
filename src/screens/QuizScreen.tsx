@@ -9,15 +9,27 @@ import { Breath, Icon, LevelGlyph, SCENE_FOR } from '../components/ui'
 import { NumberPad, OrderTiles } from '../components/widgets/Inputs'
 import { VisualView } from '../components/widgets/Visual'
 import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
-import { buildChallenge, buildQuiz, isCorrect } from '../engine/quiz'
+import { buildChallenge, buildQuiz, isCorrect, similarQuestion } from '../engine/quiz'
 import type { Option, Question } from '../engine/types'
-import { useProgress } from '../state/progress'
+import { lessonFor } from '../lessons'
+import { dueReview, getProgress, recordAnswer, recordReview, useProgress, type ReviewItem } from '../state/progress'
 import './quiz.css'
 
 const PRAISE_EN = ['Well done', 'Beautiful', 'You got it', 'Lovely thinking', 'Exactly right']
 const PRAISE_SW = ['Hongera', 'Safi sana', 'Umeweza', 'Hodari', 'Vizuri sana']
 const ALMOST_EN = ['Almost', 'Nearly there', 'Good try']
 const ALMOST_SW = ['Karibu', 'Pole pole', 'Jaribu tena']
+const GOT_IT_EN = ['Now you have it', 'That is it', 'You learnt it']
+const GOT_IT_SW = ['Sasa umeweza', 'Umeelewa', 'Hongera']
+
+const EMPTY_Q: Question = { id: 'none', type: 'number', level: 1, prompt: '', answer: 0 }
+
+/** A quiz is a list of items: scored questions, plus unscored "try one like it" after a miss. */
+interface Item {
+  q: Question
+  practice?: boolean
+  review?: ReviewItem
+}
 
 type Response = string | number | string[]
 
@@ -55,21 +67,36 @@ function Label({ text }: { text: string }) {
 export function QuizScreen({ target }: { target: QuizTarget }) {
   const go = useNav()
   const { settings } = useProgress()
-  const area = findArea(target.area)
-  const lang = area.kind === 'kiswahili' ? 'sw' : 'en'
-  const questions = useMemo(
-    () => (target.strand ? buildChallenge(target.strand, target.paper * 7919) : buildQuiz(target.sub!, target.level, target.paper * 7919)),
-    [target],
-  )
-  const title = target.strand ? findStrand(target.strand).strand.title : findSubStrand(target.sub!).sub.title
+  const [items, setItems] = useState<Item[]>(() => {
+    if (target.review) return dueReview(getProgress()).map((r) => ({ q: r.q, review: r }))
+    const qs = target.strand ? buildChallenge(target.strand, target.paper * 7919) : buildQuiz(target.sub!, target.level, target.paper * 7919)
+    return qs.map((q) => ({ q }))
+  })
   const [idx, setIdx] = useState(0)
-  const [results, setResults] = useState<boolean[]>([])
+  // Nothing waiting (say, review opened twice): go home rather than show an empty quiz.
+  useEffect(() => {
+    if (!items.length) go({ name: 'home' }, { replace: true })
+  }, [items.length, go])
+  const item = items[idx] ?? { q: EMPTY_Q }
+  const q = item.q
+  // Review mixes worlds, so the scene and voice follow each question.
+  const areaId = item.review?.area ?? target.area
+  const area = findArea(areaId)
+  const lang = area.kind === 'kiswahili' ? 'sw' : 'en'
+  const sw = lang === 'sw'
+  const title = target.review ? (sw ? 'Marudio' : 'Mistakes review') : target.strand ? findStrand(target.strand).strand.title : findSubStrand(target.sub!).sub.title
+  const scored = useMemo(() => items.map((it, i) => (it.practice ? -1 : i)).filter((i) => i >= 0), [items])
+  const [results, setResults] = useState<Record<number, boolean>>({})
   const [response, setResponse] = useState<Response | null>(null)
   const [mood, setMood] = useState<Mood>('idle')
   const [phrase, setPhrase] = useState('')
-  const q = questions[idx]
   const answered = response !== null
   const correct = answered && isCorrect(q, response)
+  const sub = q.sub ?? item.review?.sub ?? target.sub
+  const lesson = sub ? lessonFor(sub) : undefined
+  const why = q.explain ?? (lesson ? `${sw ? 'Kumbuka' : 'Remember'}: ${lesson.remember}` : undefined)
+  const numberOf = scored.indexOf(idx) + 1
+  const nextIsPractice = !!items[idx + 1]?.practice
 
   const readAloud = useCallback(() => {
     void speak(q.listen ? q.say! : (q.say ?? q.prompt.replace(/_/g, ' ')), lang)
@@ -89,30 +116,38 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
     if (answered) return
     const ok = isCorrect(q, r)
     setResponse(r)
-    setResults((rs) => [...rs, ok])
     stopSpeaking()
+    if (!item.practice) setResults((rs) => ({ ...rs, [idx]: ok }))
+    if (item.review) recordReview(item.review, ok)
+    else if (!item.practice && sub) recordAnswer(q, sub, areaId, ok)
+    // A miss in a quiz gets one fresh question on the same idea, straight after.
+    if (!ok && !item.practice && !item.review) {
+      const like = similarQuestion(q, target.paper * 131 + idx)
+      if (like) setItems((xs) => [...xs.slice(0, idx + 1), { q: like, practice: true }, ...xs.slice(idx + 1)])
+    }
     const pick = (xs: string[]) => xs[Math.floor(Math.random() * xs.length)]
     if (ok) {
       sfx.correct()
       setMood(Math.random() < 0.4 ? 'cheer' : 'happy')
-      setPhrase(pick(lang === 'sw' || Math.random() < 0.3 ? PRAISE_SW : PRAISE_EN))
+      setPhrase(pick(item.practice ? (sw ? GOT_IT_SW : GOT_IT_EN) : sw || Math.random() < 0.3 ? PRAISE_SW : PRAISE_EN))
     } else {
       sfx.almost()
       setMood('oops')
-      setPhrase(pick(lang === 'sw' ? ALMOST_SW : ALMOST_EN))
+      setPhrase(pick(sw ? ALMOST_SW : ALMOST_EN))
     }
   }
 
   const advance = useCallback(() => {
     sfx.tap()
-    if (idx + 1 >= questions.length) {
-      go({ ...target, name: 'results', correct: results.filter(Boolean).length, total: questions.length }, { replace: true })
+    if (idx + 1 >= items.length) {
+      const right = Object.values(results).filter(Boolean).length
+      go({ ...target, name: 'results', correct: right, total: scored.length }, { replace: true })
       return
     }
     setIdx(idx + 1)
     setResponse(null)
     setMood('idle')
-  }, [idx, questions.length, results, go, target])
+  }, [idx, items.length, results, scored.length, go, target])
 
   useEffect(() => {
     if (!answered) return
@@ -127,21 +162,21 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
   return (
     <main className="quiz">
       <div className="quiz-bg">
-        <NatureScene id={SCENE_FOR[area.kind]} dim={0.55} />
+        <NatureScene id={target.review ? 'lake-dusk' : SCENE_FOR[area.kind]} dim={0.55} />
       </div>
       <header className="quiz-top gutter">
-        <button type="button" className="btn icon" aria-label="Leave quiz" onClick={() => go({ name: 'map', area: target.area, open: target.sub })}>
+        <button type="button" className="btn icon" aria-label="Leave quiz" onClick={() => go(target.review ? { name: 'home' } : { name: 'map', area: target.area, open: target.sub })}>
           {Icon.close}
         </button>
-        <div className="progress" aria-label={`Question ${idx + 1} of ${questions.length}`}>
-          {questions.map((_, i) => (
-            <span key={i} className={i < results.length ? (results[i] ? 'good' : 'miss') : i === idx ? 'now' : ''} />
+        <div className="progress" aria-label={`Question ${Math.max(1, numberOf)} of ${scored.length}`}>
+          {scored.map((i) => (
+            <span key={i} className={i in results ? (results[i] ? 'good' : 'miss') : i === idx ? 'now' : ''} />
           ))}
         </div>
         <div className="quiz-level">
-          <LevelGlyph level={target.strand ? 5 : target.level} size={30} />
+          <LevelGlyph level={target.strand ? 5 : target.review ? q.level : target.level} size={30} />
           <span>
-            <span className="ql-name">{target.strand ? 'Baobab Challenge' : LEVEL_NAMES[target.level - 1]}</span>
+            <span className="ql-name">{target.review ? (sw ? 'Marudio' : 'Review') : target.strand ? 'Baobab Challenge' : LEVEL_NAMES[target.level - 1]}</span>
             <span className="ql-title">{title}</span>
           </span>
         </div>
@@ -157,10 +192,10 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
             exit={{ opacity: 0, y: -16, filter: 'blur(6px)' }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           >
-            <article className={`q-card ${answered ? (correct ? 'is-good' : 'is-miss') : ''}`}>
+            <article className={`q-card ${item.practice ? 'is-practice' : ''} ${answered ? (correct ? 'is-good' : 'is-miss') : ''}`}>
               <div className="q-head">
                 <span className="q-num">
-                  {idx + 1} of {questions.length}
+                  {item.practice ? (sw ? 'Jaribu moja kama hili' : 'Try one like it') : `${numberOf} ${sw ? 'kati ya' : 'of'} ${scored.length}`}
                 </span>
                 {canSpeak() && (
                   <button
@@ -223,10 +258,10 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
                     {answerText(q) ? <b><Label text={answerText(q)} /></b> : q.type === 'choice' && <AnswerArt option={q.options.find((o) => o.id === q.answer)} />}
                   </div>
                 )}
-                {q.explain && <div className="fb-explain">{q.explain}</div>}
+                {why && (!correct || q.explain) && <div className="fb-explain">{why}</div>}
               </div>
               <button type="button" className="btn primary fb-go" onClick={advance} autoFocus>
-                {idx + 1 >= questions.length ? 'See how I did' : 'Continue'}
+                {idx + 1 >= items.length ? (sw ? 'Matokeo yangu' : 'See how I did') : nextIsPractice ? (sw ? 'Jaribu moja kama hili' : 'Try one like it') : sw ? 'Endelea' : 'Continue'}
               </button>
             </div>
           </motion.div>

@@ -8,6 +8,7 @@ import { LevelGlyph, SCENE_FOR, Star } from '../components/ui'
 import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
 import { starsFor } from '../engine/quiz'
 import type { Level } from '../engine/types'
+import { lessonFor } from '../lessons'
 import { nextPaper, recordChallenge, recordQuiz } from '../state/progress'
 import './results.css'
 
@@ -70,18 +71,29 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
   const [shown, setShown] = useState(0)
   const saved = useRef(false)
   const isChallenge = !!target.strand
-  const title = isChallenge ? `${findStrand(target.strand!).strand.title} · Baobab Challenge` : `${findSubStrand(target.sub!).sub.title} · ${LEVEL_NAMES[target.level - 1]}`
-  const [headline, body] = MESSAGES[stars]
-  const canGrow = !isChallenge && stars >= 1 && target.level < 5
+  const isReview = !!target.review
+  const title = isReview
+    ? 'Mistakes review'
+    : isChallenge
+      ? `${findStrand(target.strand!).strand.title} · Baobab Challenge`
+      : `${findSubStrand(target.sub!).sub.title} · ${LEVEL_NAMES[target.level - 1]}`
+  const [headline, body] = isReview
+    ? correct === total
+      ? (['All grown back', 'Every one you missed before is right now. They will visit once more, a little later, to stay strong.'] as const)
+      : (['Still growing', 'The ones you missed will come back tomorrow. That is how they stick.'] as const)
+    : MESSAGES[stars]
+  const canGrow = !isChallenge && !isReview && stars >= 1 && target.level < 5
+  const lesson = !isChallenge && !isReview && target.sub ? lessonFor(target.sub) : undefined
   const nextName = LEVEL_NAMES[Math.min(4, target.level)]
   const C = 2 * Math.PI * 76
 
   useEffect(() => {
     if (saved.current) return
     saved.current = true
+    if (isReview) return
     if (isChallenge) recordChallenge(target.strand!, stars)
     else recordQuiz(target.sub!, target.level, stars)
-  }, [isChallenge, stars, target])
+  }, [isChallenge, isReview, stars, target])
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = []
@@ -167,7 +179,20 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
         )}
 
         <motion.div className="res-actions" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2, duration: 0.8 }}>
-          {canGrow ? (
+          {isReview ? (
+            <button type="button" className="btn primary" onClick={() => go({ name: 'home' }, { replace: true })}>
+              Back home
+            </button>
+          ) : stars === 0 && lesson ? (
+            <>
+              <button type="button" className="btn primary" onClick={() => go({ name: 'learn', area: target.area, sub: target.sub! }, { replace: true })}>
+                Read the lesson again
+              </button>
+              <button type="button" className="btn" onClick={retry}>
+                Try a new paper
+              </button>
+            </>
+          ) : canGrow ? (
             <button type="button" className="btn primary" onClick={grow}>
               Continue to {nextName}
             </button>
@@ -181,9 +206,11 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
               New paper, same level
             </button>
           )}
-          <button type="button" className="btn quiet" onClick={() => go({ name: 'map', area: target.area }, { replace: true })}>
-            Back to the journey
-          </button>
+          {!isReview && (
+            <button type="button" className="btn quiet" onClick={() => go({ name: 'map', area: target.area }, { replace: true })}>
+              Back to the journey
+            </button>
+          )}
         </motion.div>
       </section>
       <div className="res-kobe" aria-hidden>

@@ -1,0 +1,24 @@
+import { describe, expect, it } from 'vitest'
+import { findGrade } from '../../curriculum'
+import { LESSONS } from '..'
+
+describe('Grade 3 lessons', () => {
+  const subs = findGrade('g3').areas.flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+
+  it.each(subs.map((s) => [s.id]))('%s has a full lesson', (id) => {
+    const lesson = LESSONS[id]
+    expect(lesson, `missing lesson for ${id}`).toBeDefined()
+    expect(lesson.intro.length).toBeGreaterThan(20)
+    expect(lesson.steps.length).toBeGreaterThanOrEqual(2)
+    expect(lesson.remember.length).toBeGreaterThan(15)
+    for (const step of lesson.steps) {
+      expect(step.title).toBeTruthy()
+      expect(step.text.length).toBeGreaterThan(15)
+    }
+  })
+
+  it('has no lessons for sub-strands that do not exist', () => {
+    const known = new Set(subs.map((s) => s.id))
+    for (const id of Object.keys(LESSONS)) expect(known.has(id), id).toBe(true)
+  })
+})

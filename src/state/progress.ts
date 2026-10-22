@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { findArea, findStrand, type AreaId } from '../curriculum'
-import type { Level } from '../engine/types'
+import type { Level, Question } from '../engine/types'
 
 const KEY = 'cbc-helper:v1'
 
@@ -15,16 +15,43 @@ export interface Progress {
   settings: { sound: boolean; voice: boolean }
   /** The world opened most recently, featured on the grade page. */
   last?: string
+  /** Sub-strands whose lesson has been read, with when. */
+  learned: Record<string, number>
+  /** Missed questions waiting to be tried again, spaced out over days. */
+  review: ReviewItem[]
+  /** Scored answers per sub-strand, for the parent summary. */
+  stats: Record<string, { answered: number; missed: number; last: string }>
+  /** Quizzes taken per `${subId}:${level}`, passed or not. */
+  tries: Record<string, number>
 }
 
-const EMPTY: Progress = { best: {}, challenge: {}, papers: {}, streak: { last: '', days: 0 }, settings: { sound: true, voice: true } }
+export interface ReviewItem {
+  q: Question
+  sub: string
+  area: string
+  /** 1 → back tomorrow, 2 → in 3 days, 3 → in a week; right at 3 and it is learned. */
+  box: 1 | 2 | 3
+  due: string
+}
+
+const EMPTY: Progress = {
+  best: {},
+  challenge: {},
+  papers: {},
+  streak: { last: '', days: 0 },
+  settings: { sound: true, voice: true },
+  learned: {},
+  review: [],
+  stats: {},
+  tries: {},
+}
 
 function load(): Progress {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return EMPTY
     const parsed = JSON.parse(raw) as Partial<Progress>
-    return { ...EMPTY, ...parsed, settings: { ...EMPTY.settings, ...parsed.settings } }
+    return { ...EMPTY, ...parsed, settings: { ...EMPTY.settings, ...parsed.settings } } as Progress
   } catch {
     return EMPTY
   }
@@ -56,6 +83,7 @@ export function useProgress(): Progress {
 export const getProgress = () => state
 
 const today = () => new Date().toISOString().slice(0, 10)
+const daysFromNow = (n: number) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10)
 
 function bumpStreak(p: Progress): Progress['streak'] {
   const t = today()
@@ -66,7 +94,47 @@ function bumpStreak(p: Progress): Progress['streak'] {
 
 export function recordQuiz(subId: string, level: Level, stars: number) {
   const k = `${subId}:${level}`
-  set({ ...state, best: { ...state.best, [k]: Math.max(stars, state.best[k] ?? 0) }, streak: bumpStreak(state) })
+  set({
+    ...state,
+    best: { ...state.best, [k]: Math.max(stars, state.best[k] ?? 0) },
+    tries: { ...state.tries, [k]: (state.tries[k] ?? 0) + 1 },
+    streak: bumpStreak(state),
+  })
+}
+
+export function markLearned(subId: string) {
+  set({ ...state, learned: { ...state.learned, [subId]: Date.now() } })
+}
+
+const sameQuestion = (a: Question, b: Question) => a.prompt === b.prompt && JSON.stringify(a.visual ?? null) === JSON.stringify(b.visual ?? null)
+
+/** Called for every scored answer: counts it, and queues a miss for review tomorrow. */
+export function recordAnswer(q: Question, sub: string, area: string, ok: boolean) {
+  const st = state.stats[sub] ?? { answered: 0, missed: 0, last: '' }
+  const stats = { ...state.stats, [sub]: { answered: st.answered + 1, missed: st.missed + (ok ? 0 : 1), last: today() } }
+  let review = state.review
+  if (!ok && !review.some((r) => sameQuestion(r.q, q))) {
+    // Keep the queue small: the oldest misses make way for new ones.
+    review = [...review, { q, sub, area, box: 1 as const, due: daysFromNow(1) }].slice(-60)
+  }
+  set({ ...state, stats, review })
+}
+
+export function dueReview(p: Progress, limit = 8): ReviewItem[] {
+  const t = today()
+  return p.review.filter((r) => r.due <= t).slice(0, limit)
+}
+
+/** Right moves a question to a longer gap (and off the list after a week); wrong starts it again. */
+export function recordReview(item: ReviewItem, ok: boolean) {
+  const review = state.review.flatMap((r) => {
+    if (!sameQuestion(r.q, item.q)) return [r]
+    if (!ok) return [{ ...r, box: 1 as const, due: daysFromNow(1) }]
+    if (r.box === 3) return []
+    const box = (r.box + 1) as 2 | 3
+    return [{ ...r, box, due: daysFromNow(box === 2 ? 3 : 7) }]
+  })
+  set({ ...state, review, streak: bumpStreak(state) })
 }
 
 export function recordChallenge(strandId: string, stars: number) {

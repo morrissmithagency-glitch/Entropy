@@ -52,6 +52,8 @@ interface Base {
   visual?: Visual
   /** Shown after answering, to teach rather than just mark. */
   explain?: string
+  /** The sub-strand it came from; set by the quiz builder. */
+  sub?: string
 }
 
 export interface ChoiceQuestion extends Base {

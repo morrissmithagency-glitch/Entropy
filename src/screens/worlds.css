@@ -159,3 +159,12 @@
   margin-top: 4px;
   font-variant-numeric: tabular-nums;
 }
+
+.gh-review {
+  max-width: 520px;
+  margin-bottom: 28px;
+}
+
+.gh-review:empty {
+  display: none;
+}

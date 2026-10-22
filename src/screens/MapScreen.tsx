@@ -22,6 +22,7 @@ import {
 } from '../state/progress'
 import { canOpenStrand, useSubscription } from '../state/subscription'
 import { ksh, PLANS } from '../billing/plans'
+import { lessonFor } from '../lessons'
 import './map.css'
 
 export const LEVEL_HINTS = ['Warm up gently', 'Fewer clues, more thinking', 'Two steps of thinking', 'End-of-term paper level', 'The toughest questions']
@@ -186,7 +187,14 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
             {'locked' in sheet ? (
               <LockedSheet strand={sheet.locked} onPlans={() => go({ name: 'plans', from: areaId })} />
             ) : 'sub' in sheet ? (
-              <SubSheet sub={sheet.sub} onStart={(level) => start({ sub: sheet.sub.id, level })} />
+              <SubSheet
+                sub={sheet.sub}
+                onStart={(level) => start({ sub: sheet.sub.id, level })}
+                onLearn={() => {
+                  sfx.select()
+                  go({ name: 'learn', area: areaId, sub: sheet.sub.id })
+                }}
+              />
             ) : (
               <ChallengeSheet strand={sheet.strand} onStart={() => start({ strand: sheet.strand.id, level: 5 })} />
             )}
@@ -219,9 +227,12 @@ function LockedSheet({ strand, onPlans }: { strand: Strand; onPlans: () => void 
   )
 }
 
-function SubSheet({ sub, onStart }: { sub: SubStrand; onStart: (l: Level) => void }) {
+function SubSheet({ sub, onStart, onLearn }: { sub: SubStrand; onStart: (l: Level) => void; onLearn: () => void }) {
   const p = useProgress()
   const reached = levelReached(p, sub.id)
+  const hasLesson = !!lessonFor(sub.id)
+  // A new sub-strand starts with its lesson; after that the lesson is one tap away.
+  const lessonFirst = hasLesson && !p.learned[sub.id] && reached === 0
   const [chosen, setChosen] = useState<Level>(Math.min(5, reached + 1) as Level)
   return (
     <div className="sheet-body">
@@ -256,10 +267,28 @@ function SubSheet({ sub, onStart }: { sub: SubStrand; onStart: (l: Level) => voi
           )
         })}
       </div>
-      <button type="button" className="btn primary sheet-go" onClick={() => onStart(chosen)}>
-        Begin {LEVEL_NAMES[chosen - 1]}
-      </button>
-      <p className="sheet-note">Eight questions. Get five right to grow to the next level.</p>
+      {lessonFirst ? (
+        <>
+          <button type="button" className="btn primary sheet-go" onClick={onLearn}>
+            {Icon.leaf} Start with the lesson
+          </button>
+          <button type="button" className="btn quiet sheet-go" onClick={() => onStart(chosen)}>
+            Skip to {LEVEL_NAMES[chosen - 1]}
+          </button>
+        </>
+      ) : (
+        <>
+          <button type="button" className="btn primary sheet-go" onClick={() => onStart(chosen)}>
+            Begin {LEVEL_NAMES[chosen - 1]}
+          </button>
+          {hasLesson && (
+            <button type="button" className="btn quiet sheet-go" onClick={onLearn}>
+              {Icon.leaf} Read the lesson
+            </button>
+          )}
+          <p className="sheet-note">Eight questions. Get five right to grow to the next level.</p>
+        </>
+      )}
     </div>
   )
 }

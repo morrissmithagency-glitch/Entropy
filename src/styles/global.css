@@ -224,3 +224,43 @@ button:focus-visible,
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Today's mistakes review */
+.review-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px 14px 14px;
+  border-radius: var(--r-m);
+  text-align: left;
+  border-color: rgba(127, 214, 200, 0.35);
+}
+
+.rc-orb {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(127, 214, 200, 0.14);
+  color: var(--lagoon);
+  font-size: 24px;
+}
+
+.rc-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.rc-title {
+  font-size: 17px;
+  font-weight: 450;
+}
+
+.rc-sub {
+  font-size: 14px;
+  color: var(--mist-soft);
+}

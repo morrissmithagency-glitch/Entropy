@@ -32,7 +32,7 @@ export function rampLevels(level: Level, length = QUIZ_LENGTH): Level[] {
 
 const CHALLENGE_RAMP: Level[] = [4, 4, 4, 4, 5, 4, 5, 5, 5, 5]
 
-function signature(q: Question): string {
+export function signature(q: Question): string {
   const visual = q.visual ? JSON.stringify(q.visual) : ''
   const ans = q.type === 'choice' ? q.answer : q.type === 'number' ? String(q.answer) : q.answer.join('|')
   return `${q.prompt}::${visual}::${ans}`
@@ -75,7 +75,7 @@ function questionsFor(rng: Rng, subId: string, levels: Level[], usedBank: Set<Ba
     }
     if (q) {
       seen.add(signature(q))
-      out.push(q)
+      out.push({ ...q, sub: subId })
     }
   }
   return out
@@ -101,6 +101,21 @@ export function buildChallenge(strandId: string, seed: number): Question[] {
     out.push(...questionsFor(rng, order[i % order.length], [level], usedBank, seen, 3))
   })
   return out
+}
+
+/**
+ * A fresh question on the same idea, for "try one like it" after a miss: same sub-strand
+ * and level, different question.
+ */
+export function similarQuestion(missed: Question, seed: number): Question | null {
+  if (!missed.sub) return null
+  const rng = createRng(seed ^ hashString(`similar:${missed.sub}:${missed.prompt}`))
+  const seen = new Set([signature(missed)])
+  const bank = BANKS[missed.sub]
+  // A bank question is "like" the missed one only if it is not the same one.
+  const used = new Set(bank?.filter((b) => b.prompt === missed.prompt) ?? [])
+  const [q] = questionsFor(rng, missed.sub, [missed.level], used, seen, missed.level)
+  return q && signature(q) !== signature(missed) ? q : null
 }
 
 export function isCorrect(q: Question, response: string | number | string[]): boolean {
