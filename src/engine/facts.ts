@@ -10,6 +10,9 @@ export interface Category {
   /** "protective foods" */
   many: string
   items: string[]
+  /** Categories are only compared with others in the same set, so wrong answers are
+   * always the same kind of thing ("ways to…" against "ways to…", not against colours). */
+  set?: string
 }
 
 export interface PairSet {
@@ -50,11 +53,12 @@ const q = (level: Level, prompt: string, answer: string, wrong: string[], explai
   explain,
 })
 
-const others = (cats: Category[], c: Category) => cats.filter((x) => x !== c).flatMap((x) => x.items)
+const peers = (cats: Category[], c: Category) => cats.filter((x) => x !== c && (x.set ?? '') === (c.set ?? ''))
+const others = (cats: Category[], c: Category) => peers(cats, c).flatMap((x) => x.items)
 const list = (xs: string[]) => xs.join(', ')
 
 function fromCategories(rng: Rng, level: Level, cats: Category[], w: Wording): ChoiceQuestion {
-  const c = rng.pick(cats.filter((x) => x.items.length >= 3))
+  const c = rng.pick(cats.filter((x) => x.items.length >= 3 && others(cats, x).length >= 3))
   // Explanations are written in English; other languages fall back to the lesson's key idea.
   const en = w === ENGLISH
   const outside = others(cats, c)

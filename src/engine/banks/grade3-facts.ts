@@ -164,14 +164,16 @@ const ENV: Record<string, FactSet> = {
     categories: [
       { one: 'a source of heat', many: 'sources of heat', items: ['the sun', 'burning firewood', 'burning charcoal', 'an electric cooker', 'a gas cooker', 'a burning candle'] },
       { one: 'a use of heat', many: 'uses of heat', items: ['cooking food', 'boiling water', 'drying clothes', 'keeping warm', 'ironing clothes', 'baking bread'] },
-      { one: 'a heat safety rule', many: 'heat safety rules', items: ['keep away from a burning jiko', 'hold hot pots with a cloth', 'keep candles away from curtains', 'never play with matches'] },
+      { one: 'a heat safety rule', many: 'heat safety rules', items: ['keep away from a burning jiko', 'hold hot pots with a cloth', 'keep candles away from curtains', 'never play with matches'], set: 'b' },
+      { one: 'an unsafe thing to do near heat', many: 'unsafe things to do near heat', items: ['playing with matches', 'touching a hot sufuria', 'leaving a candle near curtains', 'running near a jiko'], set: 'b' },
     ],
   },
   'tv-water': {
     categories: [
       { one: 'a source of water', many: 'sources of water', items: ['rain', 'a river', 'a lake', 'a well', 'a borehole', 'a spring', 'a tap'] },
-      { one: 'a way of making water safe', many: 'ways of making water safe', items: ['boiling', 'filtering', 'adding water treatment tablets', 'covering the container'] },
-      { one: 'a way of saving water', many: 'ways of saving water', items: ['closing taps after use', 'repairing leaking pipes', 're-using washing water', 'harvesting rain water'] },
+      { one: 'a way of making water safe', many: 'ways of making water safe', items: ['boiling', 'filtering', 'adding water treatment tablets', 'covering the container'], set: 'b' },
+      { one: 'a way of saving water', many: 'ways of saving water', items: ['closing taps after use', 'repairing leaking pipes', 're-using washing water', 'harvesting rain water'], set: 'b' },
+      { one: 'a use of water', many: 'uses of water', items: ['drinking', 'cooking', 'bathing', 'watering crops', 'washing clothes'] },
     ],
     pairs: [
       {
@@ -186,7 +188,8 @@ const ENV: Record<string, FactSet> = {
   },
   'tv-plants': {
     categories: [
-      { one: 'a way of caring for plants', many: 'ways of caring for plants', items: ['watering', 'weeding', 'adding manure', 'mulching', 'fencing young trees', 'pruning'] },
+      { one: 'a way of caring for plants', many: 'ways of caring for plants', items: ['watering', 'weeding', 'adding manure', 'mulching', 'fencing young trees', 'pruning'], set: 'b' },
+      { one: 'a way of harming plants', many: 'ways of harming plants', items: ['stepping on seedlings', 'pulling off leaves', 'letting goats eat them', 'pouring soapy water on them'], set: 'b' },
       { one: 'a plant we eat', many: 'plants we eat', items: ['maize', 'beans', 'cassava', 'sukuma wiki', 'mango', 'banana'] },
       { one: 'a plant used as medicine', many: 'plants used as medicine', items: ['aloe vera', 'neem (mwarubaini)', 'lemon grass', 'moringa'] },
     ],
@@ -209,7 +212,8 @@ const ENV: Record<string, FactSet> = {
     categories: [
       { one: 'an animal product', many: 'animal products', items: ['milk', 'eggs', 'honey', 'meat', 'wool', 'hides and skins'] },
       { one: 'a plant product', many: 'plant products', items: ['maize', 'cotton', 'tea leaves', 'timber', 'sugarcane', 'beans'] },
-      { one: 'a way of caring for animals', many: 'ways of caring for animals', items: ['giving them clean water', 'feeding them well', 'cleaning their shed', 'taking them to the vet', 'spraying them against ticks'] },
+      { one: 'a way of caring for animals', many: 'ways of caring for animals', items: ['giving them clean water', 'feeding them well', 'cleaning their shed', 'taking them to the vet', 'spraying them against ticks'], set: 'b' },
+      { one: 'a way of mistreating animals', many: 'ways of mistreating animals', items: ['beating them', 'leaving them without water', 'overloading a donkey', 'keeping them in a dirty shed'], set: 'b' },
     ],
     pairs: [
       {
@@ -384,7 +388,8 @@ const CREATIVE: Record<string, FactSet> = {
     categories: [
       { one: 'a skipping skill', many: 'skipping skills', items: ['single skipping', 'group skipping', 'skipping on one leg', 'skipping backwards', 'double bounce'] },
       { one: 'a ball skill', many: 'ball skills', items: ['dribbling', 'passing', 'catching', 'shooting', 'kicking'] },
-      { one: 'a safety rule for skipping', many: 'safety rules for skipping', items: ['warm up first', 'land softly', 'skip on flat ground', 'use a rope that is not too long'] },
+      { one: 'a safety rule for skipping', many: 'safety rules for skipping', items: ['warm up first', 'land softly', 'skip on flat ground', 'use a rope that is not too long'], set: 'b' },
+      { one: 'an unsafe thing when skipping', many: 'unsafe things when skipping', items: ['skipping on stones', 'using a very long rope', 'skipping near a road', 'skipping in slippery shoes'], set: 'b' },
     ],
   },
   'tc-dribbling': {
@@ -427,7 +432,8 @@ const CREATIVE: Record<string, FactSet> = {
     categories: [
       { one: 'a balancing activity', many: 'balancing activities', items: ['standing on one leg', 'walking on a line', 'balancing a bean bag on your head', 'holding a still pose'] },
       { one: 'a rolling activity', many: 'rolling activities', items: ['forward roll', 'log roll', 'side roll', 'egg roll'] },
-      { one: 'a safety rule for rolling', many: 'safety rules for rolling', items: ['roll on a soft mat', 'tuck your chin in', 'one learner at a time', 'clear the mat first'] },
+      { one: 'a safety rule for rolling', many: 'safety rules for rolling', items: ['roll on a soft mat', 'tuck your chin in', 'one learner at a time', 'clear the mat first'], set: 'b' },
+      { one: 'an unsafe thing when rolling', many: 'unsafe things when rolling', items: ['rolling on stones', 'landing on your head', 'rolling while others roll', 'rolling with a pencil in your pocket'], set: 'b' },
     ],
   },
   'tc-water': {
@@ -473,7 +479,8 @@ const CRE: Record<string, FactSet> = {
     categories: [
       { one: 'a thing God created', many: 'things God created', items: ['the sun', 'the moon', 'the stars', 'animals', 'plants', 'the sea', 'people'] },
       { one: 'a thing people made', many: 'things people made', items: ['a car', 'a house', 'a chair', 'a phone', 'a bicycle', 'a radio'] },
-      { one: 'a way of caring for creation', many: 'ways of caring for creation', items: ['planting trees', 'feeding animals', 'keeping rivers clean', 'not wasting water'] },
+      { one: 'a way of caring for creation', many: 'ways of caring for creation', items: ['planting trees', 'feeding animals', 'keeping rivers clean', 'not wasting water'], set: 'b' },
+      { one: 'a way of harming creation', many: 'ways of harming creation', items: ['cutting all the trees', 'killing animals for fun', 'throwing litter in rivers', 'wasting water'], set: 'b' },
     ],
     pairs: [
       {
@@ -494,7 +501,8 @@ const CRE: Record<string, FactSet> = {
     categories: [
       { one: 'a member of the nuclear family', many: 'members of the nuclear family', items: ['father', 'mother', 'brother', 'sister'] },
       { one: 'a member of the extended family', many: 'members of the extended family', items: ['grandmother', 'grandfather', 'uncle', 'aunt', 'cousin'] },
-      { one: 'a way of showing love at home', many: 'ways of showing love at home', items: ['helping with chores', 'praying together', 'sharing food', 'caring for the sick'] },
+      { one: 'a way of showing love at home', many: 'ways of showing love at home', items: ['helping with chores', 'praying together', 'sharing food', 'caring for the sick'], set: 'b' },
+      { one: 'a way of hurting the family', many: 'ways of hurting the family', items: ['fighting with siblings', 'lying to parents', 'refusing to help', 'shouting at grandparents'], set: 'b' },
     ],
     pairs: [
       {

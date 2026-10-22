@@ -10,6 +10,10 @@ import { GRADE3_MORE_BANKS, GRADE3_MORE_GENERATORS } from './banks/grade3-more'
 import { GRADE3_FACT_GENERATORS } from './banks/grade3-facts'
 import { ENGLISH3_GRAMMAR } from './generators/english3-grammar'
 import { KISWAHILI3_GRAMMAR } from './generators/kiswahili3-grammar'
+import { MATH2_GENERATORS } from './generators/math2'
+import { GRADE2_BANKS, GRADE2_FACT_GENERATORS } from './banks/grade2'
+import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
+import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
 import { uid } from './helpers'
 import { createRng, hashString } from './rng'
 import type { BankQuestion, Generator, Level, Question, Rng } from './types'
@@ -17,8 +21,8 @@ import type { BankQuestion, Generator, Level, Question, Rng } from './types'
 export const QUIZ_LENGTH = 8
 export const CHALLENGE_LENGTH = 10
 
-const GENERATORS: Record<string, Generator> = { ...MATH_GENERATORS, ...ENGLISH_GENERATORS, ...KISWAHILI_GENERATORS, ...MATH3_GENERATORS, ...ENGLISH3_GENERATORS, ...GRADE3_MORE_GENERATORS, ...GRADE3_FACT_GENERATORS, ...ENGLISH3_GRAMMAR, ...KISWAHILI3_GRAMMAR }
-const BANKS: Record<string, BankQuestion[]> = { ...ENVIRONMENTAL_BANKS, ...ENGLISH_BANKS, ...KISWAHILI_BANKS, ...ENVIRONMENTAL3_BANKS, ...ENGLISH3_BANKS, ...GRADE3_MORE_BANKS }
+const GENERATORS: Record<string, Generator> = { ...MATH_GENERATORS, ...ENGLISH_GENERATORS, ...KISWAHILI_GENERATORS, ...MATH3_GENERATORS, ...ENGLISH3_GENERATORS, ...GRADE3_MORE_GENERATORS, ...GRADE3_FACT_GENERATORS, ...ENGLISH3_GRAMMAR, ...KISWAHILI3_GRAMMAR, ...MATH2_GENERATORS, ...ENGLISH2_GENERATORS, ...KISWAHILI2_GENERATORS, ...GRADE2_FACT_GENERATORS }
+const BANKS: Record<string, BankQuestion[]> = { ...ENVIRONMENTAL_BANKS, ...ENGLISH_BANKS, ...KISWAHILI_BANKS, ...ENVIRONMENTAL3_BANKS, ...ENGLISH3_BANKS, ...GRADE3_MORE_BANKS, ...ENGLISH2_BANKS, ...KISWAHILI2_BANKS, ...GRADE2_BANKS }
 
 export function hasSource(subId: string): boolean {
   return subId in GENERATORS || subId in BANKS

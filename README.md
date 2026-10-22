@@ -1,7 +1,7 @@
 # CBC Helper
 
 Calm, nature-themed practice for Kenyan learners on the Competency-Based Curriculum (CBC/CBE).
-Grades 1 and 3 are live; the other grades show as "Coming soon".
+Grades 1, 2 and 3 are live; the other grades show as "Coming soon".
 
 Learners pick a **world** (learning area) and walk a path **strand by strand**. Each
 sub-strand is a stop with five levels that grow like a tree:
@@ -17,6 +17,15 @@ sub-strand is a stop with five levels that grow like a tree:
 Each quiz has 8 questions and opens with two warm-ups one level lower. Passing (5/8) unlocks
 the next level. When every stop in a strand reaches Acacia, the strand's **Baobab Challenge**
 unlocks: 10 mixed questions at levels 4–5.
+
+## What's in Grade 2
+
+Six worlds: Maasai Mara (Maths), Mount Kenya Forest (English), Rift Valley Farms
+(Environmental), Fukwe za Malindi (Kiswahili), Lake Bogoria (Creative Activities) and Valley
+of Light (CRE): 63 sub-strands, each with a lesson and at least 15 different questions per
+level (stories: 5). Environmental Activities follows the published KICD design exactly; the
+other areas follow the lower-primary pattern and need checking against the KICD PDFs. See
+[`research/grade2-strands.md`](research/grade2-strands.md).
 
 ## What's in Grade 3
 
@@ -42,7 +51,7 @@ commercial papers (JESMA etc.) were used only as a guide to format and difficult
 
 ## Enough to practise for a term
 
-Every Grade 3 sub-strand has at least 15 different questions at every level (comprehension:
+Every Grade 2 and Grade 3 sub-strand has at least 15 different questions at every level (comprehension:
 7, because stories are written by hand), and most have hundreds. The test
 `src/engine/__tests__/depth.test.ts` keeps it that way. Quizzes mix two sources:
 
@@ -54,7 +63,7 @@ Every Grade 3 sub-strand has at least 15 different questions at every level (com
 
 ## Teaching, not just testing
 
-* **Lessons.** Every Grade 3 sub-strand has a short, read-aloud lesson with worked examples
+* **Lessons.** Every Grade 2 and Grade 3 sub-strand has a short, read-aloud lesson with worked examples
   (`src/lessons/`). A new sub-strand starts with its lesson; the lesson ends on one key
   idea to remember. Kiswahili lessons are written in Kiswahili.
 * **Mistakes explained.** A wrong answer shows why, then gives one unscored question on the

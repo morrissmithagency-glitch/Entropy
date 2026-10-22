@@ -1,6 +1,6 @@
 export type AreaKind = 'math' | 'english' | 'environmental' | 'kiswahili' | 'creative' | 'cre'
 export type AreaId = string
-export type GradeId = 'g1' | 'g3'
+export type GradeId = 'g1' | 'g2' | 'g3'
 
 export interface SubStrand {
   id: string

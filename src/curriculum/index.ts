@@ -1,4 +1,5 @@
 import { GRADE1 } from './grade1'
+import { GRADE2 } from './grade2'
 import { GRADE3 } from './grade3'
 import type { Grade, GradeId, LearningArea, Strand, SubStrand } from './types'
 
@@ -8,6 +9,7 @@ export const LEVEL_NAMES = ['Seed', 'Sprout', 'Sapling', 'Acacia', 'Baobab'] as 
 
 export const GRADES: Grade[] = [
   { id: 'g1', number: 1, label: 'Grade 1', areas: GRADE1 },
+  { id: 'g2', number: 2, label: 'Grade 2', areas: GRADE2 },
   { id: 'g3', number: 3, label: 'Grade 3', areas: GRADE3 },
 ]
 

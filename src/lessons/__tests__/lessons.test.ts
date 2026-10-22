@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { findGrade } from '../../curriculum'
 import { LESSONS } from '..'
 
-describe('Grade 3 lessons', () => {
-  const subs = findGrade('g3').areas.flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+describe('Grade 2 and 3 lessons', () => {
+  const subs = [findGrade('g2'), findGrade('g3')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
 
   it.each(subs.map((s) => [s.id]))('%s has a full lesson', (id) => {
     const lesson = LESSONS[id]

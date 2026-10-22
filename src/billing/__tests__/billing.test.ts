@@ -41,7 +41,7 @@ describe('phone numbers', () => {
 describe('what a plan opens', () => {
   const day = 86400_000
   const now = Date.UTC(2026, 9, 22)
-  const sub = (plan: Subscription['plan'], grade?: 'g1' | 'g3', expiresAt = now + day): Subscription => ({ plan, grade, expiresAt, receipt: 'X' })
+  const sub = (plan: Subscription['plan'], grade?: 'g1' | 'g2' | 'g3', expiresAt = now + day): Subscription => ({ plan, grade, expiresAt, receipt: 'X' })
 
   it('keeps the first strand of every world free', () => {
     for (const area of ALL_AREAS) {
