@@ -3,7 +3,8 @@ import { useNav } from '../App'
 import { ambient } from '../audio/ambient'
 import { sfx } from '../audio/sfx'
 import { GlassPane } from '../components/Glass'
-import { Kobe } from '../components/Kobe'
+import { KenyaFlag } from '../components/KenyaFlag'
+import { KobeWander } from '../components/KobeWander'
 import { NatureScene } from '../components/NatureScene'
 import { ReviewCard } from '../components/ReviewCard'
 import { CountUp } from '../components/motion'
@@ -34,7 +35,10 @@ export function Home() {
       <TopBar
         title={
           <span className="display wordmark">
-            CBC <em>Helper</em>
+            <KenyaFlag width={50} />
+            <span className="wm-text">
+              CBC <em>Helper</em>
+            </span>
           </span>
         }
         right={
@@ -114,9 +118,8 @@ export function Home() {
         </motion.div>
       </section>
 
-      <div className="home-kobe" aria-hidden>
-        <Kobe size={130} />
-      </div>
+      <KobeWander />
+      <div className="home-credit">Coded by M.N. Muturi</div>
     </main>
   )
 }

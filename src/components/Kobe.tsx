@@ -20,7 +20,22 @@ const LINES: Record<Reaction, string[]> = {
   peek: ['Friends?'],
 }
 
-export function Kobe({ mood = 'idle', size = 220, className, interactive = true }: { mood?: Mood; size?: number; className?: string; interactive?: boolean }) {
+interface KobeProps {
+  mood?: Mood
+  size?: number
+  className?: string
+  interactive?: boolean
+  /** Face left instead of right (the speech bubble never flips). */
+  flip?: boolean
+  /** Legs step while Kobe walks. */
+  walking?: boolean
+  /** Head dips to the grass. */
+  nibbling?: boolean
+  /** Told when a child pokes Kobe, so whatever moves Kobe can pause. */
+  onPoke?: () => void
+}
+
+export function Kobe({ mood = 'idle', size = 220, className, interactive = true, flip = false, walking = false, nibbling = false, onPoke }: KobeProps) {
   const ref = useRef<SVGSVGElement>(null)
   const [reaction, setReaction] = useState<Reaction | null>(null)
   const [line, setLine] = useState<string | null>(null)
@@ -35,15 +50,17 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true 
   const body = useAnimationControls()
   const arm = useAnimationControls()
   const pid = useId().replace(/:/g, '')
+  const flipRef = useRef(flip)
+  flipRef.current = flip
 
   // Eyes follow the pointer anywhere on the page.
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       const r = ref.current?.getBoundingClientRect()
       if (!r) return
-      const cx = r.left + r.width * 0.78
+      const cx = r.left + r.width * (flipRef.current ? 0.22 : 0.78)
       const cy = r.top + r.height * 0.5
-      const dx = e.clientX - cx
+      const dx = (e.clientX - cx) * (flipRef.current ? -1 : 1)
       const dy = e.clientY - cy
       const d = Math.hypot(dx, dy) || 1
       const k = Math.min(1, d / 260)
@@ -100,6 +117,7 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true 
     p.count = now - p.last > 2600 ? 1 : p.count + 1
     p.last = now
     haptic('tap')
+    onPoke?.()
     if (p.count <= 2) {
       say('giggle', 1100)
       void body.start({ scaleY: [1, 0.86, 1.06, 1], scaleX: [1, 1.08, 0.97, 1], transition: { duration: 0.5 } })
@@ -160,11 +178,12 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true 
         </clipPath>
       </defs>
       {/* breathing wrapper */}
+      <g transform={flip ? 'translate(230 0) scale(-1 1)' : undefined}>
       <motion.g animate={{ scaleY: [1, 1.018, 1] }} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }} style={{ originY: 1 }}>
         <ellipse cx="112" cy="166" rx="88" ry="10" fill={INK} opacity="0.16" />
         <motion.g animate={body}>
           {/* back legs */}
-          <motion.g animate={{ y: tucked ? -22 : 0 }} transition={{ duration: 0.25 }}>
+          <motion.g animate={{ y: tucked ? -22 : walking ? [0, -6, 0, 0] : 0 }} transition={tucked || !walking ? { duration: 0.25 } : { duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}>
             <path d="M42 120c-6 18-2 34 10 38h16c4-10 4-24 0-38z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
             <path d="M142 122c-4 16-2 30 6 36h16c6-10 6-24 2-36z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
           </motion.g>
@@ -180,14 +199,18 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true 
             <circle key={i} cx={30 + i * 11.4} cy={122} r={2.3} fill="#e6c07e" />
           ))}
           {/* front legs */}
-          <motion.g animate={{ y: tucked ? -26 : 0 }} transition={{ duration: 0.25 }}>
+          <motion.g animate={{ y: tucked ? -26 : walking ? [0, 0, -6, 0] : 0 }} transition={tucked || !walking ? { duration: 0.25 } : { duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}>
             <path d="M60 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
             <motion.g animate={arm} style={{ originX: 0.5, originY: 0.05 }}>
               <path d="M160 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
             </motion.g>
           </motion.g>
           {/* neck + head (pulled into the shell when Kobe hides) */}
-          <motion.g animate={tucked ? { x: -34, y: 18, scale: 0.4, opacity: 0 } : { x: 0, y: 0, scale: 1, opacity: 1 }} transition={{ duration: tucked ? 0.22 : 0.5, ease: 'easeOut' }} style={{ originX: 0, originY: 1 }}>
+          <motion.g
+            animate={tucked ? { x: -34, y: 18, scale: 0.4, opacity: 0, rotate: 0 } : nibbling ? { x: [0, 4, 4, 0], y: [0, 16, 14, 0], scale: 1, opacity: 1, rotate: [0, 14, 12, 0] } : { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0 }}
+            transition={tucked ? { duration: 0.22, ease: 'easeOut' } : nibbling ? { duration: 1.4, repeat: Infinity, repeatDelay: 0.3, ease: 'easeInOut' } : { duration: 0.5, ease: 'easeOut' }}
+            style={{ originX: 0, originY: 1 }}
+          >
           <path d="M172 104c4-14 12-22 20-24l10 26c-8 8-20 10-30-2z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
           <g>
             <ellipse cx="192" cy="78" rx="32" ry="29" fill={SKIN} stroke={INK} strokeWidth="3.2" />
@@ -242,6 +265,7 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true 
           </motion.g>
         </motion.g>
       </motion.g>
+      </g>
       <AnimatePresence>
         {line && (
           <motion.g
