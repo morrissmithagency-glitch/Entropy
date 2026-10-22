@@ -312,9 +312,11 @@ function fracOptions(rng: Rng, answer: string, wrong: string[]): Option[] {
 export const frac3: Generator = (rng, level) => {
   switch (level) {
     case 1: {
-      const parts = rng.pick([2, 3, 4])
+      const parts = rng.pick([2, 3, 4, 5, 6, 8])
       const shape = rng.pick(['circle', 'bar'] as const)
-      return choice('m3', level, 'What fraction is shaded?', fracOptions(rng, `1/${parts}`, ['1/2', '1/3', '1/4', '1/8']), `1/${parts}`, {
+      if (rng.next() < 0.4)
+        return num(level, 'Into how many equal parts is this whole cut?', parts, { visual: { kind: 'fraction', parts, shaded: 0, shape }, explain: `Count the equal parts: ${parts}.` })
+      return choice('m3', level, 'What fraction is shaded?', fracOptions(rng, `1/${parts}`, ['1/2', '1/3', '1/4', '1/5', '1/6', '1/8'].filter((f) => f !== `1/${parts}`)), `1/${parts}`, {
         visual: { kind: 'fraction', parts, shaded: 1, shape },
         explain: `1 out of ${parts} equal parts is shaded: 1/${parts}.`,
       })
@@ -341,6 +343,14 @@ export const frac3: Generator = (rng, level) => {
         const ans = bigger ? '1/2' : '1/8'
         return choice('m3', level, `Which fraction is the ${bigger ? 'biggest' : 'smallest'}?`, rng.shuffle(['1/2', '1/4', '1/8']).map((f) => ({ id: f, label: f })), ans, {
           explain: 'The more equal parts a whole is cut into, the smaller each part. 1/2 > 1/4 > 1/8.',
+        })
+      }
+      if (rng.next() < 0.4) {
+        const [whole, part] = rng.pick([[2, 4], [2, 8], [4, 8], [3, 6]])
+        const k = part / whole
+        return num(level, `1/${whole} = ?/${part}  (How many ${part === 4 ? 'quarters' : part === 6 ? 'sixths' : 'eighths'} make one ${whole === 2 ? 'half' : whole === 4 ? 'quarter' : 'third'}?)`, k, {
+          visual: { kind: 'fraction', parts: part, shaded: k, shape: 'bar' },
+          explain: `Cut each 1/${whole} into ${k} pieces: 1/${whole} = ${k}/${part}.`,
         })
       }
       const d = rng.pick([3, 8])
@@ -371,11 +381,24 @@ function measure(unit: 'm' | 'kg' | 'litres', what: { add: string[]; sub: string
       case 1: {
         const q = rng.pick<[string, string]>([
           ['the length of a classroom', 'metres'],
-          ['the mass of a bag of maize', 'kilograms'],
-          ['the water in a jerrycan', 'litres'],
           ['the length of a road', 'metres'],
-          ['the milk in a cow\'s bucket', 'litres'],
+          ['the length of a rope', 'metres'],
+          ['the length of a football pitch', 'metres'],
+          ['the height of a door', 'metres'],
+          ['the length of a piece of cloth', 'metres'],
+          ['the length of the school fence', 'metres'],
+          ['the mass of a bag of maize', 'kilograms'],
           ['the mass of a sack of potatoes', 'kilograms'],
+          ['the mass of a goat', 'kilograms'],
+          ['the mass of a bag of cement', 'kilograms'],
+          ['the mass of a pumpkin', 'kilograms'],
+          ['the mass of a packet of sugar', 'kilograms'],
+          ['the water in a jerrycan', 'litres'],
+          ['the milk in a cow\'s bucket', 'litres'],
+          ['the water in a tank', 'litres'],
+          ['the paraffin in a tin', 'litres'],
+          ['the juice in a jug', 'litres'],
+          ['the cooking oil in a bottle', 'litres'],
         ])
         return choice('m3', level, `Which unit do we use to measure ${q[0]}?`, textOptions(rng, q[1], ['metres', 'kilograms', 'litres']), q[1], { explain: `We measure ${q[0]} in ${q[1]}.` })
       }
@@ -393,6 +416,17 @@ function measure(unit: 'm' | 'kg' | 'litres', what: { add: string[]; sub: string
       case 4: {
         const small = rng.pick([2, 5, 10])
         const k = rng.int(3, 10)
+        if (rng.next() < 0.5)
+          return num(
+            level,
+            unit === 'm'
+              ? `${k} pieces of rope, each ${small} m long, are tied end to end. How many metres long is the rope?`
+              : unit === 'kg'
+                ? `${k} cans of ${small} kg each are packed in a box. What is their total mass in kilograms?`
+                : `${k} tins of ${small} litres each are poured into a drum. How many litres are in the drum?`,
+            small * k,
+            { explain: `${k} × ${small} = ${small * k} ${unitWord}` },
+          )
         return num(level, `How many ${small}${u} ${what.fill[1]} can fill a ${small * k}${u} ${what.fill[0]}?`, k, { explain: `${small * k} ÷ ${small} = ${k}` })
       }
       default: {
@@ -439,12 +473,27 @@ function clockLabel(h: number, m: number) {
 export const time3: Generator = (rng, level) => {
   switch (level) {
     case 1: {
+      if (rng.next() < 0.5) {
+        const h = rng.int(1, 12)
+        return choice('m3', level, 'What is the time?', textOptions(rng, clockLabel(h, 0), [clockLabel((h % 12) + 1, 0), clockLabel(((h + 10) % 12) + 1, 0), clockLabel(((h + 4) % 12) + 1, 0)], 3), clockLabel(h, 0), {
+          visual: { kind: 'clock', hour: h, minute: 0 },
+          explain: `The long hand is on 12, so it is o'clock. The short hand is on ${h}.`,
+        })
+      }
       const order = ['first', 'second', 'third', 'fourth', 'fifth']
       const i = rng.int(0, 4)
       return choice('m3', level, `Monday is the first school day. Which day is the ${order[i]} school day?`, textOptions(rng, DAYS[i], DAYS.slice(0, 5), 4), DAYS[i], { explain: `${DAYS.slice(0, i + 1).join(', ')}.` })
     }
     case 2: {
-      if (rng.next() < 0.4) return num(level, 'How many months are there in one year?', 12, { explain: 'January to December: 12 months.' })
+      const r = rng.next()
+      if (r < 0.15) return num(level, 'How many months are there in one year?', 12, { explain: 'January to December: 12 months.' })
+      if (r < 0.5) {
+        const h = rng.int(1, 12)
+        return choice('m3', level, 'What is the time?', textOptions(rng, clockLabel(h, 30), [clockLabel(h, 0), clockLabel((h % 12) + 1, 30), clockLabel(((h + 10) % 12) + 1, 30)], 3), clockLabel(h, 30), {
+          visual: { kind: 'clock', hour: h, minute: 30 },
+          explain: `The long hand is on 6, so it is half past. The short hand is just past ${h}.`,
+        })
+      }
       const i = rng.int(0, 10)
       return choice('m3', level, `Which month comes after ${MONTHS[i][0]}?`, textOptions(rng, MONTHS[i + 1][0], MONTHS.map((m) => m[0]), 4), MONTHS[i + 1][0], { explain: `${MONTHS[i][0]}, then ${MONTHS[i + 1][0]}.` })
     }
@@ -547,33 +596,123 @@ export const money3: Generator = (rng, level) => {
 
 const FIG_COUNT = { 'rect-diag': 2, tri2: 3, tri4: 5, tri3: 6, 'rect-cross': 8 } as const
 
+// Everyday things and the flat shape they are like.
+const SHAPED: [string, ShapeKind][] = [
+  ['a clock face', 'circle'],
+  ['a coin', 'circle'],
+  ['a plate', 'circle'],
+  ['the top of a cup', 'circle'],
+  ['a door', 'rectangle'],
+  ['an exercise book', 'rectangle'],
+  ['a blackboard', 'rectangle'],
+  ['an envelope', 'rectangle'],
+  ['a samosa', 'triangle'],
+  ['a "give way" road sign', 'triangle'],
+  ['a mandazi cut corner to corner', 'triangle'],
+  ['a floor tile', 'square'],
+  ['a handkerchief', 'square'],
+  ['a chessboard', 'square'],
+  ['an egg', 'oval'],
+  ['a rugby ball', 'oval'],
+]
+const SIDES: Record<string, number> = { triangle: 3, square: 4, rectangle: 4 }
+
 export const shapes3: Generator = (rng, level) => {
   const COLORS = ['#e0876a', '#5fa39a', '#e9c46a', '#6c8ebf']
+  const ALL: ShapeKind[] = ['circle', 'triangle', 'rectangle', 'square', 'oval']
   switch (level) {
     case 1: {
-      const want = rng.pick<ShapeKind>(['circle', 'triangle', 'rectangle', 'square', 'oval'])
-      const others = rng.sample((['circle', 'triangle', 'rectangle', 'square', 'oval'] as ShapeKind[]).filter((s) => s !== want), 2)
+      if (rng.next() < 0.5) {
+        const [thing, shape] = rng.pick(SHAPED)
+        return choice('m3', level, `${thing[0].toUpperCase()}${thing.slice(1)} is shaped like a ___.`, textOptions(rng, shape, ALL), shape, { explain: `${thing} is like a ${shape}.` })
+      }
+      const want = rng.pick(ALL)
+      const others = rng.sample(ALL.filter((s) => s !== want), 2)
       const opts = rng.shuffle([want, ...others]).map((k, i) => ({ id: k, visual: { kind: 'shapes' as const, shapes: [{ kind: k, color: COLORS[i] }] } }))
       return choice('m3', level, `Which one is ${want === 'oval' ? 'an oval' : `a ${want}`}?`, opts, want)
     }
     case 2: {
+      const r = rng.next()
+      if (r < 0.4) {
+        const [prompt, ans] = rng.pick([
+          ['Which shape has 3 sides?', 'triangle'],
+          ['Which shape has 4 equal sides?', 'square'],
+          ['Which shape has 2 long sides and 2 short sides?', 'rectangle'],
+          ['Which shape is perfectly round with no corners?', 'circle'],
+          ['Which shape has 3 corners?', 'triangle'],
+        ] as const)
+        const wrong = ALL.filter((x) => x !== ans && !(ans === 'circle' && x === 'oval'))
+        return choice('m3', level, prompt, textOptions(rng, ans, wrong, 3), ans)
+      }
       const k = rng.pick<ShapeKind>(['triangle', 'rectangle', 'square'])
       const ask = rng.pick(['sides', 'corners'])
-      const n = k === 'triangle' ? 3 : 4
+      const n = SIDES[k]
       return num(level, `How many ${ask} does a ${k} have?`, n, { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS) }] }, explain: `A ${k} has ${n} ${ask}.` })
     }
-    case 3:
-    case 4:
-    case 5: {
-      const fig = level === 3 ? rng.pick(['rect-diag', 'tri2'] as const) : level === 4 ? rng.pick(['tri4', 'tri3'] as const) : 'rect-cross'
+    case 3: {
+      if (rng.next() < 0.5) {
+        const k = rng.pick<ShapeKind>(['triangle', 'rectangle', 'square'])
+        const c = rng.int(2, 5)
+        const ask = rng.pick(['sides', 'corners'])
+        return num(level, `How many ${ask} do ${c} ${k}s have altogether?`, c * SIDES[k], {
+          visual: { kind: 'shapes', shapes: Array.from({ length: c }, (_, i) => ({ kind: k, color: COLORS[i % 4] })) },
+          explain: `${c} × ${SIDES[k]} = ${c * SIDES[k]}.`,
+        })
+      }
+      const fig = rng.pick(['rect-diag', 'tri2'] as const)
       return num(level, 'How many triangles are there? Look for big ones too!', FIG_COUNT[fig], {
         visual: { kind: 'figure', figure: fig },
-        explain: fig === 'tri4' ? '4 small triangles + 1 big triangle = 5.' : fig === 'tri3' ? '3 small, 2 made of two, and 1 big = 6.' : fig === 'tri2' ? '2 small + 1 big = 3.' : fig === 'rect-cross' ? '4 small triangles + 4 made of two small ones = 8.' : 'One line cuts the rectangle into 2 triangles.',
+        explain: fig === 'tri2' ? '2 small + 1 big = 3.' : 'One line cuts the rectangle into 2 triangles.',
       })
+    }
+    case 4: {
+      const r = rng.next()
+      if (r < 0.35) {
+        const t = rng.int(1, 4)
+        const q = rng.int(1, 4)
+        return num(level, `${t} triangle${t > 1 ? 's' : ''} and ${q} square${q > 1 ? 's' : ''}. How many corners altogether?`, t * 3 + q * 4, {
+          visual: { kind: 'shapes', shapes: [...Array.from({ length: t }, () => ({ kind: 'triangle' as const, color: COLORS[0] })), ...Array.from({ length: q }, () => ({ kind: 'square' as const, color: COLORS[1] }))] },
+          explain: `${t} × 3 + ${q} × 4 = ${t * 3 + q * 4}.`,
+        })
+      }
+      if (r < 0.7) {
+        const unit = rng.sample(ALL, rng.pick([2, 3]))
+        const seq = Array.from({ length: unit.length * 2 + 1 }, (_, i) => unit[i % unit.length])
+        const gap = rng.int(unit.length, seq.length - 1)
+        const ans = seq[gap]
+        const opts = rng.shuffle([ans, ...rng.sample(ALL.filter((x) => x !== ans), 2)]).map((k, i) => ({ id: k, visual: { kind: 'shapes' as const, shapes: [{ kind: k, color: COLORS[i] }] } }))
+        return choice('m3', level, 'Which shape is missing from the pattern?', opts, ans, {
+          visual: { kind: 'pattern', items: seq.map((k, i) => (i === gap ? null : { kind: k, color: COLORS[unit.indexOf(k)] })) },
+          explain: `The pattern repeats: ${unit.join(', ')}.`,
+        })
+      }
+      const fig = rng.pick(['tri4', 'tri3'] as const)
+      return num(level, 'How many triangles are there? Look for big ones too!', FIG_COUNT[fig], {
+        visual: { kind: 'figure', figure: fig },
+        explain: fig === 'tri4' ? '4 small triangles + 1 big triangle = 5.' : '3 small, 2 made of two, and 1 big = 6.',
+      })
+    }
+    default: {
+      const r = rng.next()
+      if (r < 0.4) {
+        const fig = rng.pick(['rect-cross', 'tri3', 'tri4'] as const)
+        return num(level, 'How many triangles are there? Look for big ones too!', FIG_COUNT[fig], {
+          visual: { kind: 'figure', figure: fig },
+          explain: fig === 'rect-cross' ? '4 small triangles + 4 made of two small ones = 8.' : fig === 'tri3' ? '3 small, 2 made of two, and 1 big = 6.' : '4 small triangles + 1 big triangle = 5.',
+        })
+      }
+      if (r < 0.7) {
+        const total = rng.pick([12, 15, 18, 21, 24])
+        const per = rng.pick([3, 4].filter((x) => total % x === 0))
+        const shape = per === 3 ? 'triangles' : 'squares'
+        return num(level, `${name(rng)} used ${total} sticks to make ${shape}, using one stick for each side. How many ${shape} were made?`, total / per, { explain: `Each one needs ${per} sticks: ${total} ÷ ${per} = ${total / per}.` })
+      }
+      const t = rng.int(2, 5)
+      const rect = rng.int(2, 5)
+      return num(level, `How many sides do ${t} triangles and ${rect} rectangles have altogether?`, t * 3 + rect * 4, { explain: `${t} × 3 = ${t * 3}, ${rect} × 4 = ${rect * 4}, total ${t * 3 + rect * 4}.` })
     }
   }
 }
-
 
 // ── Number concept ──────────────────────────────────────────────────────────
 
@@ -684,19 +823,33 @@ export const position3: Generator = (rng, level) => {
       const start = rng.int(0, 3)
       const right = rng.next() < 0.5
       const ans = ROOM[(start + (right ? 1 : 3)) % 4]
+      if (rng.next() < 0.5) {
+        const row = rng.sample(ROW_ART, 6)
+        const k = rng.int(1, 4)
+        const side = rng.pick(['left', 'right'] as const)
+        const target = side === 'right' ? row[5 - (k - 1)] : row[k - 1]
+        const next = side === 'right' ? row[5 - k] : row[k]
+        return choice('m3', level, `Count from the ${side}. Which picture comes just after the ${ORD[k - 1]} one?`, artOpts(rng.shuffle([next, target, rng.pick(row.filter((x) => x !== next && x !== target))])), next, {
+          visual: { kind: 'art', art: row },
+          explain: `From the ${side}, the ${ORD[k - 1]} is the ${target} and the next one is the ${next}.`,
+        })
+      }
       return choice('m3', level, `In our classroom the blackboard is in front, the door is on the right, the window is on the left and the back wall is behind. You face ${ROOM[start]} and turn ${right ? 'right' : 'left'}. What do you face now?`, ROOM.map((r) => ({ id: r, label: r })), ans, {
         explain: `A quarter turn to the ${right ? 'right' : 'left'} from ${ROOM[start]} faces ${ans}.`,
       })
     }
     case 4: {
       const start = rng.int(0, 3)
-      const kind = rng.pick(['half', 'full', 'two-right'] as const)
-      const steps = kind === 'half' || kind === 'two-right' ? 2 : 4
+      const [words, steps, why] = rng.pick([
+        ['make a half turn', 2, 'A half turn faces the opposite side.'],
+        ['make a full turn', 4, 'A full turn brings you back to where you started.'],
+        ['turn right two times', 2, 'Two quarter turns make a half turn.'],
+        ['turn left two times', 2, 'Two quarter turns make a half turn, whichever way you turn.'],
+        ['turn right, then turn left', 0, 'A right turn and a left turn cancel out.'],
+        ['make a half turn to the left', 2, 'A half turn faces the opposite side, left or right.'],
+      ] as const)
       const ans = ROOM[(start + steps) % 4]
-      const words = kind === 'half' ? 'make a half turn' : kind === 'full' ? 'make a full turn' : 'turn right two times'
-      return choice('m3', level, `The blackboard is in front, the door on the right, the window on the left, the back wall behind. You face ${ROOM[start]} and ${words}. What do you face now?`, ROOM.map((r) => ({ id: r, label: r })), ans, {
-        explain: kind === 'full' ? 'A full turn brings you back to where you started.' : 'Two quarter turns make a half turn: you face the opposite side.',
-      })
+      return choice('m3', level, `The blackboard is in front, the door on the right, the window on the left, the back wall behind. You face ${ROOM[start]} and ${words}. What do you face now?`, ROOM.map((r) => ({ id: r, label: r })), ans, { explain: why })
     }
     default: {
       if (rng.next() < 0.5) {

@@ -18,10 +18,17 @@ const WORD_SETS: string[][] = [
 ]
 // Same first letter: the learner must look at the second letter.
 const HARD_SETS: string[][] = [
-  ['bread', 'bean', 'banana', 'butter', 'biscuit'],
-  ['make', 'mango', 'melon', 'milk', 'mother'],
-  ['sing', 'sand', 'soap', 'sugar', 'seed'],
-  ['tree', 'table', 'tomato', 'tiger', 'tea'],
+  ['bread', 'bean', 'banana', 'butter', 'biscuit', 'bottle'],
+  ['make', 'mango', 'melon', 'milk', 'mother', 'market'],
+  ['sing', 'sand', 'soap', 'sugar', 'seed', 'salt'],
+  ['tree', 'table', 'tomato', 'tiger', 'tea', 'tooth'],
+  ['cat', 'cow', 'cup', 'chair', 'clock', 'coat'],
+  ['goat', 'grass', 'girl', 'gate', 'guava', 'gift'],
+  ['pen', 'pot', 'paper', 'plate', 'pumpkin', 'pig'],
+  ['dog', 'drum', 'door', 'duck', 'desk', 'dish'],
+  ['fish', 'farm', 'flag', 'food', 'friend', 'fork'],
+  ['hen', 'house', 'hat', 'hill', 'hoe', 'hand'],
+  ['rain', 'river', 'road', 'rope', 'ruler', 'rice'],
 ]
 
 export const alphabetical: Generator = (rng, level) => {
@@ -248,6 +255,35 @@ export const BUILD3: BankQuestion[] = [
 ]
 
 export const COMP3: BankQuestion[] = [
+  ...passage(1, 'My Cat', 'I have a black cat called Simba. Simba likes milk. He sleeps on my bed every night.', [
+    ['What is the name of the cat?', 'Simba', ['Tom', 'Kitty']],
+    ['What colour is the cat?', 'black', ['white', 'brown']],
+    ['Where does Simba sleep?', 'on my bed', ['in the kitchen', 'under a tree']],
+  ]),
+  ...passage(1, 'At the River', 'Wafula went to the river with his father. They caught three fish. Mother cooked the fish for supper.', [
+    ['Who went to the river with Wafula?', 'his father', ['his mother', 'his teacher']],
+    ['How many fish did they catch?', '3', ['2', '4']],
+    ['Who cooked the fish?', 'Mother', ['Father', 'Wafula']],
+  ]),
+  ...passage(2, 'Sports Shoes', 'Halima wanted new shoes for sports day. Her mother gave her two hundred shillings. At the market Halima found white shoes for one hundred and fifty shillings. She bought them and kept the change in her pocket.', [
+    ['Why did Halima want new shoes?', 'for sports day', ['for church', 'for a wedding']],
+    ['How much money did Mother give her?', '200 shillings', ['150 shillings', '50 shillings']],
+    ['What colour were the shoes?', 'white', ['black', 'blue']],
+    ['How much change did Halima get?', '50 shillings', ['200 shillings', '150 shillings']],
+  ]),
+  ...passage(3, 'The Clever Hare', 'One hot afternoon Hare was thirsty, but Elephant stood in the only path to the water. Hare said, "Elephant, the lions are coming this way!" Elephant ran into the bush. Hare drank as much water as he wanted. When Elephant came back, Hare was sleeping under a tree.', [
+    ['How was the weather?', 'hot', ['cold', 'rainy', 'windy']],
+    ['What did Hare want?', 'water', ['food', 'a friend', 'a house']],
+    ['Why did Elephant run into the bush?', 'He thought lions were coming.', ['He was thirsty.', 'He was tired.', 'Hare chased him.']],
+    ['Which word best describes Hare?', 'clever', ['lazy', 'kind', 'slow']],
+  ]),
+  ...passage(4, 'The School Garden', 'Grade 3 started a school garden in March. Each learner brought one seedling. There were twenty-five learners, so they planted twenty-five seedlings. Goats ate four of them, so the class built a fence of sticks. By July, the cabbages were big enough to eat, and the school cook used them for lunch.', [
+    ['When did Grade 3 start the garden?', 'in March', ['in July', 'in January', 'in May']],
+    ['How many seedlings were planted?', '25', ['4', '21', '29']],
+    ['How many seedlings were left after the goats ate some?', '21', ['25', '29', '4']],
+    ['Why did the class build a fence?', 'to keep goats away', ['to grow more cabbages', 'to play games', 'to sell sticks']],
+    ['Who used the cabbages?', 'the school cook', ['the goats', 'the head teacher', 'the parents']],
+  ]),
   ...passage(1, 'The New Bicycle', 'Halima got a new bicycle on her birthday. It was blue with a small bell. She rode it to her grandmother\'s house.', [
     ['What did Halima get?', 'a bicycle', ['a doll', 'a book']],
     ['What colour was it?', 'blue', ['red', 'green']],

@@ -40,6 +40,18 @@ The curriculum mapping, sources and confidence levels are in
 [`research/grade1-strands.md`](research/grade1-strands.md). All questions are original:
 commercial papers (JESMA etc.) were used only as a guide to format and difficulty.
 
+## Enough to practise for a term
+
+Every Grade 3 sub-strand has at least 15 different questions at every level (comprehension:
+7, because stories are written by hand), and most have hundreds. The test
+`src/engine/__tests__/depth.test.ts` keeps it that way. Quizzes mix two sources:
+
+* **Written questions** for stories, reasoning and "what should you do" situations.
+* **Question makers**: maths generators, English and Kiswahili grammar makers built on
+  checked word tables (verbs, comparing words, *kukanusha*, *hili/haya*, *yeye/wao*), and
+  fact tables for Environmental, Creative and CRE (`src/engine/banks/grade3-facts.ts`) that
+  produce "Which one is…", "Which one is NOT…" and "Which group has only…" questions.
+
 ## Teaching, not just testing
 
 * **Lessons.** Every Grade 3 sub-strand has a short, read-aloud lesson with worked examples

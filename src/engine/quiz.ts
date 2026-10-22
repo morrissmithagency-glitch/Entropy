@@ -7,6 +7,9 @@ import { MATH3_GENERATORS } from './generators/math3'
 import { ENGLISH3_BANKS, ENGLISH3_GENERATORS } from './generators/english3'
 import { ENVIRONMENTAL3_BANKS } from './banks/environmental3'
 import { GRADE3_MORE_BANKS, GRADE3_MORE_GENERATORS } from './banks/grade3-more'
+import { GRADE3_FACT_GENERATORS } from './banks/grade3-facts'
+import { ENGLISH3_GRAMMAR } from './generators/english3-grammar'
+import { KISWAHILI3_GRAMMAR } from './generators/kiswahili3-grammar'
 import { uid } from './helpers'
 import { createRng, hashString } from './rng'
 import type { BankQuestion, Generator, Level, Question, Rng } from './types'
@@ -14,7 +17,7 @@ import type { BankQuestion, Generator, Level, Question, Rng } from './types'
 export const QUIZ_LENGTH = 8
 export const CHALLENGE_LENGTH = 10
 
-const GENERATORS: Record<string, Generator> = { ...MATH_GENERATORS, ...ENGLISH_GENERATORS, ...KISWAHILI_GENERATORS, ...MATH3_GENERATORS, ...ENGLISH3_GENERATORS, ...GRADE3_MORE_GENERATORS }
+const GENERATORS: Record<string, Generator> = { ...MATH_GENERATORS, ...ENGLISH_GENERATORS, ...KISWAHILI_GENERATORS, ...MATH3_GENERATORS, ...ENGLISH3_GENERATORS, ...GRADE3_MORE_GENERATORS, ...GRADE3_FACT_GENERATORS, ...ENGLISH3_GRAMMAR, ...KISWAHILI3_GRAMMAR }
 const BANKS: Record<string, BankQuestion[]> = { ...ENVIRONMENTAL_BANKS, ...ENGLISH_BANKS, ...KISWAHILI_BANKS, ...ENVIRONMENTAL3_BANKS, ...ENGLISH3_BANKS, ...GRADE3_MORE_BANKS }
 
 export function hasSource(subId: string): boolean {
@@ -38,9 +41,9 @@ export function signature(q: Question): string {
   return `${q.prompt}::${visual}::${ans}`
 }
 
-function fromBank(rng: Rng, bank: BankQuestion[], level: Level, used: Set<BankQuestion>, floor = 1): Question | null {
+function fromBank(rng: Rng, bank: BankQuestion[], level: Level, used: Set<BankQuestion>, floor = 1, exact = false): Question | null {
   // Prefer the exact level, then step outward: below first (easier), then above.
-  for (const d of [0, -1, 1, -2, 2, -3, 3, -4, 4]) {
+  for (const d of exact ? [0] : [0, -1, 1, -2, 2, -3, 3, -4, 4]) {
     const pool = bank.filter((b) => b.level === level + d && b.level >= floor && !used.has(b))
     if (pool.length) {
       const pick = rng.pick(pool)
@@ -59,18 +62,24 @@ function fromBank(rng: Rng, bank: BankQuestion[], level: Level, used: Set<BankQu
 }
 
 function questionsFor(rng: Rng, subId: string, levels: Level[], usedBank: Set<BankQuestion>, seen: Set<string>, floor = 1): Question[] {
-  const gen = GENERATORS[subId]
-  const bank = BANKS[subId]
+  const gen = GENERATORS[subId] as Generator | undefined
+  const bank = BANKS[subId] as BankQuestion[] | undefined
   const out: Question[] = []
   for (const level of levels) {
     let q: Question | null = null
-    if (gen) {
+    // Sub-strands with both: half the questions come from the written bank (story and
+    // reasoning questions), half from the question maker (endless variety).
+    if (gen && bank && rng.next() < 0.5) {
+      const b = fromBank(rng, bank, level, usedBank, floor, true)
+      if (b && !seen.has(signature(b))) q = b
+    }
+    if (!q && gen) {
       // Avoid repeats, but a small pool (five vowels…) may have to repeat eventually.
       for (let attempt = 0; attempt < 25; attempt++) {
         q = gen(rng, level)
         if (!seen.has(signature(q))) break
       }
-    } else if (bank) {
+    } else if (!q && bank) {
       q = fromBank(rng, bank, level, usedBank, floor)
     }
     if (q) {

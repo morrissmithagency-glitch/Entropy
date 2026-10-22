@@ -149,6 +149,51 @@ const KINYUME3: BankQuestion[] = [
 ]
 
 const UFAHAMU3: BankQuestion[] = [
+  t(1, 'Soma: "Juma ana kuku watano." Juma ana kuku wangapi?', 'watano', ['wanne', 'sita']),
+  t(1, 'Soma: "Leo ni Jumatatu. Tunaenda shuleni." Leo ni siku gani?', 'Jumatatu', ['Jumapili', 'Ijumaa']),
+  t(1, 'Soma: "Paka wetu ni mweupe." Paka ana rangi gani?', 'nyeupe', ['nyeusi', 'kahawia']),
+  ...passage(1, 'Mbuzi wa Saida', 'Saida ana mbuzi mweusi. Mbuzi huyo anapenda kula majani. Saida humpa maji kila jioni.', [
+    ['Saida ana mnyama gani?', 'mbuzi', ['ng\'ombe', 'kuku']],
+    ['Mbuzi anapenda kula nini?', 'majani', ['mahindi', 'nyama']],
+    ['Saida humpa mbuzi maji lini?', 'kila jioni', ['kila asubuhi', 'Jumapili']],
+  ]),
+  ...passage(2, 'Sokoni', 'Jumamosi, Mama na Wanjiru walienda sokoni. Walinunua nyanya, vitunguu na sukuma wiki. Mama alilipa shilingi mia moja. Walirudi nyumbani kwa matatu.', [
+    ['Walienda sokoni siku gani?', 'Jumamosi', ['Jumapili', 'Jumatatu']],
+    ['Walinunua nini?', 'nyanya, vitunguu na sukuma wiki', ['mkate na maziwa', 'mchele na sukari']],
+    ['Mama alilipa shilingi ngapi?', 'mia moja', ['hamsini', 'mia mbili']],
+    ['Walirudi nyumbani kwa nini?', 'matatu', ['baiskeli', 'miguu']],
+  ]),
+  ...passage(2, 'Mwalimu Mpya', 'Leo tumepata mwalimu mpya. Jina lake ni Bi. Atieno. Anafundisha Kiswahili na Muziki. Alitufundisha wimbo mzuri wa Kenya. Sote tulifurahi sana.', [
+    ['Mwalimu mpya anaitwa nani?', 'Bi. Atieno', ['Bw. Kamau', 'Bi. Neema']],
+    ['Anafundisha masomo gani?', 'Kiswahili na Muziki', ['Hisabati na Sayansi', 'Kiingereza na Michezo']],
+    ['Aliwafundisha nini?', 'wimbo', ['hadithi', 'mchezo']],
+    ['Wanafunzi walijisikiaje?', 'walifurahi', ['walihuzunika', 'walikasirika']],
+  ]),
+  ...passage(3, 'Shamba la Babu', 'Babu ana shamba kubwa karibu na mto. Analima mahindi, maharagwe na viazi. Wakati wa likizo, mimi na kaka yangu Otieno tunamsaidia kupalilia. Babu hutupa miwa tunapomaliza kazi.', [
+    ['Shamba la Babu liko wapi?', 'karibu na mto', ['karibu na shule', 'mjini', 'mlimani']],
+    ['Babu analima mimea mingapi?', 'mitatu', ['miwili', 'minne', 'mmoja']],
+    ['Watoto humsaidia Babu lini?', 'wakati wa likizo', ['kila Jumatatu', 'usiku', 'kila asubuhi']],
+    ['Babu huwapa nini?', 'miwa', ['pesa', 'maziwa', 'mayai']],
+  ]),
+  ...passage(3, 'Siku ya Michezo', 'Shuleni kwetu tulikuwa na siku ya michezo. Baraka alishinda mbio za mita mia moja. Neema alishinda kuruka kamba. Mwalimu Mkuu aliwapa washindi vitabu na kalamu. Wazazi wengi walikuja kutazama.', [
+    ['Nani alishinda mbio?', 'Baraka', ['Neema', 'Mwalimu Mkuu', 'Juma']],
+    ['Neema alishinda mchezo gani?', 'kuruka kamba', ['mbio', 'mpira', 'kuogelea']],
+    ['Washindi walipewa nini?', 'vitabu na kalamu', ['pesa', 'viatu', 'mipira']],
+    ['Nani walikuja kutazama?', 'wazazi wengi', ['wanyama', 'madaktari', 'wageni wawili']],
+  ]),
+  ...passage(4, 'Kuku wa Mama', 'Mama ana kuku kumi. Kila siku, kuku sita hutaga yai moja kila mmoja. Mama huuza mayai sokoni siku ya Ijumaa. Jana, mwewe alimchukua kifaranga kimoja. Sasa Mama amejenga banda imara.', [
+    ['Mama ana kuku wangapi?', 'kumi', ['sita', 'kumi na sita', 'tano']],
+    ['Kuku hutaga mayai mangapi kwa siku?', 'sita', ['kumi', 'moja', 'kumi na mbili']],
+    ['Mama huuza mayai lini?', 'Ijumaa', ['Jumamosi', 'Jumapili', 'kila siku']],
+    ['Kwa nini Mama amejenga banda imara?', 'ili kuwalinda kuku dhidi ya mwewe', ['ili kuuza kuku', 'ili kupanda mboga', 'ili watoto wacheze']],
+  ]),
+  ...passage(5, 'Kisima Kipya', 'Kijiji cha Kalawa kilikuwa na shida ya maji. Wanawake na watoto walitembea kilomita tano kuchota maji mtoni. Mwaka jana, wanakijiji walichanga pesa na kuchimba kisima. Sasa maji safi yako karibu, na watoto hufika shuleni mapema. Wanakijiji hutunza kisima kwa kukifunika kila jioni.', [
+    ['Kijiji kilikuwa na shida gani?', 'ukosefu wa maji', ['ukosefu wa chakula', 'mafuriko', 'magonjwa']],
+    ['Watu walitembea umbali gani kuchota maji?', 'kilomita tano', ['kilomita moja', 'mita tano', 'kilomita kumi']],
+    ['Kisima kilichimbwa vipi?', 'wanakijiji walichanga pesa', ['serikali ilileta pesa', 'mvua ilikichimba', 'watoto walikichimba peke yao']],
+    ['Kisima kimewasaidiaje watoto?', 'hufika shuleni mapema', ['hawaendi shuleni', 'hucheza mtoni', 'hulala sana']],
+    ['Wanakijiji hutunzaje kisima?', 'kwa kukifunika kila jioni', ['kwa kukijaza takataka', 'kwa kuogelea ndani yake', 'kwa kukiacha wazi']],
+  ]),
   t(1, 'Soma: "Aisha ana miaka tisa." Aisha ana miaka mingapi?', 'tisa', ['nane', 'kumi']),
   t(1, 'Soma: "Baba anapenda chai ya maziwa." Baba anapenda nini?', 'chai ya maziwa', ['kahawa', 'maji']),
   ...passage(2, 'Shuleni Kwetu', 'Jina langu ni Zuhura. Niko katika Gredi ya Tatu. Ninasoma katika Shule ya Msingi ya Amani. Ninapenda Hisabati na Kiswahili. Mama hunipeleka shuleni kila asubuhi.', [
