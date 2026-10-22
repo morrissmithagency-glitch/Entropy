@@ -195,23 +195,25 @@
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(7, 13, 27, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(7, 13, 27, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: 0 var(--gutter-r) env(safe-area-inset-bottom, 0px) var(--gutter-l);
 }
 
-.sheet {
+.sheet.glass {
   width: min(100%, 520px);
   max-height: 92dvh;
   overflow: auto;
   border-radius: 32px 32px 0 0;
+  /* Solid, not see-through: the level list must be easy to read over any landscape. */
   background:
-    radial-gradient(120% 60% at 50% 0%, rgba(241, 207, 135, 0.08), rgba(0, 0, 0, 0) 60%),
-    rgba(17, 29, 54, 0.88);
+    radial-gradient(120% 60% at 50% 0%, rgba(241, 207, 135, 0.12), rgba(0, 0, 0, 0) 60%),
+    #13203b;
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 @media (min-width: 700px) {
@@ -251,6 +253,7 @@
 }
 
 .level {
+  background: rgba(255, 255, 255, 0.04);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -272,7 +275,7 @@
 }
 
 .level[disabled] {
-  opacity: 0.45;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 

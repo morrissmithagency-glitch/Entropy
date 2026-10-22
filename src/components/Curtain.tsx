@@ -123,8 +123,8 @@ type Run = (swap: () => void) => Promise<void>
 const CurtainContext = createContext<Run>(async (swap) => swap())
 export const useCurtain = () => useContext(CurtainContext)
 
-const COVER_MS = 760
-const REVEAL_MS = 820
+const COVER_MS = 1300
+const REVEAL_MS = 1400
 
 export function CurtainProvider({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -226,7 +226,7 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
         setProverb(PROVERBS[proverbIdx.current])
         swap()
         // Let the new screen mount and paint under the cloth, and the proverb be read.
-        await new Promise((r) => setTimeout(r, 520))
+        await new Promise((r) => setTimeout(r, 1100))
         setProverb(null)
         await animate(1, 2, REVEAL_MS)
         if (mode === 'gl') draw(2, 0)
