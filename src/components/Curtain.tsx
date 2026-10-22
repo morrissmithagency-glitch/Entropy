@@ -18,12 +18,13 @@ uniform vec2 uRes;
 uniform float uTime;
 uniform float uProg;
 
-const vec3 INK = vec3(0.165, 0.106, 0.071);
-const vec3 TEAL = vec3(0.078, 0.2, 0.184);
-const vec3 TEAL2 = vec3(0.184, 0.49, 0.447);
-const vec3 OCHRE = vec3(0.949, 0.702, 0.239);
-const vec3 TERRA = vec3(0.784, 0.333, 0.239);
-const vec3 CREAM = vec3(0.984, 0.957, 0.902);
+// Dusk silk: midnight indigo with fine gold, the app's own palette.
+const vec3 INK = vec3(0.027, 0.051, 0.106);
+const vec3 TEAL = vec3(0.067, 0.114, 0.212);
+const vec3 TEAL2 = vec3(0.45, 0.38, 0.55);
+const vec3 OCHRE = vec3(0.114, 0.165, 0.345);
+const vec3 TERRA = vec3(0.30, 0.26, 0.45);
+const vec3 CREAM = vec3(0.945, 0.81, 0.53);
 
 float ease(float x) { x = clamp(x, 0.0, 1.0); return x < 0.5 ? 4.0*x*x*x : 1.0 - pow(-2.0*x + 2.0, 3.0) / 2.0; }
 
@@ -46,7 +47,7 @@ vec3 kanga(vec2 p, float distHem, float px) {
     float tri = abs(fract(along) - 0.5) * 2.0;
     c = mix(c, TERRA, aa(across - 0.1 - (1.0 - tri) * 0.9, px * 26.0));
     vec2 dotP = vec2(fract(along) - 0.5, across - 1.55);
-    c = mix(c, OCHRE, aa(length(dotP) - 0.22, px * 26.0));
+    c = mix(c, CREAM, aa(length(dotP) - 0.18, px * 26.0));
     c = mix(c, INK, aa(abs(border - 0.083) - 0.004, px));
     return c;
   }
@@ -55,10 +56,10 @@ vec3 kanga(vec2 p, float distHem, float px) {
   vec2 cell = fract(q) - 0.5;
   float d = length(cell);
   vec3 c = OCHRE;
-  c = mix(c, INK, aa(d - 0.36, px * 7.0));
   c = mix(c, TERRA, aa(d - 0.33, px * 7.0));
-  c = mix(c, CREAM, aa(abs(d - 0.2) - 0.035, px * 7.0));
-  c = mix(c, TEAL, aa(d - 0.09, px * 7.0));
+  c = mix(c, OCHRE, aa(d - 0.3, px * 7.0));
+  c = mix(c, CREAM, aa(abs(d - 0.2) - 0.012, px * 7.0));
+  c = mix(c, CREAM, aa(d - 0.05, px * 7.0));
   vec2 corner = fract(q + 0.5) - 0.5;
   c = mix(c, TEAL2, aa(length(corner) - 0.07, px * 7.0));
   return c;
@@ -101,7 +102,7 @@ void main() {
 
   vec3 col = kanga(vec2(pd.x, pd.y), distHem, px);
   float diff = 0.72 + 0.42 * dot(n, normalize(vec3(-0.5, 0.55, 0.85)));
-  float spec = pow(max(0.0, dot(n, normalize(vec3(-0.25, 0.35, 1.0)))), 40.0) * 0.18;
+  float spec = pow(max(0.0, dot(n, normalize(vec3(-0.25, 0.35, 1.0)))), 28.0) * 0.32;
   col = col * diff + spec;
   // Darken the hem line.
   col = mix(col, INK, 1.0 - smoothstep(0.0, 0.006, distHem));
@@ -245,7 +246,7 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
         style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', zIndex: 100, pointerEvents: active ? 'auto' : 'none', display: mode === 'gl' ? 'block' : 'none' }}
       />
       {mode === 'css' && active && <CssCloth prog={cssProg} />}
-      {mode === 'fade' && <motion.div aria-hidden animate={{ opacity: active ? 1 : 0 }} style={{ position: 'fixed', inset: 0, background: 'var(--paper)', zIndex: 100, pointerEvents: 'none' }} />}
+      {mode === 'fade' && <motion.div aria-hidden animate={{ opacity: active ? 1 : 0 }} style={{ position: 'fixed', inset: 0, background: 'var(--night-900)', zIndex: 100, pointerEvents: 'none' }} />}
       <AnimatePresence>
         {proverb && (
           <motion.div
@@ -256,11 +257,11 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
             transition={{ duration: 0.25 }}
             style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', zIndex: 101, pointerEvents: 'none', padding: 16 }}
           >
-            <div style={{ background: 'var(--teal-deep)', color: 'var(--paper)', borderRadius: 18, padding: '16px 26px', border: '2.5px solid var(--ink)', textAlign: 'center', maxWidth: 520, boxShadow: '0 20px 40px -20px rgba(0,0,0,.6)' }}>
-              <div className="display" style={{ fontSize: 'clamp(22px, 5vw, 32px)', fontStyle: 'italic', fontWeight: 600 }}>
+            <div style={{ color: 'var(--cloud)', textAlign: 'center', maxWidth: 560, textShadow: '0 2px 20px rgba(7,13,27,.9)' }}>
+              <div className="display" style={{ fontSize: 'clamp(26px, 5vw, 40px)', fontStyle: 'italic', fontWeight: 300 }}>
                 {proverb[0]}
               </div>
-              <div style={{ fontSize: 14, opacity: 0.75, marginTop: 4 }}>{proverb[1]}</div>
+              <div style={{ fontSize: 15, color: 'var(--gold)', marginTop: 8, letterSpacing: '0.04em' }}>{proverb[1]}</div>
             </div>
           </motion.div>
         )}
@@ -282,8 +283,8 @@ function CssCloth({ prog }: { prog: number }) {
         left: `${left}%`,
         right: `${right}%`,
         zIndex: 100,
-        background: 'radial-gradient(circle, var(--terracotta) 32%, var(--ochre) 34%) 0 0 / 46px 46px, var(--ochre)',
-        borderLeft: '10px solid var(--teal-deep)',
+        background: 'radial-gradient(circle, var(--gold) 6%, transparent 8%) 0 0 / 46px 46px, var(--night-700)',
+        borderLeft: '10px solid var(--night-800)',
         boxShadow: '-12px 0 24px rgba(0,0,0,.25)',
       }}
     />

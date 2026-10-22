@@ -5,9 +5,9 @@ import { useEffect, useId, useRef, useState } from 'react'
 
 export type Mood = 'idle' | 'happy' | 'cheer' | 'think' | 'oops'
 
-const INK = '#2a1b12'
-const SKIN = '#9fb565'
-const SKIN_SHADE = '#7e9548'
+const INK = '#1f2733'
+const SKIN = '#a9bd8c'
+const SKIN_SHADE = '#88a06e'
 
 export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; size?: number; className?: string }) {
   const ref = useRef<SVGSVGElement>(null)
@@ -71,8 +71,8 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
     <motion.svg ref={ref} viewBox="0 0 230 180" width={size} height={(size * 180) / 230} className={className} role="img" aria-label="Kobe the tortoise" style={{ overflow: 'visible' }}>
       <defs>
         <pattern id={`${pid}-plates`} width="34" height="30" patternUnits="userSpaceOnUse" patternTransform="translate(6 4)">
-          <path d="M8.5 0h17L34 15l-8.5 15h-17L0 15z" fill="#f2b33d" stroke={INK} strokeWidth="2.2" />
-          <circle cx="17" cy="15" r="3.2" fill="#1f5b52" />
+          <path d="M8.5 0h17L34 15l-8.5 15h-17L0 15z" fill="#e6c07e" stroke={INK} strokeWidth="2.2" />
+          <circle cx="17" cy="15" r="3.2" fill="#3f6a7a" />
         </pattern>
         <clipPath id={`${pid}-shell`}>
           <path d="M26 118C26 64 62 34 108 34s80 30 80 84z" />
@@ -86,15 +86,15 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
           <path d="M42 120c-6 18-2 34 10 38h16c4-10 4-24 0-38z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
           <path d="M142 122c-4 16-2 30 6 36h16c6-10 6-24 2-36z" fill={SKIN_SHADE} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
           {/* shell */}
-          <path d="M26 118C26 64 62 34 108 34s80 30 80 84z" fill="#c8553d" stroke={INK} strokeWidth="3.2" strokeLinejoin="round" />
+          <path d="M26 118C26 64 62 34 108 34s80 30 80 84z" fill="#b97a66" stroke={INK} strokeWidth="3.2" strokeLinejoin="round" />
           <g clipPath={`url(#${pid}-shell)`}>
             <rect x="20" y="30" width="180" height="90" fill={`url(#${pid}-plates)`} opacity="0.95" />
             <path d="M40 60c30-24 106-26 140 0" stroke="#fff" strokeOpacity="0.45" strokeWidth="5" fill="none" strokeLinecap="round" />
           </g>
           {/* kanga rim */}
-          <path d="M22 116h170c4 0 6 3 6 6s-2 6-6 6H22c-4 0-6-3-6-6s2-6 6-6z" fill="#1f5b52" stroke={INK} strokeWidth="3" />
+          <path d="M22 116h170c4 0 6 3 6 6s-2 6-6 6H22c-4 0-6-3-6-6s2-6 6-6z" fill="#2f4a63" stroke={INK} strokeWidth="3" />
           {Array.from({ length: 15 }, (_, i) => (
-            <circle key={i} cx={30 + i * 11.4} cy={122} r={2.3} fill="#f2b33d" />
+            <circle key={i} cx={30 + i * 11.4} cy={122} r={2.3} fill="#e6c07e" />
           ))}
           {/* front legs */}
           <path d="M60 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
@@ -107,8 +107,8 @@ export function Kobe({ mood = 'idle', size = 220, className }: { mood?: Mood; si
             <ellipse cx="192" cy="78" rx="32" ry="29" fill={SKIN} stroke={INK} strokeWidth="3.2" />
             <ellipse cx="184" cy="64" rx="14" ry="6" fill="#fff" opacity="0.28" />
             {/* scarf */}
-            <path d="M166 98c12 8 34 8 46-2l4 8c-14 12-40 12-54 2z" fill="#c8553d" stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
-            <path d="M200 104l6 18 8-4-4-16z" fill="#c8553d" stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
+            <path d="M166 98c12 8 34 8 46-2l4 8c-14 12-40 12-54 2z" fill="#d08a7a" stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
+            <path d="M200 104l6 18 8-4-4-16z" fill="#d08a7a" stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
             <circle cx="176" cy="102" r="1.8" fill="#f2b33d" />
             <circle cx="188" cy="104" r="1.8" fill="#f2b33d" />
             <circle cx="200" cy="102" r="1.8" fill="#f2b33d" />

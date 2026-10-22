@@ -1,7 +1,7 @@
 # CBC Helper
 
-Adventure-style practice for Kenyan learners on the Competency-Based Curriculum (CBC/CBE).
-Grade 1 is live; the other grades show as "Soon".
+Calm, nature-themed practice for Kenyan learners on the Competency-Based Curriculum (CBC/CBE).
+Grades 1 and 3 are live; the other grades show as "Coming soon".
 
 Learners pick a **world** (learning area) and walk a path **strand by strand**. Each
 sub-strand is a stop with five levels that grow like a tree:
@@ -17,6 +17,13 @@ sub-strand is a stop with five levels that grow like a tree:
 Each quiz has 8 questions and opens with two warm-ups one level lower. Passing (5/8) unlocks
 the next level. When every stop in a strand reaches Acacia, the strand's **Baobab Challenge**
 unlocks: 10 mixed questions at levels 4–5.
+
+## What's in Grade 3
+
+Six worlds, each with its own painted landscape: Golden Plains (Maths), Kakamega Forest
+(English), Tea Hills (Environmental), Pwani ya Lamu (Kiswahili), Flamingo Lake (Creative
+Activities) and Morning Hills (CRE). Question types and difficulty follow Grade 3 end-term
+papers; see [`research/grade3-papers.md`](research/grade3-papers.md).
 
 ## What's in Grade 1
 
@@ -49,12 +56,17 @@ Dev-only helpers: `?gallery` shows every illustration and widget, and
   progress is saved in `localStorage`.
 * `src/curriculum/` lists the strands and sub-strands. `src/engine/` holds the seeded
   question generators, the written question banks and the quiz builder.
-* **Art** is hand-built SVG in one ink-outline style (`src/components/art/`). To swap in
+* **Landscapes** (`NatureScene.tsx`) are painted in SVG from seeded ridgelines, with
+  atmospheric haze, mist, water reflections, and canvas stars and fireflies. Layers drift with
+  the pointer. Question illustrations are hand-built SVG (`src/components/art/`); to swap in
   commissioned artwork, keep the same ids.
-* **Cloth transition** (`Curtain.tsx`) is a single WebGL shader: a kanga cloth with a
+* **Design**: night blues with dawn and gold accents, frosted glass, Fraunces display and
+  Lexend body type. Tokens are in `src/styles/global.css`.
+* **Cloth transition** (`Curtain.tsx`) is a single WebGL shader: dusk-coloured silk with a
   rippling hem and a Kiswahili proverb. It falls back to CSS without WebGL and to a fade
   under reduced motion.
-* **Sound** is synthesised kalimba tones, and questions are **read aloud** with the
+* **Sound** is synthesised: kalimba tones for answers and a quiet nature bed (wind and
+  distant chimes) that can be switched off, and questions are **read aloud** with the
   browser's speech engine (en-KE/en-GB, sw-KE where available). Both can be toggled.
 * Kobe the tortoise ("kobe" is Kiswahili for tortoise) is the mascot. His eyes follow
   the pointer and his mood follows the child's answers.

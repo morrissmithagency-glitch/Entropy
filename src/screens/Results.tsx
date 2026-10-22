@@ -2,24 +2,24 @@ import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useNav, type QuizTarget } from '../App'
 import { sfx, speak } from '../audio/sfx'
-import { LevelIcon } from '../components/art/levels'
 import { Kobe } from '../components/Kobe'
-import { Scene } from '../components/Scene'
-import { Star } from '../components/ui'
-import { findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
+import { NatureScene } from '../components/NatureScene'
+import { LevelGlyph, SCENE_FOR, Star } from '../components/ui'
+import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
 import { starsFor } from '../engine/quiz'
 import type { Level } from '../engine/types'
 import { nextPaper, recordChallenge, recordQuiz } from '../state/progress'
 import './results.css'
 
 const MESSAGES: Record<number, [string, string]> = {
-  3: ['Bingwa!', 'You are a champion. Every answer counted.'],
-  2: ['Safi sana!', 'Great work. One more push and it is three stars.'],
-  1: ['You passed!', 'Mwenda pole hajikwai: slow and steady, you are growing.'],
-  0: ['Good try!', 'Every baobab started as a seed. Let us try a new paper.'],
+  3: ['Bingwa', 'A champion’s paper. Every answer counted.'],
+  2: ['Safi sana', 'Lovely work. One more step and it is three stars.'],
+  1: ['You grew', 'Mwenda pole hajikwai. Slow and steady, you are growing.'],
+  0: ['Good try', 'Every baobab began as a seed. A new paper is waiting.'],
 }
 
-function Confetti() {
+/** Warm motes that rise slowly, like embers or fireflies, when a level is passed. */
+function Lights() {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
     const c = ref.current
@@ -29,65 +29,52 @@ function Confetti() {
     c.width = innerWidth * dpr
     c.height = innerHeight * dpr
     ctx.scale(dpr, dpr)
-    const colors = ['#c8553d', '#f2b33d', '#1f5b52', '#2f7d72', '#fbf4e6', '#6b8f3a']
-    const bits = Array.from({ length: 130 }, () => ({
-      x: innerWidth / 2 + (Math.random() - 0.5) * 120,
-      y: innerHeight * 0.45,
-      vx: (Math.random() - 0.5) * 16,
-      vy: -Math.random() * 16 - 6,
-      r: Math.random() * Math.PI,
-      vr: (Math.random() - 0.5) * 0.3,
-      s: 6 + Math.random() * 8,
-      c: colors[Math.floor(Math.random() * colors.length)],
-      kind: Math.floor(Math.random() * 3),
+    const motes = Array.from({ length: 34 }, () => ({
+      x: innerWidth / 2 + (Math.random() - 0.5) * innerWidth * 0.6,
+      y: innerHeight * (0.55 + Math.random() * 0.5),
+      vy: 0.4 + Math.random() * 1.1,
+      p: Math.random() * 6.28,
+      r: 0.8 + Math.random() * 1.4,
+      life: 0,
     }))
     let raf = 0
     const tick = () => {
       ctx.clearRect(0, 0, innerWidth, innerHeight)
       let alive = 0
-      for (const b of bits) {
-        b.vy += 0.42
-        b.vx *= 0.985
-        b.x += b.vx
-        b.y += b.vy
-        b.r += b.vr
-        if (b.y < innerHeight + 30) alive++
-        ctx.save()
-        ctx.translate(b.x, b.y)
-        ctx.rotate(b.r)
-        ctx.fillStyle = b.c
-        ctx.strokeStyle = '#2a1b12'
-        ctx.lineWidth = 1.5
+      for (const m of motes) {
+        m.life++
+        m.y -= m.vy
+        m.x += Math.sin((m.life + m.p * 40) / 40) * 0.5
+        const a = Math.min(1, m.life / 40) * Math.max(0, (m.y - innerHeight * 0.05) / innerHeight)
+        if (a > 0.01) alive++
+        const g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 5)
+        g.addColorStop(0, `rgba(255, 224, 160, ${a})`)
+        g.addColorStop(1, 'rgba(255, 224, 160, 0)')
+        ctx.fillStyle = g
         ctx.beginPath()
-        if (b.kind === 0) ctx.arc(0, 0, b.s / 2, 0, Math.PI * 2)
-        else if (b.kind === 1) {
-          ctx.moveTo(0, -b.s / 2)
-          ctx.lineTo(b.s / 2, b.s / 2)
-          ctx.lineTo(-b.s / 2, b.s / 2)
-          ctx.closePath()
-        } else ctx.rect(-b.s / 2, -b.s / 4, b.s, b.s / 2)
+        ctx.arc(m.x, m.y, m.r * 5, 0, Math.PI * 2)
         ctx.fill()
-        ctx.stroke()
-        ctx.restore()
       }
       if (alive) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [])
-  return <canvas ref={ref} aria-hidden style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }} />
+  return <canvas ref={ref} aria-hidden style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }} />
 }
 
 export function Results({ target, correct, total }: { target: QuizTarget; correct: number; total: number }) {
   const go = useNav()
+  const area = findArea(target.area)
   const stars = starsFor(correct, total)
   const [shown, setShown] = useState(0)
   const saved = useRef(false)
   const isChallenge = !!target.strand
-  const title = isChallenge ? `${findStrand(target.strand!).strand.title}: Baobab Challenge` : `${findSubStrand(target.sub!).sub.title} · ${LEVEL_NAMES[target.level - 1]}`
+  const title = isChallenge ? `${findStrand(target.strand!).strand.title} · Baobab Challenge` : `${findSubStrand(target.sub!).sub.title} · ${LEVEL_NAMES[target.level - 1]}`
   const [headline, body] = MESSAGES[stars]
   const canGrow = !isChallenge && stars >= 1 && target.level < 5
   const nextName = LEVEL_NAMES[Math.min(4, target.level)]
+  const C = 2 * Math.PI * 76
 
   useEffect(() => {
     if (saved.current) return
@@ -98,17 +85,17 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = []
-    timers.push(setTimeout(() => (stars > 0 ? sfx.fanfare() : sfx.almost()), 900))
+    timers.push(setTimeout(() => (stars > 0 ? sfx.fanfare() : sfx.almost()), 1100))
     for (let i = 0; i < stars; i++)
       timers.push(
         setTimeout(() => {
           setShown(i + 1)
           sfx.star(i)
-        }, 1300 + i * 420),
+        }, 1700 + i * 450),
       )
-    timers.push(setTimeout(() => void speak(`${headline} ${correct} out of ${total}.`, target.area === 'kiswahili' ? 'sw' : 'en'), 1500 + stars * 420))
+    timers.push(setTimeout(() => void speak(`${headline}. ${correct} out of ${total}.`, area.kind === 'kiswahili' ? 'sw' : 'en'), 1900 + stars * 450))
     return () => timers.forEach(clearTimeout)
-  }, [stars, headline, correct, total, target.area])
+  }, [stars, headline, correct, total, area.kind])
 
   const retry = () => {
     const key = isChallenge ? `challenge:${target.strand}` : `${target.sub}:${target.level}`
@@ -121,62 +108,87 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
 
   return (
     <main className="results">
-      <Scene variant={stars >= 2 ? 'savanna' : 'garden'} />
-      {stars > 0 && <Confetti />}
-      <motion.section className="res-card glass" initial={{ y: 80, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 140, damping: 16, delay: 0.3 }}>
-        <div className="kanga-band" style={{ borderRadius: '30px 30px 0 0' }} />
-        <div className="res-body">
-          <div className="res-kobe">
-            <Kobe mood={stars >= 1 ? 'cheer' : 'happy'} size={190} />
-          </div>
-          <div className="res-sub">{title}</div>
-          <div className="res-stars">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className={`res-star s${i}`}>
-                <Star filled={i < shown} size={i === 1 ? 84 : 66} />
-              </div>
-            ))}
-          </div>
-          <h1 className="display res-head">{headline}</h1>
+      <NatureScene id={SCENE_FOR[area.kind]} dim={0.6} />
+      {stars > 0 && <Lights />}
+      <section className="res gutter">
+        <motion.div className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 1 }}>
+          {title}
+        </motion.div>
+
+        <motion.div className="res-ring" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4, duration: 1, ease: [0.22, 1, 0.36, 1] }}>
+          <svg viewBox="0 0 180 180" width="180" height="180" aria-hidden>
+            <circle cx="90" cy="90" r="76" fill="none" stroke="rgba(255,255,255,.12)" strokeWidth="5" />
+            <motion.circle
+              cx="90"
+              cy="90"
+              r="76"
+              fill="none"
+              stroke="var(--gold)"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeDasharray={C}
+              initial={{ strokeDashoffset: C }}
+              animate={{ strokeDashoffset: C * (1 - correct / total) }}
+              transition={{ delay: 0.8, duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+              transform="rotate(-90 90 90)"
+              style={{ filter: 'drop-shadow(0 0 8px rgba(241,207,135,.7))' }}
+            />
+          </svg>
           <div className="res-score">
-            <b>{correct}</b> out of <b>{total}</b> correct
+            <span className="display">{correct}</span>
+            <span>of {total}</span>
           </div>
-          <p className="res-msg">{body}</p>
-          {canGrow && (
-            <div className="res-grow">
-              <LevelIcon level={target.level} size={44} />
-              <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 2.4 }} className="res-arrow">
-                →
-              </motion.span>
-              <motion.span initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 2.6, type: 'spring' }}>
-                <LevelIcon level={target.level + 1} size={56} />
-              </motion.span>
-              <span className="res-grow-text">
-                You grew to <b>{nextName}</b>!
-              </span>
-            </div>
-          )}
-          <div className="res-actions">
-            {canGrow ? (
-              <button type="button" className="btn terracotta" onClick={grow}>
-                Next: {nextName} →
-              </button>
-            ) : (
-              <button type="button" className="btn terracotta" onClick={retry}>
-                {stars === 3 ? 'Play a new paper' : 'Try a new paper'}
-              </button>
-            )}
-            {canGrow && (
-              <button type="button" className="btn paper" onClick={retry}>
-                New paper, same level
-              </button>
-            )}
-            <button type="button" className="btn paper" onClick={() => go({ name: 'map', area: target.area }, { replace: true })}>
-              Back to the map
-            </button>
-          </div>
+        </motion.div>
+
+        <div className="res-stars">
+          {[0, 1, 2].map((i) => (
+            <span key={i} className={`s${i}`}>
+              <Star filled={i < shown} size={i === 1 ? 46 : 36} />
+            </span>
+          ))}
         </div>
-      </motion.section>
+
+        <motion.h1 className="display" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4, duration: 1 }}>
+          {headline}
+        </motion.h1>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }}>
+          {body}
+        </motion.p>
+
+        {canGrow && (
+          <motion.div className="res-grow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4, duration: 1 }}>
+            <LevelGlyph level={target.level} size={30} />
+            <span className="res-line" />
+            <LevelGlyph level={target.level + 1} size={38} />
+            <span>
+              You grew to <b>{nextName}</b>
+            </span>
+          </motion.div>
+        )}
+
+        <motion.div className="res-actions" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2, duration: 0.8 }}>
+          {canGrow ? (
+            <button type="button" className="btn primary" onClick={grow}>
+              Continue to {nextName}
+            </button>
+          ) : (
+            <button type="button" className="btn primary" onClick={retry}>
+              {stars === 3 ? 'Play a new paper' : 'Try a new paper'}
+            </button>
+          )}
+          {canGrow && (
+            <button type="button" className="btn" onClick={retry}>
+              New paper, same level
+            </button>
+          )}
+          <button type="button" className="btn quiet" onClick={() => go({ name: 'map', area: target.area }, { replace: true })}>
+            Back to the journey
+          </button>
+        </motion.div>
+      </section>
+      <div className="res-kobe" aria-hidden>
+        <Kobe mood={stars >= 1 ? 'cheer' : 'happy'} size={120} />
+      </div>
     </main>
   )
 }

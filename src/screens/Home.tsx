@@ -1,66 +1,94 @@
 import { motion } from 'framer-motion'
 import { useNav } from '../App'
+import { ambient } from '../audio/ambient'
 import { sfx } from '../audio/sfx'
 import { GlassPane } from '../components/Glass'
 import { Kobe } from '../components/Kobe'
-import { Scene } from '../components/Scene'
-import { Bubble, Icon, SettingsButtons } from '../components/ui'
+import { NatureScene } from '../components/NatureScene'
+import { Icon, SettingsButtons, TopBar } from '../components/ui'
+import { GRADES } from '../curriculum'
+import { areaStars, useProgress } from '../state/progress'
 import './home.css'
 
-const GRADES = [
-  { id: 'pp1', top: 'PP', big: '1' },
-  { id: 'pp2', top: 'PP', big: '2' },
-  ...Array.from({ length: 9 }, (_, i) => ({ id: `g${i + 1}`, top: 'Grade', big: String(i + 1) })),
-]
+const SOON = ['PP1', 'PP2', '2', '4', '5', '6', '7', '8', '9']
+
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Habari ya asubuhi'
+  if (h < 16) return 'Habari ya mchana'
+  if (h < 19) return 'Habari ya jioni'
+  return 'Habari za usiku'
+}
 
 export function Home() {
   const go = useNav()
+  const p = useProgress()
   return (
     <main className="home">
-      <Scene variant="savanna" />
-      <header className="home-head">
-        <div>
-          <motion.h1 className="display wordmark" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 120, damping: 14 }}>
-            <span className="wm-cbc">CBC</span> Helper
-          </motion.h1>
-          <div className="kanga-band thin" style={{ width: 132, borderRadius: 4, marginTop: 6 }} />
-        </div>
-        <SettingsButtons />
-      </header>
+      <NatureScene id="lake-dusk" />
+      <div className="home-veil" />
+      <TopBar
+        title={
+          <span className="display wordmark">
+            CBC <em>Helper</em>
+          </span>
+        }
+        right={<SettingsButtons />}
+      />
 
-      <section className="home-stage">
-        <div className="home-kobe">
-          <Bubble tail="left" style={{ maxWidth: 300, marginLeft: 40, marginBottom: 6 }}>
-            <div className="display" style={{ fontSize: 24, fontWeight: 700, lineHeight: 1.15 }}>Jambo! I'm Kobe.</div>
-            <div style={{ fontSize: 16, color: 'var(--ink-soft)', marginTop: 4 }}>Slow and steady, we climb every strand. Which grade are you in?</div>
-          </Bubble>
-          <Kobe mood="idle" size={260} />
-        </div>
+      <section className="home-hero gutter">
+        <motion.div className="eyebrow" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }}>
+          {greeting()}
+        </motion.div>
+        <motion.h1 className="display" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}>
+          Where shall we
+          <br />
+          learn today?
+        </motion.h1>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.7 }}>
+          Practice for Kenya&rsquo;s curriculum, one strand at a time, at the pace of a tortoise.
+        </motion.p>
 
-        <div className="grade-grid" role="list" aria-label="Choose your grade">
+        <div className="grade-cards">
           {GRADES.map((g, i) => {
-            const open = g.id === 'g1'
+            const earned = g.areas.reduce((s, a) => s + areaStars(p, a.id).earned, 0)
             return (
-              <motion.div key={g.id} role="listitem" initial={{ opacity: 0, y: 30, rotateX: -30 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ delay: 0.15 + i * 0.04, type: 'spring', stiffness: 140, damping: 15 }}>
+              <motion.div key={g.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.8 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}>
                 <GlassPane
-                  className={`grade-pane ${open ? 'open' : 'soon'}`}
-                  disabled={!open}
-                  label={open ? `${g.top} ${g.big}` : `${g.top} ${g.big}, coming soon`}
+                  className="grade-card"
+                  tilt={5}
+                  label={`${g.label}, ${g.areas.length} worlds`}
                   onClick={() => {
                     sfx.select()
-                    go({ name: 'worlds' })
+                    ambient.start()
+                    go({ name: 'worlds', grade: g.id })
                   }}
                 >
-                  <span className="gp-top">{g.top}</span>
-                  <span className="display gp-big">{g.big}</span>
-                  {open ? <span className="gp-badge">Start</span> : <span className="gp-soon">{Icon.lock} Soon</span>}
+                  <span className="display gc-num">{g.number}</span>
+                  <span className="gc-text">
+                    <span className="gc-title">{g.label}</span>
+                    <span className="gc-sub">{g.areas.length} worlds · {earned} ★</span>
+                  </span>
+                  <span className="gc-go">{Icon.play}</span>
                 </GlassPane>
               </motion.div>
             )
           })}
         </div>
+
+        <motion.div className="soon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }}>
+          <span className="eyebrow">Coming soon</span>
+          <span className="soon-list">
+            {SOON.map((s) => (
+              <span key={s}>{s.startsWith('PP') ? s : `Grade ${s}`}</span>
+            ))}
+          </span>
+        </motion.div>
       </section>
-      <footer className="home-foot">Original practice questions for the rationalised KICD curriculum</footer>
+
+      <div className="home-kobe" aria-hidden>
+        <Kobe size={130} />
+      </div>
     </main>
   )
 }

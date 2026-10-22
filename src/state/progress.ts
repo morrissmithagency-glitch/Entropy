@@ -13,6 +13,8 @@ export interface Progress {
   papers: Record<string, number>
   streak: { last: string; days: number }
   settings: { sound: boolean; voice: boolean }
+  /** The world opened most recently, featured on the grade page. */
+  last?: string
 }
 
 const EMPTY: Progress = { best: {}, challenge: {}, papers: {}, streak: { last: '', days: 0 }, settings: { sound: true, voice: true } }
@@ -76,6 +78,10 @@ export function nextPaper(key: string): number {
   const n = (state.papers[key] ?? 0) + 1
   set({ ...state, papers: { ...state.papers, [key]: n } })
   return n
+}
+
+export function setLastArea(area: string) {
+  if (state.last !== area) set({ ...state, last: area })
 }
 
 export function setSetting<K extends keyof Progress['settings']>(k: K, v: Progress['settings'][K]) {

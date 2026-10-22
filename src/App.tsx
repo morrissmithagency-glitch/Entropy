@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { CurtainProvider, useCurtain } from './components/Curtain'
-import type { AreaId } from './curriculum'
+import type { AreaId, GradeId } from './curriculum'
 import type { Level } from './engine/types'
 import { Home } from './screens/Home'
 import { MapScreen } from './screens/MapScreen'
@@ -19,7 +19,7 @@ export interface QuizTarget {
 
 export type Screen =
   | { name: 'home' }
-  | { name: 'worlds' }
+  | { name: 'worlds'; grade: GradeId }
   | { name: 'map'; area: AreaId; open?: string }
   | ({ name: 'quiz' } & QuizTarget)
   | ({ name: 'results'; correct: number; total: number } & QuizTarget)
@@ -50,6 +50,7 @@ function initialScreen(): Screen {
   }
   // Results and quizzes are not restorable after a reload; send those back to the map.
   if (s?.name === 'quiz' || s?.name === 'results') return { name: 'map', area: s.area }
+  if (s?.name === 'worlds' && !s.grade) return { name: 'worlds', grade: 'g1' }
   return s ?? { name: 'home' }
 }
 
@@ -84,7 +85,7 @@ function Router() {
   return (
     <NavContext.Provider value={go}>
       {screen.name === 'home' && <Home />}
-      {screen.name === 'worlds' && <Worlds />}
+      {screen.name === 'worlds' && <Worlds key={screen.grade} grade={screen.grade} />}
       {screen.name === 'map' && <MapScreen key={screen.area} area={screen.area} open={screen.open} />}
       {screen.name === 'quiz' && <QuizScreen key={`${screen.sub ?? screen.strand}:${screen.level}:${screen.paper}`} target={screen} />}
       {screen.name === 'results' && <Results target={screen} correct={screen.correct} total={screen.total} />}
@@ -94,7 +95,7 @@ function Router() {
 
 export default function App() {
   return (
-    <div className="grain" style={{ minHeight: '100%' }}>
+    <div style={{ minHeight: '100%' }}>
       <CurtainProvider>
         <Router />
       </CurtainProvider>

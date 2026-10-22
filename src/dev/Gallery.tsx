@@ -1,6 +1,6 @@
 // Dev-only: every illustration and widget on one page, for visual review (?gallery).
 import { ART_IDS, Art } from '../components/art/objects'
-import { LevelIcon } from '../components/art/levels'
+import { LevelGlyph as LevelIcon } from '../components/ui'
 import { Kobe } from '../components/Kobe'
 import { VisualView } from '../components/widgets/Visual'
 import type { Visual } from '../engine/types'

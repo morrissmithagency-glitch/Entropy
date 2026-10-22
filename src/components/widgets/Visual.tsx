@@ -3,7 +3,7 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import type { ShapeSpec, Visual } from '../../engine/types'
 import { Art, type ArtId } from '../art/objects'
 
-const INK = '#2a1b12'
+const INK = '#27304a'
 
 const pop = (i: number) => ({
   initial: { scale: 0, rotate: -12, opacity: 0 },
@@ -59,11 +59,12 @@ function CountGrid({ art, n, size, crossFrom }: { art: ArtId; n: number; size: n
   )
 }
 
-function Clock({ hour, size = 170 }: { hour: number; size?: number }) {
+function Clock({ hour, minute = 0, size = 170 }: { hour: number; minute?: number; size?: number }) {
   const on = useArrived()
-  const ha = ((hour % 12) / 12) * 360
+  const ha = (((hour % 12) + minute / 60) / 12) * 360
+  const ma = (minute / 60) * 360
   return (
-    <svg viewBox="0 0 200 200" width={size} height={size} role="img" aria-label={`A clock showing ${hour} o'clock`}>
+    <svg viewBox="0 0 200 200" width={size} height={size} role="img" aria-label={`A clock showing ${hour}:${String(minute).padStart(2, '0')}`}>
       <circle cx="100" cy="100" r="92" fill="#fbf4e6" stroke={INK} strokeWidth="6" />
       <circle cx="100" cy="100" r="82" fill="none" stroke="#c8553d" strokeWidth="3" strokeDasharray="2 10.9" />
       {Array.from({ length: 12 }, (_, i) => {
@@ -75,7 +76,7 @@ function Clock({ hour, size = 170 }: { hour: number; size?: number }) {
         )
       })}
       <line style={spin(on ? ha : ha - 120, 100, 100)} x1="100" y1="100" x2="100" y2="58" stroke={INK} strokeWidth="9" strokeLinecap="round" />
-      <line style={spin(on ? 0 : -120, 100, 100)} x1="100" y1="100" x2="100" y2="34" stroke="#c8553d" strokeWidth="5" strokeLinecap="round" />
+      <line style={spin(on ? ma : ma - 120, 100, 100)} x1="100" y1="100" x2="100" y2="34" stroke="#c8553d" strokeWidth="5" strokeLinecap="round" />
       <circle cx="100" cy="100" r="7" fill={INK} />
     </svg>
   )
@@ -313,13 +314,13 @@ function Sum({ a, b, op, result, vertical }: { a: number; b: number; op: '+' | '
 
 function Passage({ title, text }: { title?: string; text: string }) {
   return (
-    <div style={{ background: '#fffaf0', border: `2.5px solid ${INK}`, borderRadius: 18, padding: '14px 18px', maxWidth: 560, textAlign: 'left', boxShadow: '0 6px 0 rgba(42,27,18,.12)' }}>
+    <div style={{ background: '#f3efe6', borderRadius: 20, padding: '16px 20px', maxWidth: 600, textAlign: 'left' }}>
       {title && (
-        <div className="display" style={{ fontWeight: 700, fontSize: 22, marginBottom: 6, color: 'var(--teal)' }}>
+        <div className="display" style={{ fontSize: 22, marginBottom: 6, color: '#2f5d6b' }}>
           {title}
         </div>
       )}
-      <p style={{ margin: 0, fontSize: 19, lineHeight: 1.7 }}>{text}</p>
+      <p style={{ margin: 0, fontSize: 18, lineHeight: 1.75 }}>{text}</p>
     </div>
   )
 }
@@ -366,6 +367,79 @@ function Position({ art, where, size = 150 }: { art: ArtId; where: 'in' | 'on' |
   )
 }
 
+function Fraction({ parts, shaded, shape = 'bar' }: { parts: number; shaded: number; shape?: 'bar' | 'circle' }) {
+  const fill = (i: number) => (i < shaded ? '#e0876a' : '#fdfbf7')
+  if (shape === 'circle') {
+    const r = 70
+    return (
+      <svg viewBox="0 0 160 160" width="160" height="160" role="img" aria-label={`${shaded} of ${parts} parts shaded`}>
+        {Array.from({ length: parts }, (_, i) => {
+          const a0 = (i / parts) * Math.PI * 2 - Math.PI / 2
+          const a1 = ((i + 1) / parts) * Math.PI * 2 - Math.PI / 2
+          const large = 1 / parts > 0.5 ? 1 : 0
+          return <path key={i} d={`M80 80 L${80 + r * Math.cos(a0)} ${80 + r * Math.sin(a0)} A${r} ${r} 0 ${large} 1 ${80 + r * Math.cos(a1)} ${80 + r * Math.sin(a1)}Z`} fill={fill(i)} stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
+        })}
+      </svg>
+    )
+  }
+  const w = Math.min(360, parts * 70)
+  return (
+    <svg viewBox={`0 0 ${w + 6} 76`} width={w + 6} height="76" role="img" aria-label={`${shaded} of ${parts} parts shaded`}>
+      {Array.from({ length: parts }, (_, i) => (
+        <rect key={i} x={3 + (i * w) / parts} y="3" width={w / parts} height="70" fill={fill(i)} stroke={INK} strokeWidth="2.5" />
+      ))}
+    </svg>
+  )
+}
+
+const FIGURES: Record<string, ReactNode> = {
+  tri2: <path d="M100 10L190 170H10Z M100 10L100 170" />,
+  tri3: <path d="M100 10L190 170H10Z M100 10L70 170 M100 10L130 170" />,
+  tri4: <path d="M100 10L190 170H10Z M55 90H145 M55 90L100 170L145 90" />,
+  'rect-diag': <path d="M10 30H190V150H10Z M10 30L190 150" />,
+  'rect-cross': <path d="M10 30H190V150H10Z M10 30L190 150 M190 30L10 150" />,
+}
+
+function Figure({ figure }: { figure: keyof typeof FIGURES }) {
+  return (
+    <svg viewBox="0 0 200 180" width="220" height="198" role="img" aria-label="A figure made of lines">
+      <g fill="none" stroke={INK} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round">
+        {FIGURES[figure]}
+      </g>
+    </svg>
+  )
+}
+
+/** Shillings and cents in two columns, worked like a paper sum. */
+function Ledger({ rows, op }: { rows: [number, number][]; op: '+' | '−' }) {
+  const cell: CSSProperties = { padding: '2px 14px', textAlign: 'right' }
+  return (
+    <table className="display" style={{ fontSize: 34, borderCollapse: 'collapse', fontVariantNumeric: 'tabular-nums', color: INK }}>
+      <thead>
+        <tr style={{ fontSize: 15, fontFamily: 'var(--font-body)', color: '#55607a' }}>
+          <th />
+          <th style={cell}>Sh</th>
+          <th style={{ ...cell, borderLeft: `2px solid ${INK}` }}>cts</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(([sh, cts], i) => (
+          <tr key={i}>
+            <td style={{ color: '#e0876a', paddingRight: 4 }}>{i === rows.length - 1 ? op : ''}</td>
+            <td style={cell}>{sh}</td>
+            <td style={{ ...cell, borderLeft: `2px solid ${INK}` }}>{String(cts).padStart(2, '0')}</td>
+          </tr>
+        ))}
+        <tr>
+          <td />
+          <td style={{ ...cell, borderTop: `3px solid ${INK}` }}>?</td>
+          <td style={{ ...cell, borderTop: `3px solid ${INK}`, borderLeft: `2px solid ${INK}` }}>?</td>
+        </tr>
+      </tbody>
+    </table>
+  )
+}
+
 export function VisualView({ v, compact = false }: { v: Visual; compact?: boolean }) {
   const s = compact ? 38 : 56
   switch (v.kind) {
@@ -390,7 +464,7 @@ export function VisualView({ v, compact = false }: { v: Visual; compact?: boolea
         </div>
       )
     case 'clock':
-      return <Clock hour={v.hour} size={compact ? 110 : 170} />
+      return <Clock hour={v.hour} minute={v.minute} size={compact ? 110 : 170} />
     case 'money':
       return <Money values={v.values} size={compact ? 42 : 76} />
     case 'shapes':
@@ -421,6 +495,12 @@ export function VisualView({ v, compact = false }: { v: Visual; compact?: boolea
       return <Lines lines={v.lines} variant={v.variant} compact={compact} />
     case 'pattern':
       return <Pattern items={v.items} />
+    case 'fraction':
+      return <Fraction parts={v.parts} shaded={v.shaded} shape={v.shape} />
+    case 'figure':
+      return <Figure figure={v.figure} />
+    case 'ledger':
+      return <Ledger rows={v.rows} op={v.op} />
     case 'position':
       return <Position art={v.art} where={v.where} size={compact ? 130 : 180} />
     case 'art':

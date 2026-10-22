@@ -1,42 +1,52 @@
 @import '@fontsource-variable/fraunces/full.css';
 @import '@fontsource-variable/lexend/index.css';
 
+/*
+ * Layout concept: one painted landscape per world, full-bleed; the interface floats over it
+ * as quiet frosted glass. Night blues carry the calm, dawn and gold carry the warmth.
+ */
 :root {
-  /* Palette: savanna at golden hour + kanga cloth */
-  --ink: #2a1b12;
-  --ink-soft: #5b4636;
-  --paper: #fbf4e6;
-  --paper-2: #f3e6cd;
-  --paper-3: #e9d6b2;
-  --teal: #1f5b52;
-  --teal-deep: #14332f;
-  --teal-bright: #2f7d72;
-  --ochre: #f2b33d;
-  --ochre-deep: #c9871c;
-  --terracotta: #c8553d;
-  --terracotta-deep: #9c3b27;
-  --acacia: #6b8f3a;
-  --acacia-deep: #4d6a27;
-  --sky: #9cc9d6;
-  --lake: #3f8fa3;
-  --rose: #e86a8a;
+  --night-950: #070d1b;
+  --night-900: #0b1426;
+  --night-800: #111d36;
+  --night-700: #1a2a4a;
+  --mist: #b7c3d8;
+  --mist-soft: rgba(206, 216, 235, 0.72);
+  --cloud: #f7f4ee;
+  --ink: #1b2236;
+  --ink-soft: #55607a;
 
-  --good: #2f8a5f;
-  --good-soft: #d8efdf;
-  --almost: #c9871c;
-  --almost-soft: #fbeacb;
+  --dawn: #f2b598;
+  --gold: #f1cf87;
+  --gold-deep: #d9a855;
+  --lagoon: #7fd6c8;
+  --lagoon-deep: #2f9e8c;
+  --sand: #f2c58c;
+  --sand-deep: #c98b3c;
+  --rose: #e8a2b6;
+
+  --glass: rgba(255, 255, 255, 0.07);
+  --glass-strong: rgba(255, 255, 255, 0.13);
+  --glass-hover: rgba(255, 255, 255, 0.18);
+  --hair: rgba(255, 255, 255, 0.14);
+  --hair-strong: rgba(255, 255, 255, 0.28);
+  --card: rgba(251, 249, 244, 0.95);
 
   --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
   --font-body: 'Lexend Variable', 'Segoe UI', system-ui, sans-serif;
 
-  --radius-s: 12px;
-  --radius-m: 20px;
-  --radius-l: 30px;
-  --shadow-press: 0 5px 0 0 rgba(42, 27, 18, 0.9);
-  --shadow-soft: 0 18px 40px -18px rgba(42, 27, 18, 0.45);
+  --r-s: 14px;
+  --r-m: 22px;
+  --r-l: 32px;
+  --shadow-float: 0 30px 60px -30px rgba(3, 8, 20, 0.7);
+  --shadow-soft: 0 12px 30px -12px rgba(3, 8, 20, 0.45);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  color-scheme: light;
+  --gutter-l: max(clamp(16px, 5vw, 72px), env(safe-area-inset-left, 0px));
+  --gutter-r: max(clamp(16px, 5vw, 72px), env(safe-area-inset-right, 0px));
+
+  color-scheme: dark;
 }
 
 * {
@@ -46,16 +56,17 @@
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--night-900);
+  color: var(--cloud);
   font-family: var(--font-body);
+  font-weight: 350;
   font-size: 17px;
-  line-height: 1.45;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
@@ -73,138 +84,98 @@ button {
 
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid var(--ochre);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
 
 .display {
   font-family: var(--font-display);
-  font-variation-settings: 'SOFT' 100, 'WONK' 1;
-  letter-spacing: -0.01em;
+  font-variation-settings: 'SOFT' 100, 'WONK' 0, 'opsz' 96;
+  font-weight: 340;
+  letter-spacing: -0.02em;
 }
 
-/* Fine paper grain over everything; makes flat fills feel printed rather than digital. */
-.grain::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 50;
-  opacity: 0.16;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+.eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mist-soft);
 }
 
-/* Kanga border band: triangles and dots, as printed on the hem of a kanga cloth. */
-.kanga-band {
-  height: 14px;
-  background-color: var(--teal-deep);
-  background-image:
-    radial-gradient(circle at 7px 7px, var(--ochre) 2.6px, transparent 3px),
-    linear-gradient(135deg, var(--terracotta) 25%, transparent 25%),
-    linear-gradient(225deg, var(--terracotta) 25%, transparent 25%);
-  background-size: 14px 14px, 14px 14px, 14px 14px;
-  background-position: 0 0, 0 0, 0 0;
-}
-
-.kanga-band.thin {
-  height: 8px;
-  background-size: 8px 8px;
-  background-image:
-    radial-gradient(circle at 4px 4px, var(--ochre) 1.6px, transparent 2px),
-    linear-gradient(135deg, var(--terracotta) 25%, transparent 25%),
-    linear-gradient(225deg, var(--terracotta) 25%, transparent 25%);
-}
-
-/* Chunky, pressable button. */
+/* Buttons: one bright primary, everything else is glass. */
 .btn {
-  --btn-bg: var(--ochre);
-  --btn-fg: var(--ink);
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 56px;
-  padding: 0 26px;
-  border-radius: 18px;
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  font-weight: 650;
-  font-size: 18px;
-  border: 2.5px solid var(--ink);
-  box-shadow: var(--shadow-press);
-  transform: translateY(0);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.2s;
+  min-height: 54px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  color: var(--cloud);
+  background: var(--glass-strong);
+  border: 1px solid var(--hair);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  transition: transform 0.25s var(--ease-out), background 0.25s, box-shadow 0.25s, opacity 0.2s;
   user-select: none;
 }
 
 .btn:hover {
-  filter: brightness(1.05);
+  background: var(--glass-hover);
 }
 
-.btn:active,
-.btn.pressed {
-  transform: translateY(4px);
-  box-shadow: 0 1px 0 0 rgba(42, 27, 18, 0.9);
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn[disabled] {
-  filter: grayscale(0.6) opacity(0.6);
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.btn.teal {
-  --btn-bg: var(--teal-bright);
-  --btn-fg: #fff;
+.btn.primary {
+  background: var(--cloud);
+  color: var(--ink);
+  border-color: transparent;
+  box-shadow: 0 10px 30px -10px rgba(241, 207, 135, 0.55);
 }
 
-.btn.terracotta {
-  --btn-bg: var(--terracotta);
-  --btn-fg: #fff;
+.btn.primary:hover {
+  background: #fff;
+  box-shadow: 0 14px 36px -10px rgba(241, 207, 135, 0.75);
 }
 
-.btn.paper {
-  --btn-bg: var(--paper);
-}
-
-.btn.round {
-  width: 52px;
-  min-height: 52px;
+.btn.icon {
+  width: 46px;
+  min-height: 46px;
   padding: 0;
-  border-radius: 50%;
 }
 
-/* Frosted glass, used for the grade panes and sheets. --mx/--my follow the pointer. */
+.btn.quiet {
+  background: none;
+  border-color: transparent;
+  backdrop-filter: none;
+  color: var(--mist);
+}
+
+/* Frosted glass panel. --mx/--my follow the pointer for a soft moving sheen. */
 .glass {
   --mx: 50%;
-  --my: 30%;
+  --my: 0%;
   position: relative;
-  border-radius: var(--radius-l);
+  border-radius: var(--r-l);
   background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%),
-    linear-gradient(160deg, rgba(255, 252, 244, 0.42), rgba(255, 248, 232, 0.18));
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -14px 30px -18px rgba(42, 27, 18, 0.25),
-    0 24px 50px -24px rgba(42, 27, 18, 0.55);
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-}
-
-.glass::before {
-  /* Refracted rim: a thin bright edge on the top-left, like light catching cut glass. */
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: linear-gradient(140deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.5));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+    radial-gradient(120% 80% at var(--mx) var(--my), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 60%),
+    var(--glass);
+  border: 1px solid var(--hair);
+  box-shadow: var(--shadow-float), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
 }
 
 .sr-only {
@@ -216,11 +187,40 @@ button:focus-visible,
   white-space: nowrap;
 }
 
+.gutter {
+  padding-left: var(--gutter-l);
+  padding-right: var(--gutter-r);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
