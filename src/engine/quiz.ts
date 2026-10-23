@@ -29,6 +29,7 @@ import { jssLanguageBanks, jssLanguageGenerators } from './generators/jss-langua
 import { JSS_SCIENCE_BANKS, JSS_SCIENCE_GENERATORS } from './banks/jss-science'
 import { JSS_MORE_BANKS, JSS_MORE_GENERATORS } from './banks/jss-more'
 import { MORE_PASSAGES } from './banks/passages-more'
+import { EXTRA_READING } from './banks/extra-reading'
 import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
 import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
 import { uid } from './helpers'
@@ -69,7 +70,7 @@ Object.assign(BANKS, upperEnglishBanks(), upperKiswahiliBanks(), UPPER_SCIENCE_B
 Object.assign(GENERATORS, GRADE1_ENV_GENERATORS, { 'e-polite': G1.polite1, 'k-salamu': G1.salamu2 })
 BANKS['e-comprehension'] = [...BANKS['e-comprehension'], ...G1.COMP1_MORE]
 BANKS['k-ufahamu'] = [...BANKS['k-ufahamu'], ...G1.UFAHAMU1_MORE]
-for (const [id, qs] of Object.entries(MORE_PASSAGES)) BANKS[id] = [...(BANKS[id] ?? []), ...qs]
+for (const extra of [MORE_PASSAGES, EXTRA_READING]) for (const [id, qs] of Object.entries(extra)) BANKS[id] = [...(BANKS[id] ?? []), ...qs]
 
 // Pre-primary. Some topics are the gentlest Grade 1 questions (picture choices with three
 // options), re-levelled so each pre-primary year climbs slowly; the rest have their own makers.
