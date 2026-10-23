@@ -22,7 +22,7 @@ const MSAMIATI3: BankQuestion[] = [
   t(4, 'Seremala hutengeneza ___.', 'meza na viti', ['nguo', 'viatu', 'mikate']),
   t(4, 'Mtu anayelinda shule usiku ni ___.', 'mlinzi', ['mpishi', 'dereva', 'seremala']),
   t(4, 'Taja umuhimu mmoja wa miti.', 'hutupa hewa safi', ['huleta takataka', 'huharibu udongo', 'huleta njaa']),
-  t(5, 'Mwanaskauti hufanya nini?', 'husaidia watu na kutunza mazingira', ['huiba mali', 'hulala darasani', 'hupigana na wenzake']),
+  t(5, 'Mwanaskauti hufanya nini?', 'husaidia watu na kutunza mazingira', ['hulala darasani wakati wa somo', 'hucheza tu wakati wa mapumziko', 'huuza bidhaa sokoni kila siku']),
   t(5, 'Kifaa kipi kinatumika kukata kuni?', 'shoka', ['ufagio', 'dodoki', 'sindano']),
   t(5, 'Fundi wa viatu huitwa ___.', 'mshona viatu', ['mvuvi', 'mchungaji', 'mpishi']),
   // Uzalendo na miezi ya mwaka
@@ -34,7 +34,7 @@ const MSAMIATI3: BankQuestion[] = [
   t(4, 'Mwezi wa mwisho wa mwaka ni ___.', 'Desemba', ['Novemba', 'Januari', 'Oktoba']),
   t(4, 'Tunaonyesha uzalendo kwa ___.', 'kuimba wimbo wa taifa kwa heshima', ['kuchana bendera', 'kuharibu mali ya umma', 'kutupa takataka barabarani']),
   t(5, 'Mwezi unaokuja kabla ya Julai ni ___.', 'Juni', ['Agosti', 'Mei', 'Septemba']),
-  t(5, 'Rangi ya kijani kwenye bendera yetu inawakilisha ___.', 'mimea na ardhi yenye rutuba', ['damu ya mashujaa', 'amani', 'watu wa Kenya']),
+  t(5, 'Rangi ya kijani kwenye bendera yetu inawakilisha ___.', 'mimea na ardhi yenye rutuba', ['amani na umoja wa nchi', 'watu weusi wa Kenya', 'maji ya bahari na maziwa']),
 ]
 
 const MAAMKUZI3: BankQuestion[] = [
@@ -53,7 +53,7 @@ const MAAMKUZI3: BankQuestion[] = [
   t(4, 'Ukiambiwa "Habari za jioni?" unajibu ___.', 'Nzuri', ['Hatujambo', 'Marahaba', 'Pole']),
   t(4, 'Rafiki yako amepita mtihani. Unamwambia ___.', 'Hongera', ['Pole', 'Samahani', 'Kwaheri']),
   t(4, 'Tunapotarajia kuonana tena tunasema ___.', 'Kwaheri ya kuonana', ['Lala salama', 'Shikamoo', 'Pole sana']),
-  t(5, 'Mwalimu akiingia darasani asubuhi, wanafunzi husema ___.', 'Shikamoo mwalimu / Habari za asubuhi mwalimu', ['Kwaheri mwalimu', 'Lala salama mwalimu', 'Pole mwalimu']),
+  t(5, 'Mwalimu akiingia darasani asubuhi, wanafunzi husema ___.', 'Shikamoo mwalimu / Habari za asubuhi mwalimu', ['Kwaheri mwalimu / Tutaonana kesho mwalimu', 'Lala salama mwalimu / Usiku mwema mwalimu', 'Pole mwalimu / Pole na kazi ya jana']),
   t(5, 'Wanafunzi wawili wakiambiwa "Hamjambo?" wanajibu ___.', 'Hatujambo', ['Sijambo', 'Hawajambo', 'Hajambo']),
   t(5, 'Ni lipi jibu la heshima kwa "Karibu nyumbani"?', 'Asante, nimekaribia', ['Kwaheri', 'Sijambo', 'Pole']),
 ]
@@ -159,7 +159,7 @@ const UFAHAMU3: BankQuestion[] = [
   ]),
   ...passage(2, 'Sokoni', 'Jumamosi, Mama na Wanjiru walienda sokoni. Walinunua nyanya, vitunguu na sukuma wiki. Mama alilipa shilingi mia moja. Walirudi nyumbani kwa matatu.', [
     ['Walienda sokoni siku gani?', 'Jumamosi', ['Jumapili', 'Jumatatu']],
-    ['Walinunua nini?', 'nyanya, vitunguu na sukuma wiki', ['mkate na maziwa', 'mchele na sukari']],
+    ['Walinunua nini?', 'nyanya, vitunguu na sukuma wiki', ['mchele, sukari na chumvi', 'mkate, maziwa na mayai', 'unga, mafuta na majani ya chai']],
     ['Mama alilipa shilingi ngapi?', 'mia moja', ['hamsini', 'mia mbili']],
     ['Walirudi nyumbani kwa nini?', 'matatu', ['baiskeli', 'miguu']],
   ]),
@@ -185,7 +185,7 @@ const UFAHAMU3: BankQuestion[] = [
     ['Mama ana kuku wangapi?', 'kumi', ['sita', 'kumi na sita', 'tano']],
     ['Kuku hutaga mayai mangapi kwa siku?', 'sita', ['kumi', 'moja', 'kumi na mbili']],
     ['Mama huuza mayai lini?', 'Ijumaa', ['Jumamosi', 'Jumapili', 'kila siku']],
-    ['Kwa nini Mama amejenga banda imara?', 'ili kuwalinda kuku dhidi ya mwewe', ['ili kuuza kuku', 'ili kupanda mboga', 'ili watoto wacheze']],
+    ['Kwa nini Mama amejenga banda imara?', 'ili kuwalinda kuku dhidi ya mwewe', ['ili watoto wacheze ndani yake', 'ili apande mboga ndani yake', 'ili auze kuku sokoni haraka']],
   ]),
   ...passage(5, 'Kisima Kipya', 'Kijiji cha Kalawa kilikuwa na shida ya maji. Wanawake na watoto walitembea kilomita tano kuchota maji mtoni. Mwaka jana, wanakijiji walichanga pesa na kuchimba kisima. Sasa maji safi yako karibu, na watoto hufika shuleni mapema. Wanakijiji hutunza kisima kwa kukifunika kila jioni.', [
     ['Kijiji kilikuwa na shida gani?', 'ukosefu wa maji', ['ukosefu wa chakula', 'mafuriko', 'magonjwa']],
@@ -209,7 +209,7 @@ const UFAHAMU3: BankQuestion[] = [
   ]),
   ...passage(5, 'Mvua Kubwa', 'Usiku mmoja mvua kubwa ilinyesha kijijini Mwea. Asubuhi, Kamau aliona maji mengi barabarani. Daraja dogo lilikuwa limeharibika. Baba alisema, "Leo hatutavuka mto. Tutasubiri maji yapungue." Kamau alibaki nyumbani akasoma vitabu vyake.', [
     ['Mvua ilinyesha lini?', 'usiku', ['asubuhi', 'mchana', 'jioni']],
-    ['Kwa nini hawakuvuka mto?', 'daraja liliharibika na maji yalikuwa mengi', ['Kamau alikuwa mgonjwa', 'walikuwa wamechoka', 'ilikuwa Jumapili']],
+    ['Kwa nini hawakuvuka mto?', 'daraja liliharibika na maji yalikuwa mengi', ['Kamau alikuwa mgonjwa siku hiyo', 'walikuwa wamechoka baada ya safari', 'ilikuwa Jumapili na walienda kanisani']],
     ['Kamau alifanya nini nyumbani?', 'alisoma vitabu', ['alicheza mpira', 'alilala', 'alipika']],
     ['Neno "limeharibika" lina maana gani?', 'limevunjika', ['limejengwa', 'limepakwa rangi', 'limesafishwa']],
   ]),
@@ -283,7 +283,7 @@ const RHYTHM3: BankQuestion[] = [
   t(4, 'Clap, stamp, stamp, clap, stamp, stamp, clap, ___', 'stamp', ['clap', 'rest', 'snap']),
   t(4, 'A lullaby is usually sung with a ___ tempo.', 'slow', ['fast', 'running', 'loud']),
   t(5, 'The isukuti drum dance comes from which community?', 'Luhya', ['Maasai', 'Swahili', 'Kikuyu']),
-  t(5, 'Why do dancers listen to the drum?', 'to move together with the beat', ['to stop dancing', 'to sleep', 'to tune a guitar']),
+  t(5, 'Why do dancers listen to the drum?', 'to move together with the beat', ['to know when to stop and rest', 'to learn the words of the song', 'to tune their voices to the drum']),
   t(5, 'Which word means music getting faster and faster?', 'speeding up the tempo', ['raising the pitch', 'singing in a round', 'humming']),
 ]
 
@@ -313,13 +313,13 @@ const PUSHPULL3: BankQuestion[] = [
   t(2, 'Which one do we pull?', 'a bucket from a well', ['a wheelbarrow', 'a swing from behind']),
   t(2, 'We should push and pull objects that are ___ for us.', 'not too heavy', ['very heavy', 'sharp']),
   t(3, 'When pulling a rope we should bend our ___ a little.', 'knees', ['ears', 'fingers']),
-  t(3, 'Why should we not let go of the rope suddenly in tug of war?', 'the other team can fall and get hurt', ['the rope will cry', 'the game ends quickly']),
+  t(3, 'Why should we not let go of the rope suddenly in tug of war?', 'the other team can fall and get hurt', ['the game will end too quickly', 'the rope will become too short', 'the teacher will choose new teams']),
   t(3, 'Which game uses pulling?', 'tug of war', ['skipping', 'hopscotch']),
   t(4, 'Two learners push each other gently, palm to palm. This builds ___.', 'strength', ['pitch', 'colour', 'tempo']),
   t(4, 'Which is a safe way to push a friend on a swing?', 'push gently from behind when they are ready', ['push very hard', 'push from the front', 'push while they are standing']),
   t(4, 'A team of 6 pulls against a team of 4. How many learners are pulling in all?', '10', ['2', '8', '24']),
   t(5, 'Which group has only pushing activities?', 'pushing a wheelbarrow, closing a door, pushing a swing', ['pulling a cart, tug of war, opening a drawer', 'pushing a wheelbarrow, tug of war, drawing water', 'pulling a rope, closing a door, pushing a swing']),
-  t(5, 'Why should we warm up before pushing and pulling games?', 'to prepare our muscles and avoid injury', ['to get tired', 'to make the rope longer', 'to sleep']),
+  t(5, 'Why should we warm up before pushing and pulling games?', 'to prepare our muscles and avoid injury', ['to get tired before the game begins', 'to make the rope longer and stronger', 'to show the other team how strong we are']),
   t(5, 'Which surface is safest for tug of war?', 'a flat grassy field', ['a rocky path', 'a muddy slope', 'a tarmac road']),
 ]
 
@@ -331,14 +331,14 @@ const ROUNDS3: BankQuestion[] = [
   t(2, 'Group B starts singing when Group A finishes the ___ line.', 'first', ['last', 'tenth']),
   t(2, 'Singing a round helps us to ___.', 'listen and work together', ['shout louder', 'sleep']),
   t(3, 'In a three-part round, how many groups sing?', '3', ['2', '6']),
-  t(3, 'What must each group do to sing a round well?', 'keep its own part and not follow the others', ['copy the loudest group', 'stop when others start']),
+  t(3, 'What must each group do to sing a round well?', 'keep its own part and not follow the others', ['copy the loudest group so it sounds strong', 'stop singing when the other groups start', 'sing faster than the group before it']),
   t(3, 'A round ends when ___.', 'each group finishes in turn', ['everyone stops at once', 'the leader sleeps']),
   t(4, 'A round has 4 lines. Group A sings all 4 lines once. Group B starts after line 1. How many lines has Group A sung when Group B starts?', '1', ['2', '3', '4']),
   t(4, 'Which song type is best for singing in rounds?', 'a short song with a simple tune', ['a very long story', 'a song with no tune', 'a poem we do not know']),
   t(4, 'Why must singers in a round keep the same tempo?', 'so the parts fit together', ['so they finish first', 'to be louder', 'to change the words']),
   t(5, 'Group A starts a round. Group B starts one line later. Group C starts one line after B. Which group finishes last?', 'Group C', ['Group A', 'Group B', 'all at once']),
   t(5, 'In a round of 4 lines with 2 groups starting one line apart, how many lines are sung in all?', '8', ['4', '6', '5']),
-  t(5, 'Which shows good manners when singing in a round?', 'singing softly enough to hear the other groups', ['shouting over others', 'laughing at a mistake', 'leaving the group']),
+  t(5, 'Which shows good manners when singing in a round?', 'singing softly enough to hear the other groups', ['singing louder than every other group', 'laughing when another group makes a mistake', 'leaving the group before the song ends']),
 ]
 
 const SKIPPING3: BankQuestion[] = [
@@ -373,7 +373,7 @@ const DRIBBLING3: BankQuestion[] = [
   t(4, 'Which shows good teamwork in a dribbling game?', 'passing the ball to a free friend', ['keeping the ball always', 'kicking friends', 'hiding the ball']),
   t(4, 'Dribbling helps us to improve our ___.', 'control of the ball', ['handwriting', 'singing voice', 'painting']),
   t(5, 'Which group has only skills used in ball games?', 'dribbling, passing, shooting', ['dribbling, skipping, painting', 'passing, weaving, singing', 'shooting, rolling, hopping on a rope']),
-  t(5, 'Why do we use both feet when dribbling?', 'to move the ball in any direction', ['to run slower', 'to look taller', 'to kick friends']),
+  t(5, 'Why do we use both feet when dribbling?', 'to move the ball in any direction', ['to kick the ball as high as we can', 'to run more slowly with the ball', 'to stop other players from playing']),
   t(5, 'A ball made from waste paper and strings is a ___.', 'home-made ball', ['basketball', 'rope', 'drum']),
 ]
 
@@ -407,7 +407,7 @@ const GYM3: BankQuestion[] = [
   t(3, 'Balancing on a log helps us to have good ___.', 'control of our body', ['handwriting', 'singing']),
   t(4, 'Which body part should NOT touch the ground first in a forward roll?', 'the top of the head', ['the hands', 'the back', 'the feet']),
   t(4, 'Halima balanced on one leg for 15 seconds, then 20 seconds. How many seconds altogether?', '35', ['5', '25', '30']),
-  t(4, 'Why should one learner roll at a time?', 'to avoid bumping into each other', ['to make it slow', 'so others can laugh', 'to finish quickly']),
+  t(4, 'Why should one learner roll at a time?', 'to avoid bumping into each other', ['so the others can laugh and clap', 'to finish the lesson more quickly', 'so the mat stays clean and dry']),
   t(5, 'Put in order: squat, place hands, tuck chin, roll. What comes right after "place hands"?', 'tuck chin', ['squat', 'roll', 'stand up']),
   t(5, 'Which group has only balancing activities?', 'standing on one leg, walking on a line, holding a still pose', ['rolling, skipping, dribbling', 'hopping, running, swimming', 'standing on one leg, kicking, painting']),
   t(5, 'Which shows safety during forward rolls?', 'clearing the mat of objects before rolling', ['rolling with a pencil in your pocket', 'rolling on stones', 'pushing a friend who is rolling']),
@@ -415,20 +415,20 @@ const GYM3: BankQuestion[] = [
 
 const WATER3: BankQuestion[] = [
   t(1, 'Children should swim only when an ___ is watching.', 'adult', ['animal', 'stranger']),
-  t(1, 'Which is a safe place to learn swimming?', 'a swimming pool with a trainer', ['a deep river', 'a dam']),
+  t(1, 'Which is a safe place to learn swimming?', 'a swimming pool with a trainer', ['a deep river near the farm', 'a dam where cattle drink', 'the sea when no one is near']),
   t(1, 'We should not play near ___ water.', 'deep', ['drinking', 'warm']),
   t(2, 'Before entering a pool we should ___.', 'take a shower', ['eat a lot', 'run and jump']),
   t(2, 'A float helps us to ___ in water.', 'stay up', ['sink', 'run']),
   t(2, 'Which is NOT safe near water?', 'pushing others into water', ['walking slowly', 'listening to the trainer']),
-  t(3, 'What should you do if you see someone drowning?', 'shout for an adult to help', ['jump in yourself', 'run home quietly']),
-  t(3, 'Why should we not run around a swimming pool?', 'the floor is slippery and we can fall', ['it makes water dirty', 'the pool will empty']),
+  t(3, 'What should you do if you see someone drowning?', 'shout for an adult to help', ['jump into the water yourself', 'run home without telling anyone', 'throw stones into the water']),
+  t(3, 'Why should we not run around a swimming pool?', 'the floor is slippery and we can fall', ['running makes the pool water dirty', 'the pool water will splash out', 'the trainer cannot see us running']),
   t(3, 'Which item can be thrown to help someone in water?', 'a float or rope', ['a stone', 'a book']),
   t(4, 'Why should we not swim soon after a big meal?', 'we may get stomach cramps', ['the water becomes cold', 'we grow taller', 'the pool closes']),
   t(4, 'Which group has only water safety rules?', 'swim with an adult, do not run, obey the trainer', ['swim alone, run, dive anywhere', 'swim at night, push friends, obey the trainer', 'do not run, swim alone, dive in shallow water']),
   t(4, 'Blowing bubbles in water helps us learn to ___.', 'breathe out under water', ['drink water', 'float on our back', 'sink']),
   t(5, 'Mutua\'s friends want to swim in a flooded river after the rains. What should he say?', '"No, the water is fast and deep. It is not safe."', ['"Let us race across."', '"Let us dive in first."', '"Let us go without telling anyone."']),
   t(5, 'Which is the safest way to help a friend who is struggling in water?', 'throw a float and call an adult', ['jump in and hold them', 'throw a stone near them', 'walk away']),
-  t(5, 'Why is swimming in a pool safer than in a river?', 'the depth is known and a trainer watches', ['pool water is sweet', 'rivers have no water', 'pools are always deep']),
+  t(5, 'Why is swimming in a pool safer than in a river?', 'the depth is known and a trainer watches', ['pool water is warmer than river water', 'pools are always deeper than rivers', 'rivers have no fish to help swimmers']),
 ]
 
 const ANTHEM3: BankQuestion[] = [
@@ -464,7 +464,7 @@ const CREATION3: BankQuestion[] = [
   t(4, 'On which day did God create human beings?', 'the sixth day', ['the first day', 'the third day', 'the seventh day']),
   t(4, 'Which of these did God create?', 'the sun, moon and stars', ['houses and cars', 'shoes and bags', 'phones and radios']),
   t(4, 'Adam and Eve were sent out of the garden because they ___.', 'disobeyed God', ['were hungry', 'were tired', 'wanted to travel']),
-  t(5, 'Why should we take care of animals?', 'God created them and gave us the duty to care for them', ['they are useless', 'they are dangerous', 'they are ours to harm']),
+  t(5, 'Why should we take care of animals?', 'God created them and gave us the duty to care for them', ['they will work harder for us if they are fed well', 'they are dangerous if they are not kept happy', 'they belong to the government and must be guarded']),
   t(5, 'Which shows thanking God for His creation?', 'praying and singing praises', ['wasting food', 'cutting all trees', 'polluting rivers']),
   t(5, 'God gave Adam the work of ___ the animals.', 'naming', ['selling', 'chasing', 'counting']),
 ]
@@ -478,13 +478,13 @@ const FAMILY3: BankQuestion[] = [
   t(2, 'A family made of father, mother and children is a ___ family.', 'nuclear', ['extended', 'church']),
   t(3, 'My uncle\'s children are my ___.', 'cousins', ['grandparents', 'aunts']),
   t(3, 'Which shows love in a family?', 'helping with house chores', ['fighting with siblings', 'hiding food']),
-  t(3, 'Christian families pray together to ___.', 'thank God and ask for His help', ['make noise', 'finish food']),
+  t(3, 'Christian families pray together to ___.', 'thank God and ask for His help', ['finish their food quickly', 'show neighbours they are rich', 'make the house quiet at night']),
   t(4, 'Which commandment teaches us about parents?', 'Honour your father and mother', ['Do not steal', 'Do not tell lies', 'Keep the Sabbath holy']),
   t(4, 'Grandparents, uncles, aunts and cousins form the ___ family.', 'extended', ['nuclear', 'school', 'small']),
   t(4, 'Jesus obeyed His parents Mary and ___.', 'Joseph', ['Moses', 'David', 'Peter']),
-  t(5, 'Your little sister is sick and Mother is busy. What should you do?', 'take care of her and call Mother', ['go out to play', 'shout at her', 'eat her food']),
+  t(5, 'Your little sister is sick and Mother is busy. What should you do?', 'take care of her and call Mother', ['go out to play with your friends', 'give her some of your sweets only', 'wait until Mother finishes her work']),
   t(5, 'Which group has only members of the extended family?', 'grandfather, aunt, cousin', ['father, mother, brother', 'teacher, pastor, doctor', 'aunt, neighbour, friend']),
-  t(5, 'Why should children respect the elderly in the family?', 'God wants us to honour them for their care and wisdom', ['they are rich', 'they are strong', 'they give sweets']),
+  t(5, 'Why should children respect the elderly in the family?', 'God wants us to honour them for their care and wisdom', ['they will give us sweets and money if we obey', 'they are stronger than everyone else at home', 'they will punish us if we do not obey them']),
 ]
 
 const BIBLE3: BankQuestion[] = [
@@ -533,10 +533,10 @@ const LIVING3: BankQuestion[] = [
   t(3, 'When someone wrongs us, Jesus teaches us to ___.', 'forgive them', ['fight them', 'insult them']),
   t(3, 'Which shows respect to parents?', 'obeying them', ['shouting at them', 'ignoring them']),
   t(3, 'We should share our food with ___.', 'those who are hungry', ['nobody', 'only rich people']),
-  t(4, 'Which is the best way to use our free time?', 'helping at home and playing safely', ['fighting', 'stealing fruits', 'abusing others']),
+  t(4, 'Which is the best way to use our free time?', 'helping at home and playing safely', ['sleeping all day long', 'watching TV until night', 'walking alone on the road']),
   t(4, 'The prayer Jesus taught His disciples is called ___.', 'the Lord\'s Prayer', ['the National Anthem', 'a lullaby', 'a riddle']),
-  t(4, 'Which is a way of caring for the sick?', 'visiting and praying for them', ['laughing at them', 'taking their food', 'ignoring them']),
-  t(5, 'Wekesa found a wallet on the way to church. What should he do?', 'return it to the owner or give it to an elder', ['keep the money', 'throw it away', 'buy sweets with it']),
+  t(4, 'Which is a way of caring for the sick?', 'visiting and praying for them', ['keeping away until they are well', 'making noise near their bed', 'eating their food for them']),
+  t(5, 'Wekesa found a wallet on the way to church. What should he do?', 'return it to the owner or give it to an elder', ['keep the money and throw the wallet away', 'buy sweets for his friends with the money', 'hide it at home until someone asks']),
   t(5, 'Which group shows only good choices?', 'praying, sharing, obeying', ['lying, sharing, praying', 'stealing, obeying, praying', 'fighting, sharing, lying']),
   t(5, 'Why do Christians thank God before meals?', 'to show gratitude for the food', ['to make the food hot', 'to wait for visitors', 'to finish quickly']),
 ]

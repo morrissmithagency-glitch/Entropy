@@ -1,7 +1,7 @@
 // Grade 3 maths. Levels 4–5 match Grade 3 end-term papers: 3-digit work with
 // carrying and borrowing, shillings and cents, fractions of amounts, hidden triangles.
 import type { ArtId } from '../../components/art/objects'
-import { KENYAN_NAMES, choice, numberOptions, numberWord, textOptions, uid } from '../helpers'
+import { KENYAN_NAMES, choice, numberOptions, numberWord, textOptions, uid, countOf, An, an } from '../helpers'
 import type { Generator, Level, NumberQuestion, Option, Rng, ShapeKind, Visual } from '../types'
 import { DAYS } from './math'
 
@@ -52,7 +52,7 @@ export const whole3: Generator = (rng, level) => {
   const [h, t, o] = [Math.floor(n / 100), Math.floor(n / 10) % 10, n % 10]
   switch (level) {
     case 1:
-      return num(level, `What number has ${h} hundreds, ${t} tens and ${o} ones?`, n, { explain: `${h * 100} + ${t * 10} + ${o} = ${n}` })
+      return num(level, `What number has ${countOf(h, 'hundred')}, ${countOf(t, 'ten')} and ${countOf(o, 'one')}?`, n, { explain: `${h * 100} + ${t * 10} + ${o} = ${n}` })
     case 2: {
       const step = rng.pick([10, 2, 5])
       const start = step === 10 ? rng.int(10, 70) * 10 : step * rng.int(20, 150)
@@ -64,7 +64,7 @@ export const whole3: Generator = (rng, level) => {
       if (rng.next() < 0.5) {
         const ask = rng.pick(['hundreds', 'tens', 'ones'] as const)
         const ans = ask === 'hundreds' ? h : ask === 'tens' ? t : o
-        return num(level, `${n} = ___ hundreds, ___ tens, ___ ones. How many ${ask}?`, ans, { explain: `${n} = ${h} hundreds, ${t} tens and ${o} ones.` })
+        return num(level, `${n} = ___ hundreds, ___ tens, ___ ones. How many ${ask}?`, ans, { explain: `${n} = ${countOf(h, 'hundred')}, ${countOf(t, 'ten')} and ${countOf(o, 'one')}.` })
       }
       const wrong = [words3(n + 10), words3(n - 1 > 100 ? n - 1 : n + 2), words3(o * 100 + t * 10 + h > 100 ? o * 100 + t * 10 + h : n + 100)]
       return choice('m3', level, `Which words show the number ${n}?`, textOptions(rng, words3(n), wrong, 3), words3(n), { explain: `${n} is "${words3(n)}".` })
@@ -97,7 +97,7 @@ export const whole3: Generator = (rng, level) => {
       const k = rng.int(0, 3)
       if (k === 0) {
         const m = rng.int(10, 99)
-        return num(level, `${m} = ___ hundreds, ___ tens, ___ ones. How many hundreds?`, 0, { explain: `${m} has no hundreds: 0 hundreds, ${Math.floor(m / 10)} tens, ${m % 10} ones.` })
+        return num(level, `${m} = ___ hundreds, ___ tens, ___ ones. How many hundreds?`, 0, { explain: `${m} has no hundreds: 0 hundreds, ${countOf(Math.floor(m / 10), 'ten')}, ${countOf(m % 10, 'one')}.` })
       }
       if (k === 1) {
         const m = rng.int(100, 899)
@@ -294,7 +294,7 @@ export const div3: Generator = (rng, level) => {
       const tray = rng.pick([6, 10, 5])
       const trays = rng.int(4, 9)
       const sold = rng.int(1, trays - 2)
-      return num(level, `Mama had ${tray * trays} eggs. She packed them in trays of ${tray}. She sold ${sold} trays. How many trays were left?`, trays - sold, {
+      return num(level, `Mama had ${tray * trays} eggs. She packed them in trays of ${tray}. She sold ${countOf(sold, 'tray')}. How many trays were left?`, trays - sold, {
         explain: `${tray * trays} ÷ ${tray} = ${trays} trays. ${trays} − ${sold} = ${trays - sold}.`,
       })
     }
@@ -427,7 +427,7 @@ function measure(unit: 'm' | 'kg' | 'litres', what: { add: string[]; sub: string
             small * k,
             { explain: `${k} × ${small} = ${small * k} ${unitWord}` },
           )
-        return num(level, `How many ${small}${u} ${what.fill[1]} can fill a ${small * k}${u} ${what.fill[0]}?`, k, { explain: `${small * k} ÷ ${small} = ${k}` })
+        return num(level, `How many ${small}${u} ${what.fill[1]} can fill ${an(small * k)}${u} ${what.fill[0]}?`, k, { explain: `${small * k} ÷ ${small} = ${k}` })
       }
       default: {
         const a = rng.int(60, 99)
@@ -624,12 +624,12 @@ export const shapes3: Generator = (rng, level) => {
     case 1: {
       if (rng.next() < 0.5) {
         const [thing, shape] = rng.pick(SHAPED)
-        return choice('m3', level, `${thing[0].toUpperCase()}${thing.slice(1)} is shaped like a ___.`, textOptions(rng, shape, ALL), shape, { explain: `${thing} is like a ${shape}.` })
+        return choice('m3', level, `${thing[0].toUpperCase()}${thing.slice(1)} is shaped like a ___.`, textOptions(rng, shape, ALL), shape, { explain: `${thing} is like ${an(shape)}.` })
       }
       const want = rng.pick(ALL)
       const others = rng.sample(ALL.filter((s) => s !== want), 2)
       const opts = rng.shuffle([want, ...others]).map((k, i) => ({ id: k, visual: { kind: 'shapes' as const, shapes: [{ kind: k, color: COLORS[i] }] } }))
-      return choice('m3', level, `Which one is ${want === 'oval' ? 'an oval' : `a ${want}`}?`, opts, want)
+      return choice('m3', level, `Which one is ${want === 'oval' ? 'an oval' : `${an(want)}`}?`, opts, want)
     }
     case 2: {
       const r = rng.next()
@@ -647,7 +647,7 @@ export const shapes3: Generator = (rng, level) => {
       const k = rng.pick<ShapeKind>(['triangle', 'rectangle', 'square'])
       const ask = rng.pick(['sides', 'corners'])
       const n = SIDES[k]
-      return num(level, `How many ${ask} does a ${k} have?`, n, { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS) }] }, explain: `A ${k} has ${n} ${ask}.` })
+      return num(level, `How many ${ask} does ${an(k)} have?`, n, { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS) }] }, explain: `${An(k)} has ${n} ${ask}.` })
     }
     case 3: {
       if (rng.next() < 0.5) {

@@ -1,3 +1,4 @@
+import { An, an } from '../helpers'
 // Fact tables for Grade 3 Environmental Activities, Creative Activities and CRE. Each table
 // is a small set of true, checked facts; factGenerator turns it into many questions.
 // Items in different categories of one table must never overlap in meaning.
@@ -23,7 +24,7 @@ const ENV: Record<string, FactSet> = {
           ['nail cutter', 'cut our nails'],
           ['soap', 'remove dirt and germs'],
         ],
-        ask: (a) => `We use a ${a} to ___.`,
+        ask: (a) => `We use ${an(a)} to ___.`,
         askBack: (b) => `Which item do we use to ${b}?`,
       },
     ],
@@ -92,7 +93,7 @@ const ENV: Record<string, FactSet> = {
           ['amber', 'get ready'],
           ['green', 'go'],
         ],
-        ask: (a) => `A ${a} traffic light tells drivers to ___.`,
+        ask: (a) => `${An(a)} traffic light tells drivers to ___.`,
         askBack: (b) => `Which traffic light colour means "${b}"?`,
       },
     ],
@@ -223,7 +224,7 @@ const ENV: Record<string, FactSet> = {
           ['bee', 'honey'],
           ['sheep', 'wool'],
         ],
-        ask: (a) => `We get ___ from a ${a}.`,
+        ask: (a) => `We get ___ from ${an(a)}.`,
         askBack: (b) => `Which animal gives us ${b}?`,
       },
       {
@@ -233,7 +234,7 @@ const ENV: Record<string, FactSet> = {
           ['ox', 'pulling a plough'],
           ['cat', 'catching rats'],
         ],
-        ask: (a) => `A ${a} helps us by ___.`,
+        ask: (a) => `${An(a)} helps us by ___.`,
         askBack: (b) => `Which animal helps us by ${b}?`,
       },
       {
@@ -245,8 +246,8 @@ const ENV: Record<string, FactSet> = {
           ['dog', 'puppy'],
           ['cat', 'kitten'],
         ],
-        ask: (a) => `The young one of a ${a} is called a ___.`,
-        askBack: (b) => `A ${b} is the young one of a ___.`,
+        ask: (a) => `The young one of ${an(a)} is called a ___.`,
+        askBack: (b) => `${An(b)} is the young one of a ___.`,
       },
     ],
   },
@@ -463,9 +464,9 @@ const CREATIVE: Record<string, FactSet> = {
       {
         pairs: [
           ['black', 'the people of Kenya'],
-          ['red', 'the sacrifices made to win our freedom'],
+          ['red', 'the sacrifices for our freedom'],
           ['green', 'our land and its plants'],
-          ['white', 'peace'],
+          ['white', 'peace and honesty'],
         ],
         ask: (a) => `On the Kenyan flag, ${a} stands for ___.`,
         askBack: (b) => `Which colour on the flag stands for ${b}?`,

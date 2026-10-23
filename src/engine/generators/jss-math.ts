@@ -1,7 +1,7 @@
 // Junior school mathematics (Grades 7–9). Each topic climbs from a direct skill (level 1) to a
 // multi-step word problem (level 5). Answers that are negative, fractional or algebraic are
 // multiple choice; whole-number answers are typed.
-import { KENYAN_NAMES, uid } from '../helpers'
+import { KENYAN_NAMES, uid, An, an } from '../helpers'
 import type { ChoiceQuestion, Generator, Level, NumberQuestion, Option, Rng, Visual } from '../types'
 import { fmt, frac } from './upper-math'
 
@@ -155,7 +155,7 @@ export const fracJ = (g: J): Generator => (rng, level) => {
       return pick(level, `${a}/${b} ${op} ${c}/${d} =`, frac(top, b * d), [frac(op === '+' ? a + c : Math.abs(a - c), b + d), frac(top + b, b * d), frac(top, b * d * 2)])
     }
     case 3: {
-      const [w1, n1, d1] = [rng.int(1, 4), rng.int(1, 3), 4]
+      const [w1, n1, d1] = [rng.int(1, 4), rng.pick([1, 3]), 4]
       const [w2, n2, d2] = [rng.int(1, 3), rng.int(1, 2), 3]
       const A = w1 * d1 + n1
       const B = w2 * d2 + n2
@@ -336,7 +336,7 @@ export const ratioJ = (g: J): Generator => (rng, level) => {
     case 3: {
       const s = rng.pick([40, 50, 60, 72, 80, 90])
       const h = rng.pick([2, 3, 4, 5])
-      return rng.next() < 0.5 ? num(level, `A matatu travels ${s * h} km in ${h} hours. What is its average speed in km/h?`, s) : num(level, `A tap fills a ${s * h}-litre tank in ${h} hours. At what rate does it fill, in litres per hour?`, s)
+      return rng.next() < 0.5 ? num(level, `A matatu travels ${s * h} km in ${h} hours. What is its average speed in km/h?`, s) : num(level, `A tap fills ${an(s * h)}-litre tank in ${h} hours. At what rate does it fill, in litres per hour?`, s)
     }
     case 4: {
       const old = rng.pick([200, 400, 500, 800, 1200, 2000])
@@ -617,7 +617,7 @@ export const measureJ = (g: J): Generator => (rng, level) => {
   switch (level) {
     case 1: {
       const [a, b, c, d] = [rng.int(10, 20), rng.int(8, 14), rng.int(3, 7), rng.int(2, 6)]
-      return num(level, `An L-shaped room is a ${a} m by ${b} m rectangle with a ${c} m by ${d} m corner cut out. What is its perimeter? (m)`, 2 * (a + b), { explain: `Cutting a corner does not change the perimeter: 2 × (${a} + ${b}) = ${2 * (a + b)} m.` })
+      return num(level, `An L-shaped room is ${an(a)} m by ${b} m rectangle with ${an(c)} m by ${d} m corner cut out. What is its perimeter? (m)`, 2 * (a + b), { explain: `Cutting a corner does not change the perimeter: 2 × (${a} + ${b}) = ${2 * (a + b)} m.` })
     }
     case 2: {
       const b = 2 * rng.int(2, 15)
@@ -837,7 +837,7 @@ export const moneyJ = (g: J): Generator => (rng, level) => {
     case 2: {
       const b = rng.pick([200, 400, 500, 800, 1000, 2000])
       const p = rng.pick([10, 20, 25, 30, 40])
-      return num(level, `A trader bought a radio for ${fmt(b)} shillings and sold it at a ${p}% profit. What was the selling price?`, b + (b * p) / 100)
+      return num(level, `A trader bought a radio for ${fmt(b)} shillings and sold it at ${an(p)}% profit. What was the selling price?`, b + (b * p) / 100)
     }
     case 3: {
       const b = rng.pick([400, 500, 800, 1200, 1600])
@@ -847,7 +847,7 @@ export const moneyJ = (g: J): Generator => (rng, level) => {
     case 4: {
       const marked = rng.pick([1200, 2400, 3600, 4800])
       const d = rng.pick([5, 10, 15, 20, 25])
-      return num(level, `Shoes are marked at ${fmt(marked)} shillings. A ${d}% discount is given. What does the buyer pay?`, marked - (marked * d) / 100)
+      return num(level, `Shoes are marked at ${fmt(marked)} shillings. ${An(d)}% discount is given. What does the buyer pay?`, marked - (marked * d) / 100)
     }
     default: {
       const cost = rng.pick([30, 40, 50])
@@ -919,7 +919,7 @@ export const anglesJ = (g: J): Generator => (rng, level) => {
     case 3: {
       const k = rng.int(5, 20)
       const n = POLY.find(([, x]) => x === k)?.[0] ?? `polygon with ${k} sides`
-      return num(level, `Find the sum of the interior angles of a ${n}.`, (k - 2) * 180, { explain: `(${k} − 2) × 180° = ${(k - 2) * 180}°` })
+      return num(level, `Find the sum of the interior angles of ${an(n)}.`, (k - 2) * 180, { explain: `(${k} − 2) × 180° = ${(k - 2) * 180}°` })
     }
     case 4: {
       const [n, k] = rng.pick(POLY.filter(([, x]) => 360 % x === 0))
@@ -1020,7 +1020,7 @@ export const similarityJ = (): Generator => (rng, level) => {
       const h = rng.int(2, 6)
       const sh = rng.int(1, 3)
       const tree = rng.int(3, 8)
-      return num(level, `A ${h} m pole casts a ${sh} m shadow. At the same time a tree casts a ${sh * tree} m shadow. How tall is the tree? (m)`, h * tree, { explain: `Similar triangles: ${h} × ${tree} = ${h * tree} m` })
+      return num(level, `${An(h)} m pole casts ${an(sh)} m shadow. At the same time a tree casts ${an(sh * tree)} m shadow. How tall is the tree? (m)`, h * tree, { explain: `Similar triangles: ${h} × ${tree} = ${h * tree} m` })
     }
     default: {
       const v = rng.int(2, 9)
@@ -1109,7 +1109,7 @@ export const probJ = (g: J): Generator => (rng, level) => {
   switch (level) {
     case 1: {
       const [what, ans, wrong] = rng.pick<[string, string, string[]]>([
-        [`a ${rng.int(1, 6)}`, '1/6', ['1/2', '1/3', '6']],
+        [`${an(rng.int(1, 6))}`, '1/6', ['1/2', '1/3', '6']],
         ['an even number', '1/2', ['1/6', '1/3', '2/3']],
         ['a number greater than 4', '1/3', ['1/6', '1/2', '2/3']],
         ['a number less than 3', '1/3', ['1/2', '1/6', '2/3']],

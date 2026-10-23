@@ -3,7 +3,7 @@
 // number. PP1 counts to 5 at first and 10 at most; PP2 goes to 15 and begins to add.
 import { artName, type ArtId } from '../../components/art/objects'
 import { factGenerator } from '../facts'
-import { artOptions, choice, numberWord, textOptions } from '../helpers'
+import { artOptions, choice, numberWord, textOptions, countOf, An, an } from '../helpers'
 import type { Generator, Level, Option, ShapeKind, ShapeSpec } from '../types'
 
 export type PP = 1 | 2
@@ -204,7 +204,7 @@ export const massP = (_g: PP): Generator => (rng, level) => {
       explain: 'The heavier side of a balance goes down.',
     })
   }
-  if (level === 3) return choice(P, level, `Which one is ${askHeavy ? 'heavier' : 'lighter'}?`, rng.shuffle([heavy, light]).map((a) => ({ id: a, art: a })), ans, { explain: `A ${artName(heavy)} is heavier than a ${artName(light)}.` })
+  if (level === 3) return choice(P, level, `Which one is ${askHeavy ? 'heavier' : 'lighter'}?`, rng.shuffle([heavy, light]).map((a) => ({ id: a, art: a })), ans, { explain: `${An(artName(heavy))} is heavier than ${an(artName(light))}.` })
   const set = rng.sample(HEAVY_LIGHT, 2)
   const items = [set[0][0], set[0][1], set[1][1]]
   const heaviest = set[0][0]
@@ -225,7 +225,7 @@ const HOLDS: [ArtId, ArtId][] = [
 export const capacityP = (_g: PP): Generator => (rng, level) => {
   const [big, small] = rng.pick(HOLDS)
   const more = rng.next() < 0.6
-  if (level <= 3 || rng.next() < 0.4) return choice(P, level, `Which one holds ${more ? 'more' : 'less'} water?`, rng.shuffle([big, small]).map((a) => ({ id: a, art: a })), more ? big : small, { explain: `A ${artName(big)} holds more water than a ${artName(small)}.` })
+  if (level <= 3 || rng.next() < 0.4) return choice(P, level, `Which one holds ${more ? 'more' : 'less'} water?`, rng.shuffle([big, small]).map((a) => ({ id: a, art: a })), more ? big : small, { explain: `${An(artName(big))} holds more water than ${an(artName(small))}.` })
   const [s, ans, wrong] = rng.pick<[string, string, string[]]>([
     ['A cup with no water in it is ___.', 'empty', ['full', 'heavy']],
     ['A bucket filled to the top is ___.', 'full', ['empty', 'light']],
@@ -310,13 +310,13 @@ export const moneyP = (_g: PP): Generator => (rng, level) => {
   }
   if (level === 3) {
     const [c, v] = rng.pick(COINS)
-    return choice(P, level, 'How many shillings is this coin?', numberOptions(rng, v, 4, 1, 25), String(v), { visual: { kind: 'art', art: [c] }, explain: `It is a ${v} shilling coin.` })
+    return choice(P, level, 'How many shillings is this coin?', numberOptions(rng, v, 4, 1, 25), String(v), { visual: { kind: 'art', art: [c] }, explain: `It is ${an(v)} shilling coin.` })
   }
   if (level === 5 && rng.next() < 0.45) {
     const have = rng.pick([10, 20])
     const cost = rng.int(1, have - 1)
     const thing = rng.pick(['a sweet', 'a mandazi', 'a banana', 'an egg', 'a pencil', 'a book'])
-    return choice(P, level, `You have ${have} shillings. You buy ${thing} for ${cost} shillings. How many shillings are left?`, numberOptions(rng, have - cost, 4, 0, 25), String(have - cost), { visual: { kind: 'money', values: [have] }, explain: `${have} take away ${cost} leaves ${have - cost}.` })
+    return choice(P, level, `You have ${have} shillings. You buy ${thing} for ${countOf(cost, 'shilling')}. How many shillings are left?`, numberOptions(rng, have - cost, 4, 0, 25), String(have - cost), { visual: { kind: 'money', values: [have] }, explain: `${have} take away ${cost} leaves ${have - cost}.` })
   }
   const vals = level === 4 ? [rng.pick([1, 5, 10, 20]), rng.pick([1, 5, 10, 20])] : [rng.pick([10, 20]), rng.pick([5, 10]), rng.pick([1, 5])]
   const total = vals.reduce((x, y) => x + y, 0)
@@ -360,16 +360,16 @@ export const shapesP = (g: PP): Generator => (rng, level) => {
     const cols = rng.sample(COLORS.slice(0, 8), n)
     const kinds = [want, ...rng.sample(pool.filter((s) => s !== want), n - 1)]
     const opts = rng.shuffle(kinds.map((k, i) => ({ id: `${k}-${cols[i][0]}`, visual: { kind: 'shapes' as const, shapes: [{ kind: k, color: cols[i][1] }] } })))
-    return choice(P, level, `Which one is a ${want}?`, opts, `${want}-${cols[0][0]}`, { explain: want === 'circle' ? 'A circle is round.' : `A ${want} has straight sides.` })
+    return choice(P, level, `Which one is ${an(want)}?`, opts, `${want}-${cols[0][0]}`, { explain: want === 'circle' ? 'A circle is round.' : `${An(want)} has straight sides.` })
   }
   if (level === 4 && rng.next() < 0.4) {
     const [k, n] = rng.pick<[ShapeKind, number]>([['triangle', 3], ['square', 4], ['rectangle', 4]])
     const what = rng.pick(['sides', 'corners'])
-    return choice(P, level, `How many ${what} does a ${k} have?`, numberOptions(rng, n, 3, 0, 6), String(n), { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS)[1] }] }, explain: `Count them with your finger: ${n}.` })
+    return choice(P, level, `How many ${what} does ${an(k)} have?`, numberOptions(rng, n, 3, 0, 6), String(n), { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS)[1] }] }, explain: `Count them with your finger: ${n}.` })
   }
   if (level === 4) {
     const [shape, ans, wrong] = rng.pick(SHAPE_ART.filter(([s]) => pool.includes(s)))
-    return choice(P, level, `Which one looks like a ${shape}?`, artOptions(rng, ans, wrong, 3), ans, { explain: `A ${artName(ans)} looks like a ${shape}.` })
+    return choice(P, level, `Which one looks like ${an(shape)}?`, artOptions(rng, ans, wrong, 3), ans, { explain: `${An(artName(ans))} looks like ${an(shape)}.` })
   }
   const list: ShapeSpec[] = Array.from({ length: rng.int(4, g === 1 ? 6 : 8) }, () => ({ kind: rng.pick(pool), color: rng.pick(COLORS)[1] }))
   const want = rng.pick(pool)
@@ -463,7 +463,7 @@ const WORDS: [ArtId, string][] = [
 export const wordsP = (_g: PP): Generator => (rng, level) => {
   const pool = level <= 2 ? WORDS.filter(([, w]) => w.length === 3) : WORDS
   const [art, word] = rng.pick(pool)
-  if (level <= 4) return choice(P, level, 'Which word goes with the picture?', textOptions(rng, word, pool.map(([, w]) => w), nOpts(level)), word, { visual: { kind: 'art', art: [art] }, explain: `This is a ${word}: ${word.split('').join('-')}.` })
+  if (level <= 4) return choice(P, level, 'Which word goes with the picture?', textOptions(rng, word, pool.map(([, w]) => w), nOpts(level)), word, { visual: { kind: 'art', art: [art] }, explain: `This is ${an(word)}: ${word.split('').join('-')}.` })
   return choice(P, level, `Read the word: ${word}. Which picture is it?`, artOptions(rng, art, pool.map(([a]) => a), 4), art, { explain: `${word.split('').join('-')} spells ${word}.` })
 }
 

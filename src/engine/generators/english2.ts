@@ -613,7 +613,7 @@ export const COMP2: BankQuestion[] = [
   ]),
   ...passage(5, 'The Clever Crow', 'A thirsty crow found a jug with a little water at the bottom. Its beak could not reach the water. The crow had an idea. It dropped small stones into the jug, one by one. Slowly, the water came up to the top. The crow drank and flew away happily.', [
     ['What did the crow want?', 'water', ['food', 'a nest', 'a friend']],
-    ['Why could the crow not drink at first?', 'its beak could not reach the water', ['the jug was broken', 'the water was hot', 'a dog chased it']],
+    ['Why could the crow not drink at first?', 'its beak could not reach the water', ['a dog chased it away from the jug', 'the jug was broken and empty', 'the water was too hot to drink']],
     ['What did the crow drop into the jug?', 'small stones', ['leaves', 'seeds', 'sand']],
     ['What happened to the water?', 'it came up to the top', ['it dried up', 'it spilled', 'it turned cold']],
     ['Which word best describes the crow?', 'clever', ['lazy', 'rude', 'slow']],

@@ -276,7 +276,7 @@ export const GRADE1_MORE_BANKS: Record<string, BankQuestion[]> = {
     t(2, 'Standing on one leg without falling is called ___.', 'balancing', ['sleeping', 'singing']),
     t(3, 'When balancing, we stretch our arms out to ___.', 'stay steady', ['fly', 'wave']),
     t(4, 'Before rolling, we check that the mat is ___.', 'clear', ['wet', 'broken']),
-    t(5, 'Why do we roll one at a time?', 'so we do not bump into each other', ['so it takes long', 'so we get tired']),
+    t(5, 'Why do we roll one at a time?', 'so we do not bump into each other', ['so the game takes a long time', 'so we all get very tired', 'so the mat does not move']),
   ],
   'c-water': [
     t(1, 'We play near water only with an ___.', 'adult', ['animal', 'empty bucket']),
@@ -304,14 +304,14 @@ export const GRADE1_MORE_BANKS: Record<string, BankQuestion[]> = {
     t(2, 'My mother\'s mother is my ___.', 'grandmother', ['sister', 'aunt']),
     t(3, 'Which shows love at home?', 'helping Mama', ['fighting', 'hiding food']),
     t(4, 'We should ___ our parents.', 'obey', ['shout at', 'ignore']),
-    t(5, 'Your baby brother is crying. What can you do?', 'call Mama and be kind to him', ['shout at him', 'take his toy']),
+    t(5, 'Your baby brother is crying. What can you do?', 'call Mama and be kind to him', ['shout at him to stop crying', 'take his toy and go away', 'close the door and go out']),
   ],
   'r-creation': [
     t(1, 'Who made the trees?', 'God', ['people', 'cars']),
     a(2, 'Which one did God make?', 'tree', ['cup', 'chair']),
     t(3, 'How can we care for God\'s plants?', 'by watering them', ['by burning them', 'by stepping on them']),
     t(4, 'How should we treat animals?', 'kindly', ['roughly', 'carelessly']),
-    t(5, 'Why should we not throw rubbish in rivers?', 'God made rivers and fish live there', ['rivers like rubbish', 'fish eat plastic']),
+    t(5, 'Why should we not throw rubbish in rivers?', 'God made rivers and fish live there', ['rivers like to carry rubbish away', 'fish like to play with plastic', 'rubbish makes the river bigger']),
   ],
   'r-bible': [
     t(1, 'The Bible is God\'s ___.', 'book', ['shoe', 'cup']),
@@ -332,7 +332,7 @@ export const GRADE1_MORE_BANKS: Record<string, BankQuestion[]> = {
     t(2, 'We pray before we ___.', 'eat', ['fight', 'shout']),
     t(3, 'When someone gives us something, we say ___.', 'thank you', ['go away', 'no']),
     t(4, 'Your friend has no pencil. What should you do?', 'share yours', ['laugh', 'hide yours']),
-    t(5, 'You broke a cup by mistake. What should you do?', 'say sorry and tell the truth', ['hide it', 'blame your sister']),
+    t(5, 'You broke a cup by mistake. What should you do?', 'say sorry and tell the truth', ['hide it and say nothing', 'say your sister broke it', 'throw it out of the window']),
   ],
   'r-church': [
     t(1, 'Christians go to ___ to worship God.', 'church', ['the market', 'the river']),

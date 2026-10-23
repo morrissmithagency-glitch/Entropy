@@ -145,7 +145,14 @@ export const vocabU = (g: G): Generator => (rng, level) => {
     return q(level, `Which word is the opposite of "${w}"?`, a, wrong, `The opposite of "${w}" is "${a}".`)
   }
   if (rng.next() < 0.5) {
-    const [s, right, wrong] = rng.pick(forGrade(HOMOPHONES, g))
+    const pool = forGrade(HOMOPHONES, g)
+    const [s, right, wrong] = rng.pick(pool)
+    if (level >= 4) {
+      // Harder: one correct sentence among sentences that each use the wrong sound-alike.
+      const others = rng.sample(pool.filter(([x]) => x !== s), 2)
+      const fill = (t: string, w: string) => t.replace('___', w)
+      return q(level, 'Which sentence is written correctly?', fill(s, right), [fill(s, wrong), ...others.map(([t, , w]) => fill(t, w))], `"${right}" and "${wrong}" sound alike but mean different things.`)
+    }
     return q(level, `Choose the correct word:\n${s}`, right, [wrong], `"${right}" and "${wrong}" sound alike but mean different things.`)
   }
   const [thing, coll] = rng.pick(forGrade(COLLECTIVE, g))
@@ -568,14 +575,18 @@ const ORDER: [string, string[], string[]][] = [
   ['Father bought ___ shirt.', ['a', 'new', 'blue', 'cotton'], ['a cotton blue new', 'a blue new cotton', 'a new cotton blue']],
   ['She wore ___ shoes.', ['beautiful', 'black', 'leather'], ['black beautiful leather', 'leather black beautiful', 'beautiful leather black']],
   ['We sat under ___ tree.', ['a', 'tall', 'old', 'mango'], ['a mango old tall', 'an old tall mango', 'a tall mango old']],
-  ['He has ___ cat.', ['a', 'small', 'white'], ['a white small']],
-  ['They live in ___ hut.', ['a', 'round', 'grass'], ['a grass round']],
-  ['She drank from ___ cup.', ['a', 'large', 'plastic'], ['a plastic large']],
+  ['He has ___ cat.', ['a', 'friendly', 'little', 'black'], ['a black little friendly', 'a little friendly black', 'a friendly black little']],
+  ['They live in ___ hut.', ['a', 'small', 'round', 'grass'], ['a grass round small', 'a round small grass', 'a small grass round']],
+  ['She drank from ___ cup.', ['a', 'large', 'blue', 'plastic'], ['a plastic blue large', 'a blue large plastic', 'a large plastic blue']],
   ['She bought ___ dress.', ['a', 'beautiful', 'long', 'red'], ['a red long beautiful', 'a long beautiful red', 'a beautiful red long']],
   ['We saw ___ elephants.', ['two', 'huge', 'grey'], ['grey two huge', 'huge two grey', 'two grey huge']],
-  ['He has ___ car.', ['a', 'new', 'Japanese'], ['a Japanese new']],
-  ['I sat on ___ chair.', ['an', 'old', 'wooden'], ['a wooden old', 'an wooden old']],
+  ['He has ___ car.', ['a', 'shiny', 'new', 'Japanese'], ['a Japanese new shiny', 'a new shiny Japanese', 'a shiny Japanese new']],
+  ['I sat on ___ chair.', ['an', 'old', 'brown', 'wooden'], ['a brown old wooden', 'a wooden old brown', 'an old wooden brown']],
   ['They live in ___ house.', ['a', 'lovely', 'small', 'white'], ['a white small lovely', 'a small lovely white', 'a lovely white small']],
+  ['Grandmother wove ___ basket.', ['a', 'pretty', 'little', 'round', 'sisal'], ['a sisal round little pretty', 'a little pretty round sisal', 'a pretty round sisal little']],
+  ['We ate ___ mangoes.', ['some', 'sweet', 'ripe', 'yellow'], ['some yellow ripe sweet', 'some ripe sweet yellow', 'some sweet yellow ripe']],
+  ['He found ___ box.', ['an', 'old', 'square', 'metal'], ['a square old metal', 'a metal square old', 'an old metal square']],
+  ['She carried ___ jug.', ['a', 'heavy', 'brown', 'clay'], ['a clay brown heavy', 'a brown heavy clay', 'a heavy clay brown']],
 ]
 
 export const adjU = (g: G): Generator => (rng, level) => {
@@ -584,9 +595,9 @@ export const adjU = (g: G): Generator => (rng, level) => {
   const [base, er, est] = rng.pick(rows.filter(([b]) => !['many', 'little', 'far'].includes(b)))
   switch (level) {
     case 1:
-      return q(level, `Kamau is ___ than his brother. (${base})`, er, [base, est, `more ${er}`].filter((x) => x !== er), 'Comparing two: the comparative form.')
+      return q(level, `Kamau is ___ than his brother. (${base})`, er, [base, est, er.startsWith('more ') ? `${base}er` : `more ${er}`].filter((x) => x !== er), 'Comparing two: the comparative form.')
     case 2:
-      return q(level, `She is the ___ girl in our class. (${base})`, est, [base, er, `most ${est}`], 'Comparing three or more: the superlative form.')
+      return q(level, `She is the ___ girl in our class. (${base})`, est, [base, er, est.startsWith('most ') ? `${base}est` : `most ${est}`], 'Comparing three or more: the superlative form.')
     case 3: {
       const [adj, adv, wrong] = rng.pick(ADVERBS)
       const who = rng.pick(['The old man walked', 'The pupils sang', 'Grandmother spoke', 'The girl wrote', 'The boys worked'])
@@ -1063,7 +1074,7 @@ export const COMP_U: BankQuestion[] = [
     ['What did the hare promise to do?', 'bring food', ['dig the well', 'find water', 'build a house']],
     ['How did the hare cheat the elephant?', 'He ate the food on the way.', ['He dug a hole.', 'He hid the water.', 'He ran away from home.']],
     ['Which word best describes the hare?', 'dishonest', ['hard-working', 'generous', 'brave']],
-    ['What lesson does the story teach?', 'Dishonesty can destroy friendship.', ['Elephants are strong.', 'Wells are deep.', 'Hares are fast.']],
+    ['What lesson does the story teach?', 'Dishonesty can destroy friendship.', ['Strength is better than wisdom.', 'Fast animals always win races.', 'Deep wells are dangerous places.']],
   ]),
   ...comp(3, 'Saving Water', 'In many parts of Kenya, water is scarce. Families walk long distances to fetch it. At our school, we have learnt simple ways of saving water. We close taps after use and report any leaks. Water from washing hands is collected and used to water the school garden. Our head teacher says that every drop counts.', [
     ['What does "scarce" mean in the passage?', 'not enough', ['very cold', 'too much', 'dirty']],
@@ -1076,33 +1087,33 @@ export const COMP_U: BankQuestion[] = [
     ['What did their project show?', 'how to make a water filter', ['how to grow maize', 'how to make bricks', 'how to cook rice']],
     ['How did Kiprono feel in front of the judges?', 'nervous', ['angry', 'bored', 'sleepy']],
     ['In what position did their project come?', 'second', ['first', 'third', 'fortieth']],
-    ['What will Mr Mutua help them do next?', 'prepare for the national fair', ['buy new sand', 'judge the fair', 'teach the class']],
+    ['What will Mr Mutua help them do next?', 'prepare for the national fair', ['buy new sand for the project', 'judge the county science fair', 'teach the class a new subject']],
   ]),
   ...comp(4, 'Letter to a Friend', 'Dear Neema, I hope you are well. I am writing to tell you about our trip to Mombasa. We travelled by the new train and arrived in five hours. We visited Fort Jesus, which was built by the Portuguese more than four hundred years ago. In the evening we walked along the beach and ate roasted maize. I wish you had been with us. Please write back soon. Your friend, Zawadi.', [
     ['Who wrote the letter?', 'Zawadi', ['Neema', 'the Portuguese', 'a teacher']],
     ['How did they travel to Mombasa?', 'by train', ['by bus', 'by plane', 'by car']],
     ['Who built Fort Jesus?', 'the Portuguese', ['the British', 'the Arabs', 'Kenyans']],
     ['What did they eat on the beach?', 'roasted maize', ['fish', 'mangoes', 'ice cream']],
-    ['What does Zawadi wish?', 'that Neema had been with them', ['to live in Mombasa', 'to build a fort', 'to travel by plane']],
+    ['What does Zawadi wish?', 'that Neema had been with them', ['that they could live in Mombasa', 'that they had travelled by plane', 'that they could build a new fort']],
   ]),
   ...comp(5, 'The Importance of Forests', 'Forests cover about seven per cent of Kenya\'s land. They are often called the "lungs of the earth" because trees take in carbon dioxide and give out oxygen. Forests such as the Mau and Mount Kenya are water towers: rain falls on them and feeds the rivers that millions of people depend on. Sadly, forests are being cleared for farming, charcoal and settlement. When forests disappear, rivers dry up, rainfall becomes unreliable and wild animals lose their homes. The government has banned logging in some forests and encourages every Kenyan to plant trees.', [
-    ['Why are forests called "the lungs of the earth"?', 'Trees take in carbon dioxide and give out oxygen.', ['They are shaped like lungs.', 'Animals breathe in them.', 'They are very large.']],
+    ['Why are forests called "the lungs of the earth"?', 'Trees take in carbon dioxide and give out oxygen.', ['Forests are shaped like the lungs in our bodies.', 'Animals breathe more easily when they live in them.', 'Forests cover more land than any other plants.']],
     ['What is a "water tower" in the passage?', 'a forest that feeds rivers', ['a tank on a tower', 'a tall building', 'a type of tree']],
     ['Which of these is NOT given as a reason for clearing forests?', 'tourism', ['farming', 'charcoal', 'settlement']],
-    ['What happens when forests disappear?', 'Rivers dry up and rainfall becomes unreliable.', ['More rain falls.', 'Animals get more homes.', 'Rivers flood every day.']],
+    ['What happens when forests disappear?', 'Rivers dry up and rainfall becomes unreliable.', ['More rain falls and rivers flood every day.', 'Animals find more homes in the open land.', 'The soil becomes richer and more fertile.']],
     ['What is the best title for this passage?', 'Why We Must Protect Our Forests', ['How to Make Charcoal', 'The Mau Forest Animals', 'Farming in Kenya']],
   ]),
   ...comp(5, 'A Lesson in Patience', 'Mutua wanted a bicycle more than anything. His father told him that if he saved half the money, he would pay the rest. Mutua began to sell boiled eggs at the bus stage every Saturday. Some weeks he sold everything; other weeks it rained and few people came. Twice he was tempted to spend his savings on sweets, but he remembered his goal. After eight months, he counted his money: he had saved four thousand shillings, exactly half the price. His father kept his promise. Today, Mutua rides to school, and he says the bicycle feels special because he worked for it.', [
     ['What did Mutua\'s father promise?', 'to pay the other half', ['to buy sweets', 'to sell eggs', 'to build a shop']],
     ['How did Mutua raise money?', 'by selling boiled eggs', ['by washing cars', 'by begging', 'by selling sweets']],
     ['What was the full price of the bicycle?', '8,000 shillings', ['4,000 shillings', '2,000 shillings', '6,000 shillings']],
-    ['Why did he sometimes sell few eggs?', 'It rained and few people came.', ['He was sick.', 'The eggs were bad.', 'He was at school.']],
+    ['Why did he sometimes sell few eggs?', 'It rained and few people came.', ['He was at school all morning.', 'His hens laid very few eggs.', 'He sold his eggs too cheaply.']],
     ['Which word best describes Mutua?', 'determined', ['lazy', 'careless', 'greedy']],
   ]),
   ...comp(2, 'Kenya\'s Flag', 'The Kenyan flag has four colours: black, red, green and white. Black stands for the people of Kenya. Red stands for the sacrifices made in the struggle for independence. Green stands for our land and natural wealth, and white stands for peace. In the middle there is a shield and two spears, which show that we are ready to defend our freedom. The flag is raised every Monday at school assembly.', [
     ['How many colours are on the Kenyan flag?', 'four', ['three', 'five', 'two']],
-    ['What does green stand for?', 'our land and natural wealth', ['peace', 'the people', 'freedom']],
-    ['What do the shield and spears show?', 'readiness to defend our freedom', ['hunting', 'farming', 'peace']],
+    ['What does green stand for?', 'our land and natural wealth', ['peace and honesty', 'the people of Kenya', 'the sacrifices for freedom']],
+    ['What do the shield and spears show?', 'readiness to defend our freedom', ['the wealth of our farms and land', 'peace and unity among all people', 'the sacrifices made for freedom']],
     ['When is the flag raised at school?', 'every Monday', ['every Friday', 'once a year', 'every evening']],
   ]),
   ...comp(1, 'A Rainy Morning', 'It rained heavily on Monday morning. Wanjiru put on her raincoat and gumboots. Her father carried her to the gate under a big umbrella. At school, the teacher asked the learners to hang their wet coats outside. By ten o\'clock, the sun was shining again.', [
@@ -1128,18 +1139,18 @@ export const COMP_U: BankQuestion[] = [
     ['Why did the first kite fail?', 'It was too heavy.', ['It had no string.', 'It was too small.', 'There was no wind at all.']],
     ['Who helped Kipsang?', 'his sister Chepkoech', ['his teacher', 'his father', 'a neighbour']],
     ['Which word in the passage means "go up"?', 'rise', ['collect', 'fail', 'suggest']],
-    ['What lesson did Kipsang learn?', 'Good advice can turn failure into success.', ['Kites are bad.', 'Sticks are heavy.', 'Maize fields are big.']],
+    ['What lesson did Kipsang learn?', 'Good advice can turn failure into success.', ['Flying kites is a waste of good time.', 'Maize fields are the best place to play.', 'Strong sticks are too heavy for a kite.']],
   ]),
   ...comp(4, 'The Market Chairperson', 'Mama Wanjiku was elected chairperson of the Karatina market traders. The market had no proper drainage, and during the rains it became muddy. She called a meeting where traders agreed to each contribute fifty shillings a week. With the money and help from the county, they dug drains and laid gravel. Within three months, the market was clean and dry, and more customers came. The traders praised her for bringing them together.', [
     ['What problem did the market have?', 'It became muddy during the rains.', ['It had too many customers.', 'It was too dry.', 'It had no traders.']],
     ['How much did each trader contribute weekly?', 'fifty shillings', ['five hundred shillings', 'five shillings', 'one hundred shillings']],
     ['Who else helped the traders?', 'the county', ['a church', 'the police', 'a school']],
-    ['What happened after the drains were dug?', 'More customers came to the market.', ['The market closed.', 'Traders left.', 'The rains stopped.']],
+    ['What happened after the drains were dug?', 'More customers came to the market.', ['The traders moved to another town.', 'The market was closed for repairs.', 'The long rains stopped completely.']],
     ['Which quality best describes Mama Wanjiku?', 'a good leader', ['a lazy person', 'a selfish trader', 'a shy farmer']],
   ]),
   ...comp(5, 'Solar Power in Our Village', 'Two years ago, our village had no electricity. Families used paraffin lamps, which gave off smoke and were expensive to refill. Then a community group installed solar panels on the roofs of the school and the health centre. The school now has lights for evening study, and the health centre can store vaccines in a solar fridge. Some families have bought small solar kits that charge phones and light their homes. Elders say that clean energy has brought both light and hope. Still, the panels must be cleaned regularly and protected from damage to keep working well.', [
     ['What did families use before solar power?', 'paraffin lamps', ['electric bulbs', 'gas cookers', 'candles only']],
-    ['Why were paraffin lamps a problem?', 'They gave off smoke and were expensive.', ['They were too bright.', 'They were free.', 'They needed the sun.']],
+    ['Why were paraffin lamps a problem?', 'They gave off smoke and were expensive.', ['They needed bright sun to work well.', 'They were too bright for small rooms.', 'They were free but hard to find.']],
     ['How has solar power helped the health centre?', 'It can keep vaccines cold.', ['It has more doctors.', 'It closed early.', 'It sells phones.']],
     ['What does "install" mean in the passage?', 'put in place', ['take away', 'paint', 'sell']],
     ['What must be done to keep the panels working?', 'clean and protect them', ['cover them with soil', 'switch them off', 'move them indoors']],

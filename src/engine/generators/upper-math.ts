@@ -2,7 +2,7 @@
 // so number sizes and skills grow year by year. Level 5 matches the hardest JESMA and KPSEA
 // questions: multi-step word problems with Kenyan contexts.
 import { words3 } from './math3'
-import { KENYAN_NAMES, choice, textOptions, uid } from '../helpers'
+import { KENYAN_NAMES, choice, textOptions, uid, countOf, an } from '../helpers'
 import type { ChoiceQuestion, Generator, Level, NumberQuestion, Option, Rng, Visual } from '../types'
 
 export type UGrade = 4 | 5 | 6
@@ -413,9 +413,9 @@ export const decimals = (g: UGrade): Generator => (rng, level) => {
     switch (level) {
       case 1: {
         const t = rng.int(1, 9)
-        if (rng.next() < 0.5) return pickQ(level, `Write ${t}/10 as a decimal.`, `0.${t}`, [`${t}.0`, `0.0${t}`, `${t}.10`], `${t} tenths = 0.${t}`)
+        if (rng.next() < 0.5) return pickQ(level, `Write ${t}/10 as a decimal.`, `0.${t}`, [`${t}.0`, `0.0${t}`, `${t}.10`], `${countOf(t, 'tenth')} = 0.${t}`)
         const w = rng.int(1, 9)
-        return pickQ(level, `In ${w}.${t}, what is the value of the digit ${t}?`, `${t} tenths`, [`${t} ones`, `${t} hundredths`, `${t} tens`], `The first digit after the point is tenths.`)
+        return pickQ(level, `In ${w}.${t}, what is the value of the digit ${t}?`, countOf(t, 'tenth'), [countOf(t, 'one'), countOf(t, 'hundredth'), countOf(t, 'ten')], `The first digit after the point is tenths.`)
       }
       case 2: {
         const h = rng.int(11, 99)
@@ -528,7 +528,7 @@ export const percentages = (): Generator => (rng, level) => {
     default: {
       const price = rng.pick([800, 1200, 1500, 2000, 2400, 3000])
       const off = rng.pick([10, 15, 20, 25])
-      return num(level, `A pair of shoes is marked ${fmt(price)} shillings. The shop gives a ${off}% discount. How much does the buyer pay?`, price - (price * off) / 100, { explain: `${off}% of ${fmt(price)} = ${fmt((price * off) / 100)}; ${fmt(price)} − ${fmt((price * off) / 100)} = ${fmt(price - (price * off) / 100)}` })
+      return num(level, `A pair of shoes is marked ${fmt(price)} shillings. The shop gives ${an(off)}% discount. How much does the buyer pay?`, price - (price * off) / 100, { explain: `${off}% of ${fmt(price)} = ${fmt((price * off) / 100)}; ${fmt(price)} − ${fmt((price * off) / 100)} = ${fmt(price - (price * off) / 100)}` })
     }
   }
 }
@@ -673,7 +673,7 @@ export const capacityU = (g: UGrade): Generator => (rng, level) => {
       const a = [rng.int(1, 5), rng.int(100, 900)]
       const b = [rng.int(1, 5), rng.int(200, 950)]
       const t = a[0] * 1000 + a[1] + b[0] * 1000 + b[1]
-      return pickQ(level, `${a[0]} l ${a[1]} ml + ${b[0]} l ${b[1]} ml =`, `${Math.floor(t / 1000)} l ${t % 1000} ml`, [`${a[0] + b[0]} l ${a[1] + b[1]} ml`, `${Math.floor(t / 1000) + 1} l ${t % 1000} ml`])
+      return pickQ(level, `${a[0]} l ${a[1]} ml + ${b[0]} l ${b[1]} ml =`, `${Math.floor(t / 1000)} l ${t % 1000} ml`, [`${a[0] + b[0]} l ${a[1] + b[1]} ml`, `${Math.floor(t / 1000) + 1} l ${t % 1000} ml`, `${Math.floor(t / 1000) - 1} l ${t % 1000} ml`, `${Math.floor(t / 1000)} l ${(t % 1000) >= 100 ? (t % 1000) - 100 : (t % 1000) + 100} ml`])
     }
     case 4: {
       const cup = rng.pick([100, 200, 250, 500])
@@ -713,7 +713,7 @@ export const massU = (g: UGrade): Generator => (rng, level) => {
       const a = [rng.int(3, 9), rng.int(100, 800)]
       const b = [rng.int(1, a[0] - 1), rng.int(200, 950)]
       const t = a[0] * 1000 + a[1] - (b[0] * 1000 + b[1])
-      return pickQ(level, `${a[0]} kg ${a[1]} g − ${b[0]} kg ${b[1]} g =`, `${Math.floor(t / 1000)} kg ${t % 1000} g`, [`${a[0] - b[0]} kg ${Math.abs(a[1] - b[1])} g`, `${Math.floor(t / 1000) + 1} kg ${t % 1000} g`])
+      return pickQ(level, `${a[0]} kg ${a[1]} g − ${b[0]} kg ${b[1]} g =`, `${Math.floor(t / 1000)} kg ${t % 1000} g`, [`${a[0] - b[0]} kg ${Math.abs(a[1] - b[1])} g`, `${Math.floor(t / 1000) + 1} kg ${t % 1000} g`, `${Math.max(0, Math.floor(t / 1000) - 1)} kg ${t % 1000} g`, `${Math.floor(t / 1000)} kg ${(t % 1000) >= 100 ? (t % 1000) - 100 : (t % 1000) + 100} g`])
     }
     case 4: {
       const pkt = rng.pick([250, 500])
@@ -818,7 +818,7 @@ export const moneyU = (g: UGrade): Generator => (rng, level) => {
       const [[it, p]] = rng.sample(GOODS, 1)
       const n = rng.int(2, 6)
       const note = [500, 1000].find((x) => x > p * n) ?? 2000
-      return num(level, `${name(rng)} bought ${n} × ${it} at ${p} shillings each and paid with a ${fmt(note)} shilling note. How much change was given?`, note - p * n, { explain: `${n} × ${p} = ${p * n}; ${fmt(note)} − ${p * n} = ${fmt(note - p * n)}` })
+      return num(level, `${name(rng)} bought ${n} × ${it} at ${p} shillings each and paid with ${an(fmt(note))} shilling note. How much change was given?`, note - p * n, { explain: `${n} × ${p} = ${p * n}; ${fmt(note)} − ${p * n} = ${fmt(note - p * n)}` })
     }
     case 3: {
       const buy = rng.int(20, 80) * 50
@@ -982,7 +982,7 @@ export const shapesU = (): Generator => (rng, level) => {
   switch (level) {
     case 1: {
       const [s, n] = rng.pick(POLYGONS)
-      return rng.next() < 0.5 ? num(level, `How many sides does a ${s} have?`, n) : num(level, `How many corners (vertices) does a ${s} have?`, n)
+      return rng.next() < 0.5 ? num(level, `How many sides does ${an(s)} have?`, n) : num(level, `How many corners (vertices) does ${an(s)} have?`, n)
     }
     case 2: {
       if (rng.next() < 0.5) {
@@ -997,16 +997,16 @@ export const shapesU = (): Generator => (rng, level) => {
       const [s, prop] = rng.pick(PROPERTIES)
       return rng.next() < 0.5
         ? pickQ(level, `Which shape has ${prop}?`, s, rng.sample(PROPERTIES.map(([x]) => x).filter((x) => x !== s), 3))
-        : pickQ(level, `Which describes a ${s}?`, prop, rng.sample(PROPERTIES.map(([, x]) => x).filter((x) => x !== prop), 3))
+        : pickQ(level, `Which describes ${an(s)}?`, prop, rng.sample(PROPERTIES.map(([, x]) => x).filter((x) => x !== prop), 3))
     }
     case 4: {
       if (rng.next() < 0.5) {
         const [s, n] = rng.pick(SYMMETRY)
-        return num(level, `How many lines of symmetry does a ${s} have?`, n)
+        return num(level, `How many lines of symmetry does ${an(s)} have?`, n)
       }
       const [s, f, e, v] = rng.pick(SOLIDS)
       const [what, ans] = rng.pick([['faces', f], ['edges', e], ['vertices', v]] as const)
-      return num(level, `How many ${what} does a ${s} have?`, ans)
+      return num(level, `How many ${what} does ${an(s)} have?`, ans)
     }
     default: {
       if (rng.next() < 0.5) {

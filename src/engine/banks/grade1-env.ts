@@ -1,3 +1,4 @@
+import { an } from '../helpers'
 // Fact tables for Grade 1 Environmental Activities. Read aloud, so items are short words a
 // six-year-old knows. Mixed with the written questions in banks/environmental.ts.
 import { factGenerator, type FactSet } from '../facts'
@@ -188,7 +189,7 @@ const FACTS: Record<string, FactSet> = {
           ['sheep', 'wool'],
           ['bee', 'honey'],
         ],
-        ask: (a) => `We get ___ from a ${a}.`,
+        ask: (a) => `We get ___ from ${an(a)}.`,
         askBack: (b) => `Which animal gives us ${b}?`,
       },
       {
@@ -199,7 +200,7 @@ const FACTS: Record<string, FactSet> = {
           ['cat', 'kitten'],
           ['goat', 'kid'],
         ],
-        ask: (a) => `The young one of a ${a} is a ___.`,
+        ask: (a) => `The young one of ${an(a)} is a ___.`,
       },
     ],
   },

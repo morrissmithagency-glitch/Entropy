@@ -57,6 +57,15 @@ const peers = (cats: Category[], c: Category) => cats.filter((x) => x !== c && (
 const others = (cats: Category[], c: Category) => peers(cats, c).flatMap((x) => x.items)
 const list = (xs: string[]) => xs.join(', ')
 
+/**
+ * Wrong answers close in length to the right one, so the longest option is not a giveaway.
+ * Picks at random among the closest few to keep papers varied.
+ */
+function nearInLength(rng: Rng, pool: string[], answer: string, n: number): string[] {
+  const ranked = rng.shuffle(pool).sort((x, y) => Math.abs(x.length - answer.length) - Math.abs(y.length - answer.length))
+  return rng.sample(ranked.slice(0, Math.max(n, Math.min(ranked.length, n + 2))), n)
+}
+
 function fromCategories(rng: Rng, level: Level, cats: Category[], w: Wording): ChoiceQuestion {
   const usable = cats.filter((x) => x.items.length >= 3 && others(cats, x).length >= 3)
   // "Which one is NOT a thing we must NOT…" is a double negative: ask those lists another way.
@@ -67,7 +76,7 @@ function fromCategories(rng: Rng, level: Level, cats: Category[], w: Wording): C
   const outside = others(cats, c)
   if (level <= 2) {
     const ans = rng.pick(c.items)
-    return q(level, w.which(c), ans, rng.sample(outside, level === 1 ? 2 : 3), en ? `${ans[0].toUpperCase()}${ans.slice(1)} is ${c.one}.` : undefined)
+    return q(level, w.which(c), ans, nearInLength(rng, outside, ans, level === 1 ? 2 : 3), en ? `${ans[0].toUpperCase()}${ans.slice(1)} is ${c.one}.` : undefined)
   }
   if (level === 3) {
     const odd = rng.pick(outside)
@@ -94,10 +103,10 @@ function fromPairs(rng: Rng, level: Level, set: PairSet): ChoiceQuestion {
   const n = level === 1 ? 2 : 3
   const back = set.askBack && (level >= 3 ? rng.next() < 0.6 : rng.next() < 0.3)
   if (back) {
-    const wrong = rng.sample([...new Set(set.pairs.filter(([x, y]) => x !== a && y !== b).map(([x]) => x))], n)
+    const wrong = nearInLength(rng, [...new Set(set.pairs.filter(([x, y]) => x !== a && y !== b).map(([x]) => x))], a, n)
     return q(level, set.askBack!(b), a, wrong, set.explain?.(a, b))
   }
-  const wrong = rng.sample([...new Set(set.pairs.filter(([x, y]) => x !== a && y !== b).map(([, y]) => y))], n)
+  const wrong = nearInLength(rng, [...new Set(set.pairs.filter(([x, y]) => x !== a && y !== b).map(([, y]) => y))], b, n)
   return q(level, set.ask(a), b, wrong, set.explain?.(a, b))
 }
 

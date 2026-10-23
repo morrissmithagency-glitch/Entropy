@@ -53,5 +53,20 @@ export function choice(
 }
 
 export const plural = (n: number, one: string, many: string) => (n === 1 ? one : many)
+/** "a" or "an", by how the word (or number) sounds: an egg, a unit, an hour, an 8, an 18. */
+export function article(word: string | number): 'a' | 'an' {
+  const w = String(word).trim()
+  const digits = /^\d+/.exec(w.replace(/^(\d{1,3}),\d{3}.*/, '$1'))?.[0]
+  if (digits) return digits.startsWith('8') || digits === '11' || digits === '18' ? 'an' : 'a'
+  if (/^(hour|honest|honour|heir)/i.test(w)) return 'an'
+  if (/^(uni|use|usu|uti|ure|uro|eu|ewe|one|once|ufo)/i.test(w)) return 'a'
+  return /^[aeiou]/i.test(w) ? 'an' : 'a'
+}
+/** The word with its article: an("egg") is "an egg". */
+export const an = (word: string | number) => `${article(word)} ${word}`
+/** The same, capitalised for the start of a sentence. */
+export const An = (word: string | number) => `${article(word) === 'an' ? 'An' : 'A'} ${word}`
+/** "1 ten", "3 tens": a number with its noun in the right form. */
+export const countOf = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`
 
 export const KENYAN_NAMES = ['Amani', 'Wanjiku', 'Otieno', 'Achieng', 'Kiprono', 'Njeri', 'Baraka', 'Zawadi', 'Mutua', 'Akinyi', 'Hassan', 'Chebet', 'Kamau', 'Nekesa', 'Jabali', 'Wambui']

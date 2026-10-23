@@ -1,7 +1,7 @@
 // Grade 3 English. Formats follow Grade 3 papers (do/does/did/done, of/under/in,
 // possessive pronouns, irregular plurals, alphabetical order, opposites, jobs, and
 // stories with detail, vocabulary and "why" questions). All content is original.
-import { uid } from '../helpers'
+import { uid, an } from '../helpers'
 import type { BankQuestion, Generator, Level } from '../types'
 import { labelOptions as opts, passage } from './english'
 
@@ -74,7 +74,7 @@ function wrongPlurals(w: string, right: string): string[] {
 export const plurals3: Generator = (rng, level) => {
   const pool = PLURALS.filter((p) => p[2] === level || (level === 1 && p[2] <= 2))
   const [w, pl] = rng.pick(pool)
-  const sentence = rng.pick([`The ${w} is here.`, `I saw a ${w}.`, `Look at that ${w}.`])
+  const sentence = rng.pick([`The ${w} is here.`, `I saw ${an(w)}.`, `Look at that ${w}.`])
   const wrong = rng.sample(wrongPlurals(w, pl), 3)
   return {
     id: uid('plural'),
@@ -274,7 +274,7 @@ export const COMP3: BankQuestion[] = [
   ...passage(3, 'The Clever Hare', 'One hot afternoon Hare was thirsty, but Elephant stood in the only path to the water. Hare said, "Elephant, the lions are coming this way!" Elephant ran into the bush. Hare drank as much water as he wanted. When Elephant came back, Hare was sleeping under a tree.', [
     ['How was the weather?', 'hot', ['cold', 'rainy', 'windy']],
     ['What did Hare want?', 'water', ['food', 'a friend', 'a house']],
-    ['Why did Elephant run into the bush?', 'He thought lions were coming.', ['He was thirsty.', 'He was tired.', 'Hare chased him.']],
+    ['Why did Elephant run into the bush?', 'He thought lions were coming.', ['Hare chased him with a stick.', 'He was very thirsty and tired.', 'He wanted to find some fruit.']],
     ['Which word best describes Hare?', 'clever', ['lazy', 'kind', 'slow']],
   ]),
   ...passage(4, 'The School Garden', 'Grade 3 started a school garden in March. Each learner brought one seedling. There were twenty-five learners, so they planted twenty-five seedlings. Goats ate four of them, so the class built a fence of sticks. By July, the cabbages were big enough to eat, and the school cook used them for lunch.', [
@@ -287,7 +287,7 @@ export const COMP3: BankQuestion[] = [
   ...passage(1, 'The New Bicycle', 'Halima got a new bicycle on her birthday. It was blue with a small bell. She rode it to her grandmother\'s house.', [
     ['What did Halima get?', 'a bicycle', ['a doll', 'a book']],
     ['What colour was it?', 'blue', ['red', 'green']],
-    ['Where did she ride it?', 'to her grandmother\'s house', ['to school', 'to the market']],
+    ['Where did she ride it?', 'to her grandmother\'s house', ['to school every morning', 'to the market on Saturday', 'around the church compound']],
   ]),
   ...passage(2, 'Market Day', 'On Saturday, Baba and Kiprono went to Kapsabet market. Baba sold two bags of potatoes. With the money, he bought a jacket for Kiprono and some sugar for the house.', [
     ['When did they go to the market?', 'on Saturday', ['on Monday', 'on Sunday']],
@@ -305,7 +305,7 @@ export const COMP3: BankQuestion[] = [
     ['Why did Nekesa plant vegetables?', 'Vegetables were costly at the market.', ['She did not like them.', 'Her teacher told her to.', 'The neighbours asked her.']],
     ['How many rows of sukuma wiki did she plant?', '4', ['2', '6', '3']],
     ['How many rows did she plant in all?', '6', ['4', '2', '8']],
-    ['When did she water the plants?', 'every evening after school', ['every Sunday', 'in the morning', 'once a month']],
+    ['When did she water the plants?', 'every evening after school', ['every Sunday after church', 'every morning before school', 'once a month on Saturday']],
     ['Which word tells us the vegetables were expensive?', 'costly', ['more', 'soon', 'near']],
   ]),
   ...passage(5, 'Hide and Seek', 'The moon was big and bright over Kakamega. After supper the children played hide and seek. Imani hid behind the water tank. Juma hid behind some banana plants. Wafula hid in a pile of firewood. Akinyi counted to twenty and looked around. Then the firewood moved! "One, two, three, Wafula!" she shouted. Now Wafula had to look for the others.', [
@@ -333,12 +333,12 @@ export const COMP3: BankQuestion[] = [
     ['On which day was sports day?', 'Friday', ['Monday', 'Saturday', 'Sunday']],
     ['Who won the sixty-metre race?', 'Chebet', ['Hassan', 'the head teacher', 'Grade 3']],
     ['How many times did Hassan fall?', '2', ['1', '3', '4']],
-    ['What did the winners get?', 'exercise books and pencils', ['money and sweets', 'shoes', 'a ball']],
+    ['What did the winners get?', 'exercise books and pencils', ['a new football and shoes', 'money and some sweets', 'school bags and rulers']],
     ['Why did everybody clap for Hassan?', 'He did not give up.', ['He came first.', 'He fell down.', 'He was the head teacher.']],
   ]),
   ...passage(5, 'Rain Water', 'Last year the rains were short and the family tank was empty for many weeks. Father decided to collect rain water from the roof. He fixed gutters along the edges of the roof and joined them to a pipe. This year, when it rained, the tank filled up in four days. Now Mama uses the water for cooking, and the children use the water from washing clothes to water the kitchen garden.', [
     ['Why was the tank empty last year?', 'The rains were short.', ['The tank was broken.', 'They used too much water.', 'The pipe was stolen.']],
-    ['Where did Father fix the gutters?', 'along the edges of the roof', ['in the kitchen', 'inside the tank', 'in the garden']],
+    ['Where did Father fix the gutters?', 'along the edges of the roof', ['in the garden near the tank', 'inside the kitchen near the jiko', 'under the tank on the ground']],
     ['How long did the tank take to fill this year?', 'four days', ['many weeks', 'one day', 'a year']],
     ['What do the children use to water the kitchen garden?', 'water from washing clothes', ['clean drinking water', 'water from the river', 'milk']],
     ['What lesson does the story teach?', 'We should collect and re-use water.', ['We should waste water.', 'Gutters are not useful.', 'Rain is bad.']],

@@ -3,7 +3,7 @@
 // clock and Kenyan money to 100 shillings. Baobab level matches Grade 2 end-term papers.
 import type { ArtId } from '../../components/art/objects'
 import { artName } from '../../components/art/objects'
-import { artOptions, choice, KENYAN_NAMES, numberOptions, numberWord, textOptions, uid } from '../helpers'
+import { artOptions, choice, KENYAN_NAMES, numberOptions, numberWord, textOptions, uid, countOf, An, an } from '../helpers'
 import type { Generator, Level, NumberQuestion, Option, Rng, ShapeKind } from '../types'
 import { DAYS } from './math'
 
@@ -90,11 +90,11 @@ export const whole2: Generator = (rng, level) => {
   const o = n % 10
   switch (level) {
     case 1:
-      return num(level, 'How many sticks are there?', t * 10 + o, { visual: { kind: 'tens', tens: t, ones: o }, explain: `${t} bundles of ten and ${o} ones make ${n}.` })
+      return num(level, 'How many sticks are there?', t * 10 + o, { visual: { kind: 'tens', tens: t, ones: o }, explain: `${countOf(t, 'bundle')} of ten and ${countOf(o, 'one')} make ${n}.` })
     case 2: {
       if (rng.next() < 0.5) {
         const ask = rng.pick(['tens', 'ones'] as const)
-        return num(level, `How many ${ask} are in ${n}?`, ask === 'tens' ? t : o, { explain: `${n} = ${t} tens and ${o} ones.` })
+        return num(level, `How many ${ask} are in ${n}?`, ask === 'tens' ? t : o, { explain: `${n} = ${countOf(t, 'ten')} and ${countOf(o, 'one')}.` })
       }
       const step = rng.pick([1, 2, 5, 10])
       const start = step === 1 ? rng.int(10, 90) : step * rng.int(1, Math.floor(80 / step))
@@ -121,7 +121,7 @@ export const whole2: Generator = (rng, level) => {
         if (kind === 'after') return num(level, `What number comes just after ${a}?`, a + 1)
         return num(level, `What number is between ${a - 1} and ${a + 1}?`, a)
       }
-      if (r < 0.7) return num(level, `${t} tens and ${o} ones make what number?`, n, { explain: `${t * 10} + ${o} = ${n}.` })
+      if (r < 0.7) return num(level, `${countOf(t, 'ten')} and ${countOf(o, 'one')} make what number?`, n, { explain: `${t * 10} + ${o} = ${n}.` })
       return num(level, `What is the value of the digit ${t} in ${n}?`, t * 10, { explain: `In ${n}, ${t} is in the tens place: ${t * 10}.` })
     }
     default: {
@@ -140,7 +140,7 @@ export const whole2: Generator = (rng, level) => {
         const ans = big ? Math.max(a, b) * 10 + Math.min(a, b) : Math.min(a, b) * 10 + Math.max(a, b)
         return num(level, `Use the digits ${a} and ${b} once each. What is the ${big ? 'biggest' : 'smallest'} number you can make?`, ans, { explain: big ? 'Put the bigger digit in the tens place.' : 'Put the smaller digit in the tens place.' })
       }
-      return num(level, `${o} ones and ${t} tens make what number?`, n, { explain: `Tens first: ${t} tens = ${t * 10}, add ${o}: ${n}. The order of the words is a trap!` })
+      return num(level, `${countOf(o, 'one')} and ${countOf(t, 'ten')} make what number?`, n, { explain: `Tens first: ${countOf(t, 'ten')} = ${t * 10}, add ${o}: ${n}. The order of the words is a trap!` })
     }
   }
 }
@@ -423,7 +423,7 @@ function measure2(kind: 'length' | 'mass' | 'capacity'): Generator {
         }
         const n = rng.int(2, 8)
         const [big, small] = kind === 'mass' ? ['bag of maize', 'packets of sugar'] : ['jerrycan', 'cups']
-        return num(level, `A ${big} is as ${kind === 'mass' ? 'heavy' : 'full'} as ${n} ${small}. Two such ${big === 'bag of maize' ? 'bags' : 'jerrycans'} equal how many ${small}?`, 2 * n, { explain: `${n} + ${n} = ${2 * n}.` })
+        return num(level, `${An(big)} is as ${kind === 'mass' ? 'heavy' : 'full'} as ${n} ${small}. Two such ${big === 'bag of maize' ? 'bags' : 'jerrycans'} equal how many ${small}?`, 2 * n, { explain: `${n} + ${n} = ${2 * n}.` })
       }
       case 3: {
         const a = rng.int(5, 40)
@@ -615,7 +615,7 @@ export const shapes2: Generator = (rng, level) => {
       }
       const want = rng.pick(ALL_SHAPES)
       const opts = rng.shuffle([want, ...rng.sample(ALL_SHAPES.filter((s) => s !== want), 2)]).map((k, i) => ({ id: k, visual: { kind: 'shapes' as const, shapes: [{ kind: k, color: COLORS[i] }] } }))
-      return choice('m2', level, `Which one is ${want === 'oval' ? 'an oval' : `a ${want}`}?`, opts, want)
+      return choice('m2', level, `Which one is ${want === 'oval' ? 'an oval' : `${an(want)}`}?`, opts, want)
     }
     case 2: {
       const curved = rng.next() < 0.5
@@ -642,7 +642,7 @@ export const shapes2: Generator = (rng, level) => {
       const k = rng.pick<ShapeKind>(['triangle', 'square', 'rectangle'])
       const ask = rng.pick(['sides', 'corners'])
       const n = k === 'triangle' ? 3 : 4
-      return num(level, `How many ${ask} does a ${k} have?`, n, { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS) }] } })
+      return num(level, `How many ${ask} does ${an(k)} have?`, n, { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(COLORS) }] } })
     }
     default: {
       const unit = rng.sample(ALL_SHAPES, 2)

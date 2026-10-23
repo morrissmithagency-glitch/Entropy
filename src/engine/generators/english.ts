@@ -1,7 +1,7 @@
 // English Language Activities: questions built from a picture-word list (phonics,
 // listening, spelling, grammar) plus hand-written banks for reading and sentences.
 import type { ArtId } from '../../components/art/objects'
-import { choice, textOptions, uid } from '../helpers'
+import { choice, textOptions, uid, an } from '../helpers'
 import type { BankQuestion, Generator, Level, Option, Rng } from '../types'
 
 export interface Word {
@@ -149,7 +149,7 @@ export const phonics: Generator = (rng, level) => {
   if (level === 2) {
     const w = rng.pick(WORDS)
     const wrong = rng.sample(WORDS.filter((x) => x.word !== w.word && x.art !== w.art), 2).map((x) => x.word)
-    return choice('phonics', level, 'Read the words. Which word goes with the picture?', textOptions(rng, w.word, wrong), w.word, { visual: { kind: 'art', art: [w.art] }, explain: `The picture shows a ${w.word}.` })
+    return choice('phonics', level, 'Read the words. Which word goes with the picture?', textOptions(rng, w.word, wrong), w.word, { visual: { kind: 'art', art: [w.art] }, explain: `The picture shows ${an(w.word)}.` })
   }
   if (level === 3) {
     const family = rng.pick(RHYMES)
@@ -252,7 +252,7 @@ export const grammar: Generator = (rng, level) => {
     const ans = VOWEL_START.has(w.word[0]) ? 'an' : 'a'
     return choice('grammar', level, `Choose: ___ ${w.word}`, [{ id: 'a', label: 'a' }, { id: 'an', label: 'an' }], ans, {
       visual: { kind: 'art', art: [w.art] },
-      explain: ans === 'an' ? `We say "an ${w.word}" because ${w.word} starts with a vowel sound.` : `We say "a ${w.word}".`,
+      explain: ans === 'an' ? `We say "an ${w.word}" because ${w.word} starts with a vowel sound.` : `We say "${an(w.word)}".`,
     })
   }
   if (level === 3) {
@@ -400,9 +400,9 @@ export const POLITE: BankQuestion[] = [
   { type: 'choice', level: 3, prompt: 'Your friend says, "How are you?" What do you answer?', options: opts(['I am fine, thank you.', 'My name is Amani.', 'I am six years old.']), answer: 'I am fine, thank you.' },
   { type: 'choice', level: 3, prompt: 'The teacher asks, "What is your name?" What do you answer?', options: opts(['My name is Zawadi.', 'I am fine.', 'Thank you.']), answer: 'My name is Zawadi.' },
   { type: 'choice', level: 3, prompt: 'You want to pass, but someone is in the way. What do you say?', options: opts(['Excuse me, please.', 'Move!', 'Goodbye.']), answer: 'Excuse me, please.' },
-  { type: 'choice', level: 4, prompt: 'Which sentence is the most polite way to ask for water?', options: opts(['May I have some water, please?', 'Give me water.', 'Water!', 'I want water now.']), answer: 'May I have some water, please?' },
+  { type: 'choice', level: 4, prompt: 'Which sentence is the most polite way to ask for water?', options: opts(['May I have some water, please?', 'Give me some water right now.', 'I want water, so bring it.', 'Water! Where is my water?']), answer: 'May I have some water, please?' },
   { type: 'choice', level: 4, prompt: 'Your friend says, "Thank you." What can you say?', options: opts(['You are welcome.', 'Sorry.', 'Good night.', 'Please.']), answer: 'You are welcome.' },
-  { type: 'choice', level: 4, prompt: 'A visitor comes to class. The teacher says, "Greet the visitor." What do you say?', options: opts(['Good morning, visitor. You are welcome.', 'Who are you?', 'Goodbye.', 'Sit down.']), answer: 'Good morning, visitor. You are welcome.' },
+  { type: 'choice', level: 4, prompt: 'A visitor comes to class. The teacher says, "Greet the visitor." What do you say?', options: opts(['Good morning, visitor. You are welcome.', 'Goodbye, visitor. Go back home.', 'Sit down there and keep quiet.', 'Who are you and what do you want?']), answer: 'Good morning, visitor. You are welcome.' },
   { type: 'choice', level: 5, prompt: 'Read: "Kamau broke Njeri\'s ruler. He felt bad." What should Kamau say?', options: opts(['Njeri, I am sorry I broke your ruler.', 'Njeri, thank you for the ruler.', 'Njeri, good night.', 'Njeri, give me another ruler.']), answer: 'Njeri, I am sorry I broke your ruler.' },
   { type: 'choice', level: 5, prompt: 'Which one is NOT a polite word?', options: opts(['Shut up', 'Please', 'Thank you', 'Sorry']), answer: 'Shut up' },
   { type: 'choice', level: 5, prompt: 'Before you speak in class, what should you do?', options: opts(['Put up your hand.', 'Shout loudly.', 'Stand on the desk.', 'Clap your hands.']), answer: 'Put up your hand.' },

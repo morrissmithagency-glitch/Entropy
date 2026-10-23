@@ -107,6 +107,15 @@ function sentence([cls, sg, pl, verb]: Noun, plural: boolean, stem = 'kubwa', pi
   return cap(`${n} ${NGELI[pick.poss ?? cls].poss[i]} ${adj(pick.adj ?? cls, stem, plural)} ${NGELI[pick.subj ?? cls].subj[i]}me${verb}.`)
 }
 
+/** The noun in the right number, but with some agreements left in the other number. */
+function halfChanged([cls, sg, pl, verb]: Noun, plural: boolean): string[] {
+  const n = plural ? pl : sg
+  const i = plural ? 1 : 0
+  const out: string[] = []
+  for (const p of [0, 1]) for (const a of [0, 1]) for (const s of [0, 1]) if (!(p === i && a === i && s === i)) out.push(cap(`${n} ${NGELI[cls].poss[p]} ${adj(cls, 'kubwa', a === 1)} ${NGELI[cls].subj[s]}me${verb}.`))
+  return out
+}
+
 export const ngeliU = (g: G): Generator => (rng, level) => {
   const nouns = nounsFor(g)
   const classes = classesFor(g)
@@ -141,7 +150,8 @@ export const ngeliU = (g: G): Generator => (rng, level) => {
       const right = sentence(noun, true)
       const [a, b, c] = others
       const wrong = [sentence(noun, true, 'kubwa', { poss: a ?? cls }), sentence(noun, true, 'kubwa', { subj: b ?? a }), sentence(noun, true, 'kubwa', { adj: c ?? a, poss: c ?? a }), cap(`${pl} ${NGELI[cls].poss[0]} ${adj(cls, 'kubwa', false)} ${NGELI[cls].subj[0]}me${verb}.`)]
-      return q(level, `Andika kwa wingi: "${sentence(noun, false)}"`, right, wrong.filter((w) => w !== right))
+      const pool = [...new Set([...wrong, ...rng.shuffle(halfChanged(noun, true))])].filter((w) => w !== right)
+      return q(level, `Andika kwa wingi: "${sentence(noun, false)}"`, right, pool)
     }
     default: {
       if (g >= 5 && rng.next() < 0.5) {
@@ -155,7 +165,8 @@ export const ngeliU = (g: G): Generator => (rng, level) => {
       const right = sentence(noun, false)
       const [a, b] = others
       const wrong = [sentence(noun, false, 'kubwa', { poss: a }), sentence(noun, false, 'kubwa', { subj: b ?? a }), cap(`${sg} ${NGELI[cls].poss[1]} ${adj(cls, 'kubwa', true)} ${NGELI[cls].subj[1]}me${verb}.`)]
-      return q(level, `Andika kwa umoja: "${sentence(noun, true)}"`, right, wrong.filter((w) => w !== right))
+      const pool = [...new Set([...wrong, ...rng.shuffle(halfChanged(noun, false))])].filter((w) => w !== right)
+      return q(level, `Andika kwa umoja: "${sentence(noun, true)}"`, right, pool)
     }
   }
 }
@@ -758,24 +769,24 @@ export const UFAHAMU_K: BankQuestion[] = [
   ...ufahamu(2, 'Soko la Jumamosi', 'Kila Jumamosi, mama huenda sokoni kununua vyakula. Mimi huandamana naye ili nimsaidie kubeba kikapu. Sokoni kuna wauzaji wengi wa matunda, mboga na samaki. Mama hupenda kununua sukumawiki, nyanya na vitunguu. Tukimaliza, tunapanda matatu kurudi nyumbani.', [
     ['Mama huenda sokoni lini?', 'kila Jumamosi', ['kila Jumapili', 'kila siku', 'mara moja kwa mwezi']],
     ['Mwandishi huandamana na mama ili afanye nini?', 'amsaidie kubeba kikapu', ['anunue pipi', 'acheze sokoni', 'auze samaki']],
-    ['Mama hupenda kununua nini?', 'sukumawiki, nyanya na vitunguu', ['samaki na nyama', 'mkate na maziwa', 'sukari na chumvi']],
+    ['Mama hupenda kununua nini?', 'sukumawiki, nyanya na vitunguu', ['mkate, maziwa na mayai', 'samaki, nyama na kuku', 'sukari, chumvi na unga']],
     ['Wao hurudi nyumbani kwa nini?', 'kwa matatu', ['kwa miguu', 'kwa baiskeli', 'kwa gari moshi']],
   ]),
   ...ufahamu(3, 'Maji ni Uhai', 'Maji ni muhimu kwa viumbe vyote. Binadamu, wanyama na mimea hutegemea maji ili kuishi. Hata hivyo, katika sehemu nyingi za nchi yetu, maji ni haba. Watu hutembea mwendo mrefu kutafuta maji. Ni jukumu letu kuhifadhi vyanzo vya maji kwa kupanda miti na kutotupa taka mitoni. Pia tunapaswa kuchemsha maji ya kunywa ili kuepuka magonjwa kama vile kipindupindu.', [
-    ['Kulingana na kifungu, ni nani hutegemea maji?', 'binadamu, wanyama na mimea', ['binadamu pekee', 'wanyama pekee', 'mimea pekee']],
+    ['Kulingana na kifungu, ni nani hutegemea maji?', 'binadamu, wanyama na mimea', ['binadamu na wanyama pekee', 'mimea na samaki pekee', 'wakulima na wavuvi pekee']],
     ['Neno "haba" lina maana gani?', 'kidogo', ['mengi', 'machafu', 'baridi']],
-    ['Tunahifadhi vyanzo vya maji kwa njia gani?', 'kwa kupanda miti na kutotupa taka mitoni', ['kwa kukata miti', 'kwa kuchoma taka', 'kwa kujenga nyumba']],
+    ['Tunahifadhi vyanzo vya maji kwa njia gani?', 'kwa kupanda miti na kutotupa taka mitoni', ['kwa kukata miti iliyo karibu na mito', 'kwa kuchoma taka kando ya mito', 'kwa kujenga nyumba karibu na chemchemi']],
     ['Kwa nini tunapaswa kuchemsha maji ya kunywa?', 'ili kuepuka magonjwa', ['ili yawe matamu', 'ili yapoe', 'ili yaongezeke']],
     ['Ni ugonjwa upi uliotajwa katika kifungu?', 'kipindupindu', ['malaria', 'homa ya matumbo', 'kifua kikuu']],
   ]),
   ...ufahamu(3, 'Usalama Barabarani', 'Ajali nyingi za barabarani husababishwa na uzembe. Madereva wengine huendesha magari kwa kasi kupita kiasi. Wapita njia nao huvuka barabara bila kuangalia pande zote mbili. Abiria wanashauriwa kufunga mikanda ya usalama wakati wote. Watoto wanapaswa kuvuka barabara kwenye vivuko vya wapita njia wakiongozwa na mtu mzima. Tukifuata sheria za barabarani, tutapunguza ajali.', [
     ['Ajali nyingi husababishwa na nini?', 'uzembe', ['mvua', 'barabara nzuri', 'wanyama']],
     ['Abiria wanashauriwa kufanya nini?', 'kufunga mikanda ya usalama', ['kusimama garini', 'kuongea na dereva', 'kufungua madirisha']],
-    ['Watoto wanapaswa kuvuka barabara wapi?', 'kwenye vivuko vya wapita njia', ['popote', 'katikati ya magari', 'karibu na kona']],
+    ['Watoto wanapaswa kuvuka barabara wapi?', 'kwenye vivuko vya wapita njia', ['karibu na kona ya barabara', 'katikati ya magari yaliyosimama', 'mahali popote pasipo na gari']],
     ['Maneno "kwa kasi kupita kiasi" yana maana gani?', 'kwa mwendo wa haraka mno', ['polepole sana', 'kwa uangalifu', 'kwa kurudi nyuma']],
   ]),
   ...ufahamu(4, 'Sungura na Fisi', 'Hapo zamani za kale, Sungura na Fisi walikuwa marafiki. Siku moja walikubaliana kulima shamba pamoja na kugawana mavuno. Fisi alikuwa mvivu; kila siku alijifanya mgonjwa. Sungura alilima peke yake mpaka mahindi yakakomaa. Wakati wa mavuno ulipofika, Fisi alikuwa wa kwanza kufika shambani akitaka sehemu kubwa. Sungura alimwambia, "Asiyefanya kazi asile." Fisi aliondoka kwa aibu.', [
-    ['Sungura na Fisi walikubaliana nini?', 'kulima shamba pamoja na kugawana mavuno', ['kuwinda pamoja', 'kujenga nyumba', 'kwenda safari']],
+    ['Sungura na Fisi walikubaliana nini?', 'kulima shamba pamoja na kugawana mavuno', ['kujenga nyumba moja na kuishi pamoja', 'kuwinda pamoja na kugawana nyama', 'kwenda safari ndefu hadi mjini']],
     ['Fisi alifanya nini kila siku?', 'alijifanya mgonjwa', ['alilima kwa bidii', 'alileta chakula', 'alimsaidia Sungura']],
     ['Ni neno lipi linalomfaa Fisi?', 'mvivu', ['mwenye bidii', 'mkarimu', 'mwaminifu']],
     ['Fisi alitaka nini wakati wa mavuno?', 'sehemu kubwa ya mavuno', ['kulima tena', 'kumsaidia Sungura', 'kuondoka']],
@@ -786,7 +797,7 @@ export const UFAHAMU_K: BankQuestion[] = [
     ['Mwandishi anaishi wapi?', 'Eldoret', ['Nairobi', 'Kisumu', 'Mombasa']],
     ['Shule yao ilishinda medali ngapi za dhahabu?', 'tatu', ['mbili', 'nne', 'moja']],
     ['Jepkoech alikuwa wa ngapi katika mbio za mita mia nane?', 'wa pili', ['wa kwanza', 'wa tatu', 'wa mwisho']],
-    ['Kocha alisema watafanya nini wakiendelea na mazoezi?', 'watashiriki mashindano ya kitaifa', ['watapumzika', 'watanunua medali', 'wataacha riadha']],
+    ['Kocha alisema watafanya nini wakiendelea na mazoezi?', 'watashiriki mashindano ya kitaifa', ['watapewa medali bila kushindana', 'wataacha riadha na kucheza kandanda', 'watapumzika hadi mwaka ujao']],
   ]),
   ...ufahamu(5, 'Misitu Yetu', 'Misitu ni hazina kubwa kwa taifa letu. Misitu kama ule wa Mau na wa Mlima Kenya hujulikana kama minara ya maji kwa sababu mito mingi huanzia huko. Miti husaidia kuleta mvua, huzuia mmomonyoko wa udongo na ni makazi ya wanyama pori. Kwa bahati mbaya, watu wengi hukata miti kiholela ili kupata makaa, mbao na mashamba. Matokeo yake ni ukame, mito kukauka na wanyama kukosa makao. Serikali imeanzisha kampeni ya upandaji miti, na kila mwananchi anahimizwa kupanda angalau mti mmoja kila mwaka.', [
     ['Kwa nini misitu ya Mau na Mlima Kenya huitwa minara ya maji?', 'kwa sababu mito mingi huanzia huko', ['kwa sababu ni mirefu', 'kwa sababu ina minara', 'kwa sababu ina mvua kidogo']],
@@ -816,21 +827,21 @@ export const UFAHAMU_K: BankQuestion[] = [
   ]),
   ...ufahamu(3, 'Kiongozi wa Darasa', 'Zawadi alichaguliwa kuwa kiongozi wa darasa la tano. Alikuwa mwanafunzi mwadilifu na mcheshi. Kila asubuhi, alihakikisha darasa limefagiliwa na madawati yamepangwa vizuri. Wenzake walipogombana, aliwasikiliza wote wawili kisha akawapatanisha. Mwalimu wao alisema kwamba Zawadi alikuwa mfano mzuri wa uongozi bora.', [
     ['Zawadi alichaguliwa kuwa nini?', 'kiongozi wa darasa', ['mwalimu', 'mpishi', 'mlinzi']],
-    ['Zawadi alihakikisha nini kila asubuhi?', 'darasa limefagiliwa na madawati yamepangwa', ['wanafunzi wamelala', 'mlango umefungwa', 'mwalimu amefika']],
-    ['Zawadi alifanya nini wenzake walipogombana?', 'aliwasikiliza na kuwapatanisha', ['aliwacheka', 'aliondoka', 'aliwapiga kelele']],
+    ['Zawadi alihakikisha nini kila asubuhi?', 'darasa limefagiliwa na madawati yamepangwa', ['mlango umefungwa na madirisha yamefunguliwa', 'mwalimu amefika na vitabu vimegawanywa', 'wanafunzi wamefika na kengele imelia']],
+    ['Zawadi alifanya nini wenzake walipogombana?', 'aliwasikiliza na kuwapatanisha', ['aliwacheka na kuondoka zake', 'aliwaripoti kwa wazazi wao', 'aliwapigia kelele wanyamaze']],
     ['Neno "mwadilifu" lina maana gani?', 'mwenye tabia njema', ['mvivu', 'mkorofi', 'mgonjwa']],
   ]),
   ...ufahamu(4, 'Safari ya Lamu', 'Wakati wa likizo ya Desemba, familia ya Bwana Hamisi ilisafiri hadi kisiwa cha Lamu. Walipanda basi kutoka Malindi hadi Mokowe, kisha wakavuka bahari kwa mashua. Lamu ni mji wa kale wenye barabara nyembamba na nyumba za mawe. Hakuna magari mengi; watu hutembea au kupanda punda. Watoto walifurahia kuona mafundi wakitengeneza majahazi kwa mikono. Kabla ya kurudi, walinunua zawadi za vikapu vilivyosukwa kwa ukindu.', [
-    ['Familia ilisafiri lini?', 'wakati wa likizo ya Desemba', ['mwezi Aprili', 'wakati wa mvua', 'wiki iliyopita']],
+    ['Familia ilisafiri lini?', 'wakati wa likizo ya Desemba', ['wakati wa likizo ya Aprili', 'wiki iliyopita siku ya Jumamosi', 'wakati wa mvua za masika']],
     ['Walivuka bahari kwa nini?', 'kwa mashua', ['kwa ndege', 'kwa basi', 'kwa punda']],
     ['Watu wa Lamu husafiri vipi mjini?', 'hutembea au hupanda punda', ['hupanda magari mengi', 'hupanda treni', 'hupanda ndege']],
-    ['Watoto walifurahia kuona nini?', 'mafundi wakitengeneza majahazi', ['magari mengi', 'theluji', 'ndege angani']],
+    ['Watoto walifurahia kuona nini?', 'mafundi wakitengeneza majahazi', ['magari mengi yakipita barabarani', 'ndege kubwa ikitua uwanjani', 'wavuvi wakiuza samaki sokoni']],
     ['Vikapu walivyonunua vilisukwa kwa nini?', 'ukindu', ['plastiki', 'chuma', 'karatasi']],
   ]),
   ...ufahamu(5, 'Nishati ya Jua', 'Miaka miwili iliyopita, kijiji chetu hakikuwa na umeme. Familia nyingi zilitumia taa za mafuta taa ambazo zilitoa moshi na zilikuwa ghali. Kisha kikundi cha wanakijiji kiliweka paneli za sola kwenye paa za shule na zahanati. Sasa wanafunzi husoma jioni kwa mwangaza mzuri, na zahanati huhifadhi chanjo katika jokofu linalotumia nguvu za jua. Wazee husema kwamba nishati safi imeleta mwangaza na matumaini. Hata hivyo, paneli hizo lazima zisafishwe mara kwa mara ili ziendelee kufanya kazi vizuri.', [
     ['Familia zilitumia nini kabla ya sola?', 'taa za mafuta taa', ['balbu za umeme', 'mishumaa pekee', 'jiko la gesi']],
     ['Taa za mafuta taa zilikuwa na tatizo gani?', 'zilitoa moshi na zilikuwa ghali', ['zilikuwa angavu sana', 'zilikuwa bure', 'zilihitaji jua']],
-    ['Zahanati imefaidika vipi?', 'huhifadhi chanjo katika jokofu la sola', ['ina madaktari wengi', 'imefungwa', 'huuza simu']],
+    ['Zahanati imefaidika vipi?', 'huhifadhi chanjo katika jokofu la sola', ['huuza simu na vifaa vya sola', 'imepata madaktari wengi wapya', 'hufunguliwa usiku pekee sasa']],
     ['Neno "ghali" lina maana gani?', 'bei ya juu', ['rahisi', 'safi', 'nzito']],
     ['Ni nini kifanyike ili paneli ziendelee kufanya kazi?', 'zisafishwe mara kwa mara', ['zifunikwe kwa udongo', 'zizimwe', 'ziwekwe ndani ya nyumba']],
   ]),

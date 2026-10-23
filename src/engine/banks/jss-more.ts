@@ -49,11 +49,11 @@ const PRETECH: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'The first thing to do if a fire starts in the workshop is to ___.', 'raise the alarm', ['hide under a bench', 'continue working', 'open all windows wide']),
-      t(7, 3, 'Why should water never be used on an electrical fire?', 'Water conducts electricity and can cause electric shock.', ['Water makes the fire smaller only.', 'Water is too cold.', 'Water is expensive.']),
+      t(7, 3, 'Why should water never be used on an electrical fire?', 'Water conducts electricity and can cause electric shock.', ['Water is too expensive to waste on small fires.', 'Water makes electrical fires burn more slowly.', 'Water evaporates before it reaches the flames.']),
       t(7, 3, 'A safety sign with a red circle and a diagonal line means ___.', 'something is prohibited', ['first aid is available', 'wear protective equipment', 'a fire exit']),
       t(8, 4, 'A safety sign that is a blue circle tells you ___.', 'what you must do, such as wear goggles', ['what is forbidden', 'where the fire exit is', 'that there is danger ahead']),
-      t(8, 4, 'Why should waste materials be sorted before disposal?', 'so that they can be recycled and disposed of safely', ['to make more waste', 'to fill the workshop', 'to hide them']),
-      t(9, 5, 'Working on a raised platform, a learner should first ___.', 'check that the platform is stable and use a safety harness', ['remove the railings', 'carry heavy loads alone', 'stand on a chair on top of it']),
+      t(8, 4, 'Why should waste materials be sorted before disposal?', 'so that they can be recycled and disposed of safely', ['so that the workshop looks full and busy', 'so that all of it can be burned at once', 'so that it can be hidden from inspectors']),
+      t(9, 5, 'Working on a raised platform, a learner should first ___.', 'check that the platform is stable and use a safety harness', ['carry all the heavy tools up in one trip to save time', 'remove the side railings so there is more space to work', 'stand on a chair on the platform to reach higher']),
     ],
   },
   careers: {
@@ -84,7 +84,7 @@ const PRETECH: Record<string, Topic> = {
       t(7, 3, 'Which is the best first step in choosing a career?', 'knowing your interests, strengths and values', ['copying a friend', 'choosing the highest paying job only', 'waiting to be told']),
       t(8, 4, 'A learner enjoys drawing and using computers. Which career fits best?', 'graphic designer', ['plumber', 'farmer', 'nurse']),
       t(9, 4, 'In senior school, the pathway for those who want to become engineers is ___.', 'STEM', ['Arts and Sports Science', 'Social Sciences', 'none']),
-      t(9, 5, 'Why is it useful to talk to people working in a career you like?', 'to learn what the job involves and what training is needed', ['to get paid immediately', 'to skip school', 'to avoid choosing']),
+      t(9, 5, 'Why is it useful to talk to people working in a career you like?', 'to learn what the job involves and what training is needed', ['to ask them to give you a job before you finish school', 'to find out which career pays the most money quickly', 'to avoid having to choose subjects in senior school']),
     ],
   },
   drawing: {
@@ -122,7 +122,7 @@ const PRETECH: Record<string, Topic> = {
       t(7, 2, 'Which pencil grade is best for light construction lines?', '2H', ['2B', 'HB', '6B']),
       t(7, 3, 'In isometric drawing, the receding lines are drawn at ___ to the horizontal.', '30°', ['45°', '60°', '90°']),
       t(8, 3, 'In oblique drawing, the receding lines are usually drawn at ___.', '45°', ['30°', '90°', '15°']),
-      t(8, 4, 'A drawing at a scale of 1 : 10 shows an object ___.', 'ten times smaller than its real size', ['ten times bigger', 'at full size', 'with no dimensions']),
+      t(8, 4, 'A drawing at a scale of 1 : 10 shows an object ___.', 'ten times smaller than its real size', ['ten times bigger than its real size', 'exactly the same size as the object', 'one tenth bigger than its real size']),
       t(9, 4, 'In first-angle orthographic projection, the plan is drawn ___ the front elevation.', 'below', ['above', 'to the left of', 'on top of']),
       t(9, 5, 'A line 6 cm long on a drawing at scale 1 : 50 represents what real length?', '3 m', ['30 cm', '300 m', '6 m']),
     ],
@@ -155,7 +155,7 @@ const PRETECH: Record<string, Topic> = {
       t(7, 2, 'The physical parts of a computer are called ___.', 'hardware', ['software', 'data', 'networks']),
       t(7, 3, 'Which is an example of application software?', 'a word processor', ['the monitor', 'the CPU', 'the keyboard']),
       t(8, 3, 'Which password is the strongest?', 'K3ny@_Rain#29', ['12345', 'password', 'myname']),
-      t(8, 4, 'Someone you do not know messages you online and asks for your school name. What should you do?', 'refuse to share and tell a trusted adult', ['send the details', 'arrange to meet', 'share your password']),
+      t(8, 4, 'Someone you do not know messages you online and asks for your school name. What should you do?', 'refuse to share and tell a trusted adult', ['send it, since a school name is harmless', 'arrange to meet them to find out who they are', 'share it only if they say they are a learner']),
       t(9, 4, 'In a spreadsheet, the formula =A1+A2 ___.', 'adds the values in cells A1 and A2', ['types the letters A1 and A2', 'deletes the cells', 'prints the sheet']),
       t(9, 5, 'A step-by-step set of instructions for solving a problem is called an ___.', 'algorithm', ['application', 'antivirus', 'address']),
     ],
@@ -186,11 +186,11 @@ const PRETECH: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'Wood from coniferous trees is usually called ___.', 'softwood', ['hardwood', 'plywood', 'metal']),
-      t(7, 3, 'Why is timber seasoned before use?', 'to remove moisture so it does not warp or crack', ['to make it heavier', 'to add colour', 'to make it wet']),
+      t(7, 3, 'Why is timber seasoned before use?', 'to remove moisture so it does not warp or crack', ['to make it heavier and harder to cut', 'to add colour to the surface of the wood', 'to soften it so that nails go in easily']),
       t(8, 3, 'Ferrous metals contain ___.', 'iron', ['copper', 'aluminium', 'plastic']),
       t(8, 4, 'Which material would you choose for an outdoor water pipe?', 'PVC', ['paper', 'untreated softwood', 'glass']),
       t(9, 4, 'Plastics that can be reheated and reshaped are called ___.', 'thermoplastics', ['thermosets', 'ceramics', 'composites']),
-      t(9, 5, 'Why are plastics a problem for the environment?', 'Most do not decompose and can pollute land and water.', ['They rot very quickly.', 'They are made from water.', 'They are heavy.']),
+      t(9, 5, 'Why are plastics a problem for the environment?', 'Most do not decompose and can pollute land and water.', ['They rot too quickly and make the soil acidic.', 'They are too heavy to collect and carry away.', 'They are made from water and dry out rivers.']),
     ],
   },
   tools: {
@@ -218,9 +218,9 @@ const PRETECH: Record<string, Topic> = {
       ],
     },
     bank: [
-      t(7, 2, 'Tools should be kept ___ after use.', 'clean and in their proper place', ['on the floor', 'wet', 'outside in the rain']),
-      t(7, 3, 'Why is a mallet, not a hammer, used to strike a wooden chisel handle?', 'A mallet does not damage the handle.', ['A mallet is sharper.', 'A hammer is too light.', 'A mallet drives nails.']),
-      t(8, 4, 'How should a blunt chisel be maintained?', 'sharpen it on an oilstone', ['throw it away', 'paint it', 'heat it in fire']),
+      t(7, 2, 'Tools should be kept ___ after use.', 'clean and in their proper place', ['on the bench, ready for next time', 'in a bucket of water to stay cool', 'outside so that they dry in the sun']),
+      t(7, 3, 'Why is a mallet, not a hammer, used to strike a wooden chisel handle?', 'A mallet does not damage the handle.', ['A mallet is heavier and cuts deeper.', 'A hammer is too light for a chisel.', 'A mallet keeps the blade sharper.']),
+      t(8, 4, 'How should a blunt chisel be maintained?', 'sharpen it on an oilstone', ['heat it in a fire first', 'paint its blade with oil paint', 'hammer its edge on a stone']),
       t(9, 4, 'Which tool would you use to cut a thin sheet of metal into a curve?', 'tin snips', ['tenon saw', 'try square', 'mallet']),
       t(9, 5, 'Why should oil be applied to metal tools before storing them?', 'to prevent rusting', ['to make them sharper', 'to make them heavier', 'to clean the floor']),
     ],
@@ -252,9 +252,9 @@ const PRETECH: Record<string, Topic> = {
       t(7, 2, 'Keeping some money for future use is called ___.', 'saving', ['spending', 'borrowing', 'wasting']),
       t(7, 3, 'Which comes first when planning spending?', 'needs before wants', ['wants before needs', 'gifts before food', 'games before rent']),
       t(8, 3, 'A learner gets 500 shillings pocket money and spends 320. How much is saved?', '180 shillings', ['820 shillings', '320 shillings', '200 shillings']),
-      t(8, 4, 'Which is a quality of a good entrepreneur?', 'creativity and willingness to take calculated risks', ['laziness', 'avoiding customers', 'refusing to learn']),
+      t(8, 4, 'Which is a quality of a good entrepreneur?', 'creativity and willingness to take calculated risks', ['avoiding customers who ask difficult questions', 'refusing to change plans when things go wrong', 'spending all profits as soon as they come in']),
       t(9, 4, 'A business buys goods for 12,000 shillings and sells them for 15,000. What is the profit?', '3,000 shillings', ['27,000 shillings', '12,000 shillings', '15,000 shillings']),
-      t(9, 5, 'Why is it important to keep business records?', 'to track income and spending and know if the business is making a profit', ['to make the shop look full', 'to avoid customers', 'to pay more tax than needed']),
+      t(9, 5, 'Why is it important to keep business records?', 'to track income and spending and know if the business is making a profit', ['to show customers how many goods are in the shop each day', 'to make the shop look busy and attract more buyers', 'to pay more tax than the business really needs to']),
     ],
   },
 }
@@ -313,9 +313,9 @@ const AGRICULTURE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'Collecting and storing rain water for later use is ___.', 'water harvesting', ['irrigation', 'drainage', 'flooding']),
-      t(7, 3, 'Why is drip irrigation good in dry areas?', 'It delivers water directly to roots with little waste.', ['It floods the field.', 'It uses the most water.', 'It needs no pipes.']),
-      t(8, 4, 'Which is a benefit of agroforestry?', 'Trees provide fodder, firewood and protect the soil.', ['Trees remove all nutrients.', 'Trees stop rain.', 'Trees replace crops completely.']),
-      t(9, 4, 'Why are sand dams useful in semi-arid areas like Makueni?', 'They store water in the sand, reducing evaporation.', ['They grow sand.', 'They make rivers flow faster.', 'They stop all rain.']),
+      t(7, 3, 'Why is drip irrigation good in dry areas?', 'It delivers water directly to roots with little waste.', ['It floods the whole field so the soil stays wet.', 'It works without any pipes or water source.', 'It uses more water so crops grow faster.']),
+      t(8, 4, 'Which is a benefit of agroforestry?', 'Trees provide fodder, firewood and protect the soil.', ['Trees take all the nutrients that crops need.', 'Trees replace the need to grow food crops.', 'Trees stop rain from reaching the crops.']),
+      t(9, 4, 'Why are sand dams useful in semi-arid areas like Makueni?', 'They store water in the sand, reducing evaporation.', ['They make the river flow faster during the rains.', 'They stop sand from being carried by the wind.', 'They raise the river bed so that floods are rare.']),
       t(9, 5, 'A farmer on a slope loses topsoil and water every rainy season. Which combination helps most?', 'terraces, cover crops and planting trees', ['burning grass and ploughing downhill', 'removing all trees', 'overgrazing']),
     ],
   },
@@ -341,11 +341,11 @@ const AGRICULTURE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'Removing extra seedlings so that the rest have space is called ___.', 'thinning', ['gapping', 'pruning', 'weeding']),
-      t(7, 3, 'Why are seeds dressed with a chemical before planting?', 'to protect them from pests and diseases in the soil', ['to make them heavier', 'to colour them', 'to make them sweeter']),
-      t(8, 3, 'Avocado and mango seedlings are often grafted so that they ___.', 'fruit earlier and keep the quality of the parent', ['grow without roots', 'never fruit', 'grow taller only']),
+      t(7, 3, 'Why are seeds dressed with a chemical before planting?', 'to protect them from pests and diseases in the soil', ['to make the seeds heavier so they sink deeper', 'to give the young plants a brighter green colour', 'to make the seeds germinate without any water']),
+      t(8, 3, 'Avocado and mango seedlings are often grafted so that they ___.', 'fruit earlier and keep the quality of the parent', ['grow much taller before they ever produce fruit', 'need no water or manure for the first five years', 'produce seeds that are bigger than the fruit itself']),
       t(8, 4, 'Why should maize be dried to about 13% moisture before storage?', 'to prevent moulds and pests', ['to make it heavier', 'to make it germinate', 'to add flavour']),
       t(9, 4, 'Which practice helps control weeds, pests and diseases without chemicals?', 'crop rotation', ['monocropping', 'late planting', 'burning the field']),
-      t(9, 5, 'A farmer harvests tomatoes but many bruise and rot before reaching the market. What should be done?', 'harvest carefully, grade them and pack in ventilated crates', ['pile them in sacks', 'leave them in the sun', 'harvest them wet']),
+      t(9, 5, 'A farmer harvests tomatoes but many bruise and rot before reaching the market. What should be done?', 'harvest carefully, grade them and pack in ventilated crates', ['harvest them all wet and pack them in sacks', 'leave them on the plants until they are very soft', 'pile them in the sun until the buyer arrives']),
     ],
   },
   animals: {
@@ -371,7 +371,7 @@ const AGRICULTURE: Record<string, Topic> = {
           pairs: [
             ['dipping or spraying', 'ticks'],
             ['deworming', 'internal worms'],
-            ['vaccination', 'diseases like Newcastle and foot and mouth'],
+            ['vaccination', 'diseases like Newcastle disease'],
           ],
           ask: (a) => `What does ${a} control?`,
           askBack: (b) => `How are ${b} controlled?`,
@@ -382,9 +382,9 @@ const AGRICULTURE: Record<string, Topic> = {
       t(7, 2, 'A young cow is called a ___.', 'calf', ['kid', 'lamb', 'chick']),
       t(7, 3, 'Which breed is known for producing large amounts of milk?', 'Friesian', ['Boran', 'Hereford', 'Aberdeen Angus']),
       t(8, 3, 'Silage and hay are examples of ___ feeds.', 'roughage', ['concentrate', 'mineral', 'vitamin']),
-      t(8, 4, 'Why should a zero-grazing unit have a sloping concrete floor?', 'for easy drainage and cleaning', ['to make cows slide', 'to save feed', 'to keep it wet']),
+      t(8, 4, 'Why should a zero-grazing unit have a sloping concrete floor?', 'for easy drainage and cleaning', ['to keep the floor wet and cool', 'to help cows walk downhill to eat', 'to save feed by spreading it out']),
       t(9, 4, 'Why are animals vaccinated?', 'to prevent diseases before they occur', ['to cure diseases already present', 'to make them grow faster at once', 'to remove ticks']),
-      t(9, 5, 'A farmer keeps records of milk yield for each cow. How does this help?', 'to identify the best and least productive cows for breeding and culling decisions', ['to make milk taste better', 'to reduce rainfall', 'to stop the cows eating']),
+      t(9, 5, 'A farmer keeps records of milk yield for each cow. How does this help?', 'to identify the best and least productive cows for breeding and culling decisions', ['to make the milk from every cow taste the same', 'to prove to buyers that all cows give equal milk', 'to decide which cows should be sold for meat at random']),
     ],
   },
   nutrition: {
@@ -418,10 +418,10 @@ const AGRICULTURE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'A diet containing all nutrients in the right amounts is a ___ diet.', 'balanced', ['special', 'fast', 'light']),
-      t(7, 3, 'Which meal is the most balanced?', 'ugali, beans and sukuma wiki', ['chips and soda', 'bread and tea', 'rice and potatoes']),
-      t(8, 4, 'Why do pregnant women need foods rich in iron?', 'to make more blood for themselves and the baby', ['to lose weight', 'to stop eating', 'to sleep better only']),
-      t(8, 4, 'Which diet is best for a person with diabetes?', 'low in sugar and high in fibre', ['high in sugar', 'only fried foods', 'only soda']),
-      t(9, 5, 'A school wants to plan lunch for growing learners on a small budget. Which plan is best?', 'githeri with vegetables, plus a fruit', ['bread and soda', 'rice only', 'sweets and juice']),
+      t(7, 3, 'Which meal is the most balanced?', 'ugali, beans and sukuma wiki', ['white bread and sweet tea', 'chips, sausages and soda', 'rice, potatoes and chapati']),
+      t(8, 4, 'Why do pregnant women need foods rich in iron?', 'to make more blood for themselves and the baby', ['to help them sleep better at night', 'to make the baby\'s bones grow strong', 'to give them energy for hard work']),
+      t(8, 4, 'Which diet is best for a person with diabetes?', 'low in sugar and high in fibre', ['high in sugar and low in fibre', 'mostly fried and fatty foods', 'mainly soda and white bread']),
+      t(9, 5, 'A school wants to plan lunch for growing learners on a small budget. Which plan is best?', 'githeri with vegetables, plus a fruit', ['white bread with tea and sugar', 'plain rice with a little soup', 'chips with a sweet soda drink']),
       t(9, 5, 'Why should people with high blood pressure reduce salt?', 'Too much salt raises blood pressure.', ['Salt lowers blood pressure.', 'Salt has no effect.', 'Salt adds protein.']),
     ],
   },
@@ -456,8 +456,8 @@ const AGRICULTURE: Record<string, Topic> = {
       t(7, 2, 'Washing hands before handling food prevents the spread of ___.', 'germs', ['vitamins', 'flavour', 'colour']),
       t(7, 3, 'Why should raw meat and cooked food be kept apart?', 'to prevent cross-contamination', ['to keep the meat warm', 'to save space', 'to make food sweeter']),
       t(8, 3, 'Which cooking method keeps the most vitamins in vegetables?', 'steaming', ['deep frying', 'long boiling', 'burning']),
-      t(8, 4, 'Why is food stored in airtight containers?', 'to keep out moisture, air and pests', ['to make it heavier', 'to add germs', 'to warm it']),
-      t(9, 4, 'Why should cooked food not be left at room temperature for many hours?', 'germs multiply quickly at warm temperatures', ['it becomes more nutritious', 'it freezes', 'it gains vitamins']),
+      t(8, 4, 'Why is food stored in airtight containers?', 'to keep out moisture, air and pests', ['to make the food cook faster later', 'to keep the food warm for many days', 'to add flavour to the stored food']),
+      t(9, 4, 'Why should cooked food not be left at room temperature for many hours?', 'germs multiply quickly at warm temperatures', ['the food loses all its colour and smell', 'the food gains extra vitamins and becomes heavy', 'the food dries out and turns into powder']),
       t(9, 5, 'Which method would best preserve fresh fish in a village with no electricity?', 'smoking or sun drying', ['refrigeration', 'freezing', 'canning in a factory only']),
     ],
   },
@@ -482,9 +482,9 @@ const AGRICULTURE: Record<string, Topic> = {
       ],
     },
     bank: [
-      t(7, 2, 'Why should a farmer keep records?', 'to know whether the farm is making a profit', ['to fill shelves', 'to avoid farming', 'to confuse buyers']),
+      t(7, 2, 'Why should a farmer keep records?', 'to know whether the farm is making a profit', ['to show neighbours how big the farm is', 'to avoid having to plan the next season', 'to keep buyers from knowing the prices']),
       t(8, 3, 'A farmer spends 15,000 shillings on a crop and sells it for 24,000. What is the profit?', '9,000 shillings', ['39,000 shillings', '15,000 shillings', '24,000 shillings']),
-      t(8, 4, 'How do cooperatives help small-scale farmers?', 'They help market produce together and get better prices.', ['They take all the land.', 'They stop farmers selling.', 'They grow all the crops.']),
+      t(8, 4, 'How do cooperatives help small-scale farmers?', 'They help market produce together and get better prices.', ['They buy all the land and employ the farmers.', 'They stop farmers from selling to anyone else.', 'They grow all the crops on behalf of farmers.']),
       t(9, 4, 'Which product adds value to milk?', 'yoghurt', ['water', 'raw milk', 'grass']),
       t(9, 5, 'A poultry farmer earns 60,000 shillings from eggs, but spends 38,000 on feed and 7,000 on vaccines. What is the profit?', '15,000 shillings', ['22,000 shillings', '45,000 shillings', '105,000 shillings']),
     ],
@@ -499,13 +499,13 @@ const CREATIVE: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['complementary colours', 'colours opposite each other on the colour wheel, like red and green'],
+            ['complementary colours', 'colours opposite each other on the colour wheel'],
             ['analogous colours', 'colours next to each other on the colour wheel'],
             ['a tint', 'a colour mixed with white'],
             ['a shade', 'a colour mixed with black'],
             ['tone', 'how light or dark a colour is'],
           ],
-          ask: (a) => `In art, what is ${a}?`,
+          ask: (a) => `In art, what does "${a}" mean?`,
           askBack: (b) => `In art, what do we call ${b}?`,
         },
         {
@@ -529,7 +529,7 @@ const CREATIVE: Record<string, Topic> = {
       t(7, 3, 'Drawing objects smaller as they get further away shows ___.', 'perspective', ['texture', 'contrast', 'tint']),
       t(8, 4, 'A poster uses bright red text on a dark green background so the words stand out. Which principle is used?', 'contrast', ['unity', 'rhythm', 'proportion']),
       t(9, 4, 'In one-point perspective, all receding lines meet at the ___.', 'vanishing point', ['horizon line only', 'foreground', 'frame']),
-      t(9, 5, 'Why do artists make preliminary sketches before a final painting?', 'to plan composition, proportion and tone', ['to waste paper', 'to avoid painting', 'to copy others']),
+      t(9, 5, 'Why do artists make preliminary sketches before a final painting?', 'to plan composition, proportion and tone', ['to finish the work faster without paint', 'to copy another artist\'s finished work', 'to test which frame suits the painting']),
     ],
   },
   crafts: {
@@ -560,10 +560,10 @@ const CREATIVE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'Clay items are hardened by heating them in a ___.', 'kiln', ['fridge', 'basket', 'loom']),
-      t(7, 3, 'In batik, the wax ___.', 'resists the dye so that waxed areas stay their original colour', ['makes the dye darker', 'glues the cloth', 'is the dye']),
+      t(7, 3, 'In batik, the wax ___.', 'resists the dye so that waxed areas stay their original colour', ['mixes with the dye to make the colours darker and brighter', 'glues the different pieces of cloth together into one', 'is melted into the dye so that it spreads evenly']),
       t(8, 4, 'Which tool is used for weaving cloth?', 'loom', ['kiln', 'chisel', 'easel']),
-      t(9, 4, 'Why should a good logo be simple?', 'so it is easy to recognise and remember', ['so nobody notices it', 'so it uses many colours', 'so it changes often']),
-      t(9, 5, 'A youth group wants to earn money from crafts. Which is the best first step?', 'find out what customers want and price items to cover costs', ['make items no one needs', 'sell below cost', 'copy another group\'s brand']),
+      t(9, 4, 'Why should a good logo be simple?', 'so it is easy to recognise and remember', ['so it can use as many colours as possible', 'so it can be changed every few months', 'so it looks the same as other brands']),
+      t(9, 5, 'A youth group wants to earn money from crafts. Which is the best first step?', 'find out what customers want and price items to cover costs', ['make as many items as possible before finding buyers', 'sell every item below its cost to attract buyers', 'copy the designs and brand name of another group']),
     ],
   },
   music: {
@@ -630,7 +630,7 @@ const CREATIVE: Record<string, Topic> = {
     bank: [
       t(7, 2, 'The adumu "jumping dance" is performed by the ___.', 'Maasai', ['Mijikenda', 'Luhya', 'Kikuyu']),
       t(7, 3, 'Isukuti dance comes from the ___ community.', 'Luhya', ['Maasai', 'Luo', 'Somali']),
-      t(8, 4, 'Why do actors face the audience when speaking on stage?', 'so they can be seen and heard clearly', ['to hide their faces', 'to confuse the audience', 'to rest']),
+      t(8, 4, 'Why do actors face the audience when speaking on stage?', 'so they can be seen and heard clearly', ['so they can read the script on the floor', 'so the other actors can rest their voices', 'so the lights do not shine on their faces']),
       t(9, 4, 'The central idea or message of a play is its ___.', 'theme', ['setting', 'costume', 'prop']),
       t(9, 5, 'A dance group wants to show joy at a harvest festival. Which choice fits best?', 'lively rhythms, bright costumes and energetic movements', ['slow, heavy steps with dull costumes', 'standing still', 'no music']),
     ],
@@ -658,10 +658,10 @@ const CREATIVE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'The marathon distance is about ___ km.', '42', ['21', '10', '100']),
-      t(7, 3, 'Why do sprinters use starting blocks?', 'to push off powerfully at the start', ['to rest', 'to slow down', 'to measure time']),
+      t(7, 3, 'Why do sprinters use starting blocks?', 'to push off powerfully at the start', ['to measure their time at the start', 'to mark the lane they must run in', 'to rest their feet before the start']),
       t(8, 4, 'In the high jump, a modern style where the athlete goes over backwards is the ___.', 'Fosbury flop', ['scissors', 'straddle', 'hitch kick']),
       t(9, 4, 'Which Kenyan athlete holds a famous 800 m world record set in 2012?', 'David Rudisha', ['Eliud Kipchoge', 'Faith Kipyegon', 'Paul Tergat']),
-      t(9, 5, 'Why do distance runners train at high altitude, as in Iten?', 'The body adapts by making more red blood cells, improving endurance.', ['The air is thicker.', 'It is warmer.', 'Races are held there only.']),
+      t(9, 5, 'Why do distance runners train at high altitude, as in Iten?', 'The body adapts by making more red blood cells, improving endurance.', ['The air is thicker, so the runners can breathe more deeply.', 'It is warmer there, so the muscles do not get stiff.', 'The ground is softer, so the runners never get injured.']),
     ],
   },
   ballgames: {
@@ -698,7 +698,8 @@ const CREATIVE: Record<string, Topic> = {
       categories: [
         { one: 'a gymnastics skill', many: 'gymnastics skills', items: ['forward roll', 'backward roll', 'cartwheel', 'handstand', 'headstand', 'round-off'], set: 'g' },
         { one: 'a swimming stroke', many: 'swimming strokes', items: ['front crawl', 'breaststroke', 'backstroke', 'butterfly'], set: 'g' },
-        { one: 'a water safety rule', many: 'water safety rules', items: ['never swim alone', 'swim only where a lifeguard is present', 'do not dive into shallow water', 'learn to float'], set: 'g' },
+        { one: 'a water safety rule', many: 'water safety rules', items: ['never swim alone', 'swim where a lifeguard can see you', 'do not dive into shallow water', 'learn to float'], set: 'w' },
+        { one: 'an unsafe water practice', many: 'unsafe water practices', items: ['swimming alone', 'diving into shallow water', 'swimming straight after a big meal', 'pushing friends into the pool'], set: 'w' },
       ],
       pairs: [
         {
@@ -716,9 +717,9 @@ const CREATIVE: Record<string, Topic> = {
     bank: [
       t(7, 2, 'Gymnastics should always be done on ___.', 'mats', ['concrete', 'tables', 'rocky ground']),
       t(7, 3, 'Which swimming stroke is done lying on the back?', 'backstroke', ['breaststroke', 'butterfly', 'front crawl']),
-      t(8, 4, 'Why should a swimmer not swim right after a heavy meal?', 'They may get cramps and tire quickly.', ['They will sink at once.', 'Food makes water cold.', 'It makes them faster.']),
+      t(8, 4, 'Why should a swimmer not swim right after a heavy meal?', 'They may get cramps and tire quickly.', ['The food makes the water colder.', 'They will float too high in the water.', 'Swimming makes the food go bad.']),
       t(9, 4, 'In a handstand, the body should be ___.', 'straight and balanced over the hands', ['bent at the knees', 'leaning on a wall always', 'moving quickly']),
-      t(9, 5, 'A friend is struggling in deep water. What is the safest way to help?', 'shout for help and reach or throw something that floats', ['jump in without any float', 'walk away', 'laugh']),
+      t(9, 5, 'A friend is struggling in deep water. What is the safest way to help?', 'shout for help and reach or throw something that floats', ['jump in quickly and pull them out on your own', 'swim out and let them hold on to your neck', 'wait on the shore until they swim back alone']),
     ],
   },
   appreciation: {
@@ -726,7 +727,7 @@ const CREATIVE: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['a curator', 'looks after collections in a museum or gallery'],
+            ['a curator', 'looks after museum collections'],
             ['a choreographer', 'designs dances'],
             ['a sound engineer', 'records and mixes music'],
             ['a coach', 'trains athletes and teams'],
@@ -739,14 +740,14 @@ const CREATIVE: Record<string, Topic> = {
       ],
       categories: [
         { one: 'a Kenyan cultural heritage site', many: 'heritage sites', items: ['Lamu Old Town', 'Fort Jesus', 'Thimlich Ohinga', 'the Bomas of Kenya'], set: 'h' },
-        { one: 'a Kenyan national sports venue', many: 'sports venues', items: ['Kasarani (Moi International Sports Centre)', 'Nyayo Stadium', 'Kipchoge Keino Stadium', 'Bukhungu Stadium'], set: 'h' },
+        { one: 'a Kenyan national sports venue', many: 'sports venues', items: ['Kasarani Stadium', 'Nyayo Stadium', 'Kipchoge Keino Stadium', 'Bukhungu Stadium'], set: 'h' },
       ],
     },
     bank: [
-      t(7, 2, 'The Kenya Music Festival gives learners a chance to ___.', 'perform music, dance and poetry', ['sell farm produce', 'repair cars', 'study maths only']),
-      t(8, 3, 'Why is copying another person\'s artwork without permission wrong?', 'It breaks copyright and is unfair to the creator.', ['It improves the art.', 'It is required by law.', 'It is the same as practising.']),
-      t(8, 4, 'When giving a critique of a painting, you should ___.', 'describe, analyse, interpret and then judge it', ['only say whether you like it', 'focus on the frame', 'compare it to a photo only']),
-      t(9, 5, 'Which shows good sportsmanship?', 'shaking hands with opponents after losing', ['arguing with the referee', 'refusing to play', 'mocking the other team']),
+      t(7, 2, 'The Kenya Music Festival gives learners a chance to ___.', 'perform music, dance and poetry', ['sell farm produce and crafts', 'sit national exams early', 'compete in athletics and ball games']),
+      t(8, 3, 'Why is copying another person\'s artwork without permission wrong?', 'It breaks copyright and is unfair to the creator.', ['It is allowed if the copy is better than the original.', 'It is only wrong if the copy is sold at a market.', 'It is the same as practising, so it is never wrong.']),
+      t(8, 4, 'When giving a critique of a painting, you should ___.', 'describe, analyse, interpret and then judge it', ['say at once whether you like it and stop there', 'compare it with a photograph of the same scene', 'talk only about the frame and the price']),
+      t(9, 5, 'Which shows good sportsmanship?', 'shaking hands with opponents after losing', ['arguing with the referee after every call', 'celebrating loudly in front of the losers', 'leaving the field before the final whistle']),
     ],
   },
 }
@@ -765,13 +766,6 @@ const CRE: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['the Old Testament', 'Hebrew'],
-            ['the New Testament', 'Greek'],
-          ],
-          ask: (a) => `In which language was most of ${a} first written?`,
-        },
-        {
-          pairs: [
             ['the Gospels', 'the life and teaching of Jesus'],
             ['Acts of the Apostles', 'the growth of the early church'],
             ['Psalms', 'songs and prayers of praise'],
@@ -784,8 +778,10 @@ const CRE: Record<string, Topic> = {
       ],
     },
     bank: [
+      t(7, 3, 'In which language was most of the Old Testament first written?', 'Hebrew', ['Greek', 'Latin', 'Arabic']),
+      t(7, 3, 'In which language was most of the New Testament first written?', 'Greek', ['Hebrew', 'Latin', 'Arabic']),
       t(7, 2, 'The Bible has ___ books.', '66', ['39', '27', '72']),
-      t(7, 3, 'Why is the Bible translated into languages like Kiswahili and Dholuo?', 'so that people can read God\'s word in their own language', ['to make it longer', 'to hide its meaning', 'to replace the original']),
+      t(7, 3, 'Why is the Bible translated into languages like Kiswahili and Dholuo?', 'so that people can read God\'s word in their own language', ['so that the original Hebrew and Greek texts are no longer needed', 'so that each community can change the meaning to suit itself', 'so that the Bible becomes longer and has more chapters']),
       t(8, 4, 'The first four books of the New Testament are called the ___.', 'Gospels', ['Epistles', 'Prophets', 'Writings']),
       t(9, 4, 'Matthew, Mark and Luke are called synoptic gospels because they ___.', 'tell the story of Jesus in a similar way', ['were written by the same person', 'are the shortest books', 'contain only parables']),
       t(9, 5, 'Which is a responsible way to interpret a Bible passage?', 'read it in context and compare it with other passages', ['pick one verse and ignore the rest', 'change words to suit yourself', 'read only titles']),
@@ -812,9 +808,9 @@ const CRE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, 'The first book of the Bible, which tells the story of creation, is ___.', 'Genesis', ['Exodus', 'Psalms', 'Revelation']),
-      t(7, 3, 'In Genesis 3, Adam and Eve disobeyed God by ___.', 'eating fruit from the tree God had forbidden', ['refusing to work', 'leaving the garden', 'naming the animals']),
-      t(8, 4, 'Which Christian practice shows responsibility for creation?', 'planting trees and avoiding waste', ['burning forests', 'polluting rivers', 'wasting water']),
-      t(9, 5, 'How does the creation story teach Christians to treat people of other communities?', 'with respect, because all are made in God\'s image', ['as less important', 'with suspicion', 'by ignoring them']),
+      t(7, 3, 'In Genesis 3, Adam and Eve disobeyed God by ___.', 'eating fruit from the tree God had forbidden', ['refusing to name the animals God had made', 'leaving the garden without God\'s permission', 'refusing to work and care for the garden']),
+      t(8, 4, 'Which Christian practice shows responsibility for creation?', 'planting trees and avoiding waste', ['burning rubbish near the river', 'using more water than is needed', 'clearing bush land for firewood']),
+      t(9, 5, 'How does the creation story teach Christians to treat people of other communities?', 'with respect, because all are made in God\'s image', ['with caution, because they may have other beliefs', 'kindly, but only if they share the same language', 'fairly, but less warmly than one\'s own community']),
     ],
   },
   ot: {
@@ -844,8 +840,8 @@ const CRE: Record<string, Topic> = {
       t(7, 2, 'The Ten Commandments were given to Moses on Mount ___.', 'Sinai', ['Carmel', 'Zion', 'Hermon']),
       t(7, 3, 'God made a covenant with Noah, sealed by the sign of ___.', 'a rainbow', ['a star', 'a dove only', 'a burning bush']),
       t(8, 4, 'The prophet Amos would most strongly criticise ___.', 'traders who cheat customers with false scales', ['farmers who share harvests', 'families who pray', 'people who rest on the Sabbath']),
-      t(9, 4, 'Why did Elijah challenge the prophets of Baal on Mount Carmel?', 'to show the people that the Lord is the true God', ['to start a war', 'to win a race', 'to build an altar to Baal']),
-      t(9, 5, 'Which modern situation shows a lesson from Nehemiah?', 'a community working together to rebuild a school after floods', ['people refusing to help each other', 'leaders taking public money', 'abandoning a project halfway']),
+      t(9, 4, 'Why did Elijah challenge the prophets of Baal on Mount Carmel?', 'to show the people that the Lord is the true God', ['to win the king\'s favour and become a royal adviser', 'to prove he could build a bigger altar than theirs', 'to decide who would rule Israel after King Ahab']),
+      t(9, 5, 'Which modern situation shows a lesson from Nehemiah?', 'a community working together to rebuild a school after floods', ['a leader who keeps the money raised for a new classroom', 'a village that starts a project but stops halfway', 'neighbours who refuse to help each other after floods']),
     ],
   },
   jesus: {
@@ -870,9 +866,9 @@ const CRE: Record<string, Topic> = {
     },
     bank: [
       t(7, 2, '"Blessed are the peacemakers" is one of the ___.', 'Beatitudes', ['Ten Commandments', 'Psalms', 'Proverbs']),
-      t(7, 3, 'In the Lord\'s Prayer, Christians ask God to ___.', 'forgive them as they forgive others', ['make them rich', 'punish their enemies', 'give them fame']),
-      t(8, 4, 'What does the parable of the Talents teach young people?', 'to develop and use their abilities', ['to bury their gifts', 'to compete unfairly', 'to avoid work']),
-      t(9, 4, 'Why did Jesus eat with tax collectors and sinners?', 'to show God\'s love and call them to change', ['because they were rich', 'to break the law', 'to avoid his disciples']),
+      t(7, 3, 'In the Lord\'s Prayer, Christians ask God to ___.', 'forgive them as they forgive others', ['give them wealth and success', 'punish those who wrong them', 'make them famous among people']),
+      t(8, 4, 'What does the parable of the Talents teach young people?', 'to develop and use their abilities', ['to keep their gifts safe and hidden', 'to compete to be richer than others', 'to rest and let others do the work']),
+      t(9, 4, 'Why did Jesus eat with tax collectors and sinners?', 'to show God\'s love and call them to change', ['because they offered Him the best meals', 'to collect tax money for the temple', 'to keep away from the Pharisees\' rules']),
       t(9, 5, 'A classmate is left out because of their background. Which teaching of Jesus guides you?', 'the Good Samaritan', ['the Talents', 'the Sower', 'the Mustard Seed']),
     ],
   },
@@ -896,8 +892,8 @@ const CRE: Record<string, Topic> = {
     bank: [
       t(7, 2, 'Christians celebrate the resurrection of Jesus at ___.', 'Easter', ['Christmas', 'Pentecost', 'Palm Sunday']),
       t(7, 3, 'At the Last Supper, Jesus washed His disciples\' feet to teach ___.', 'humble service', ['cleanliness only', 'pride', 'fasting']),
-      t(8, 4, 'Holy Communion reminds Christians of ___.', 'the Last Supper and Jesus\' sacrifice', ['the birth of Jesus', 'the creation story', 'the Exodus only']),
-      t(9, 5, 'Why is the resurrection central to Christian faith?', 'It shows Jesus\' victory over death and gives hope of new life.', ['It ended the Old Testament.', 'It started the Sabbath.', 'It began the church calendar only.']),
+      t(8, 4, 'Holy Communion reminds Christians of ___.', 'the Last Supper and Jesus\' sacrifice', ['the birth of Jesus in Bethlehem', 'God\'s creation of the world', 'the escape from Egypt in the Exodus']),
+      t(9, 5, 'Why is the resurrection central to Christian faith?', 'It shows Jesus\' victory over death and gives hope of new life.', ['It marks the day Jesus was born in Bethlehem of Judea.', 'It is when the disciples first received the Holy Spirit.', 'It is when Jesus gave the Ten Commandments to the people.']),
     ],
   },
   church: {
@@ -920,10 +916,10 @@ const CRE: Record<string, Topic> = {
       ],
     },
     bank: [
-      t(7, 2, 'The early Christians shared their possessions and met to ___.', 'pray, learn and break bread together', ['argue', 'compete', 'hide']),
-      t(8, 3, 'Which is a role of the church in Kenya today?', 'running schools and hospitals and helping the needy', ['collecting taxes', 'making laws', 'running elections']),
+      t(7, 2, 'The early Christians shared their possessions and met to ___.', 'pray, learn and break bread together', ['choose a king to rule over them', 'plan how to leave Jerusalem', 'trade goods and make a profit']),
+      t(8, 3, 'Which is a role of the church in Kenya today?', 'running schools and hospitals and helping the needy', ['collecting taxes for the national government', 'making laws in Parliament for the country', 'running elections and counting the votes']),
       t(8, 4, 'Paul\'s letters to churches were written mainly to ___.', 'teach, encourage and correct believers', ['record the history of Rome', 'list kings', 'tell parables']),
-      t(9, 5, 'A youth group wants to show the fruit of the Spirit. Which activity fits best?', 'visiting and helping elderly people in the community', ['competing to be the loudest', 'refusing to work with others', 'spreading gossip']),
+      t(9, 5, 'A youth group wants to show the fruit of the Spirit. Which activity fits best?', 'visiting and helping elderly people in the community', ['holding a contest to find the best singer in church', 'collecting money only for the group\'s own trip', 'debating which members are the most important']),
     ],
   },
   ethics: {
@@ -948,11 +944,11 @@ const CRE: Record<string, Topic> = {
       ],
     },
     bank: [
-      t(7, 2, 'Christians believe work is good because ___.', 'God gave people work to do from creation', ['work is a punishment only', 'only adults matter', 'money is everything']),
-      t(7, 3, 'A learner finds a phone in class. What does Christian integrity require?', 'hand it to the teacher so it is returned', ['keep it', 'sell it', 'hide it']),
-      t(8, 4, 'Which is a Christian response to corruption?', 'refusing bribes and reporting wrongdoing', ['offering bribes', 'ignoring it', 'joining in']),
-      t(9, 4, 'Why should Christians avoid drug and substance abuse?', 'The body is a temple of the Holy Spirit and should be cared for.', ['It is expensive only.', 'Friends will be jealous.', 'It is boring.']),
-      t(9, 5, 'A friend is pressured by peers to cheat in an exam. What is the best Christian advice?', 'stay honest, revise, and ask a teacher for help', ['cheat once only', 'copy quietly', 'skip the exam']),
+      t(7, 2, 'Christians believe work is good because ___.', 'God gave people work to do from creation', ['work was a punishment for the fall only', 'only adults are expected to work at all', 'money is the most important thing in life']),
+      t(7, 3, 'A learner finds a phone in class. What does Christian integrity require?', 'hand it to the teacher so it is returned', ['keep it until someone asks for it', 'use it quietly and put it back later', 'give it to a friend who needs a phone']),
+      t(8, 4, 'Which is a Christian response to corruption?', 'refusing bribes and reporting wrongdoing', ['accepting small gifts to keep peace', 'staying silent to avoid trouble', 'offering bribes only when it is urgent']),
+      t(9, 4, 'Why should Christians avoid drug and substance abuse?', 'The body is a temple of the Holy Spirit and should be cared for.', ['Drugs are expensive, so they waste money that could be saved.', 'Using drugs makes it hard to make friends at school.', 'It is only harmful when it is done in public places.']),
+      t(9, 5, 'A friend is pressured by peers to cheat in an exam. What is the best Christian advice?', 'stay honest, revise, and ask a teacher for help', ['cheat only this once so friends stay happy', 'copy quietly but never tell anyone about it', 'stay home on exam day to avoid the pressure']),
     ],
   },
 }
@@ -996,7 +992,7 @@ const SOCIAL7: Record<string, STopic> = {
       ts(2, 'A grid reference gives the eastings first and then the ___.', 'northings', ['scale', 'title', 'key']),
       ts(3, 'On a map with scale 1 : 50,000, 4 cm represents ___ km.', '2', ['20', '200', '0.2']),
       ts(4, 'A map shows a river flowing from north-west to south-east. In which direction is it flowing?', 'south-east', ['north-west', 'north', 'west']),
-      ts(5, 'Why do map makers use a key?', 'to explain the symbols used on the map', ['to show the scale only', 'to decorate the map', 'to name the author']),
+      ts(5, 'Why do map makers use a key?', 'to explain the symbols used on the map', ['to show only the scale of the map', 'to name the person who drew the map', 'to show the date the map was made']),
     ],
   },
   earth: {
@@ -1031,7 +1027,7 @@ const SOCIAL7: Record<string, STopic> = {
       ts(2, 'The earth takes about ___ hours to rotate once on its axis.', '24', ['12', '365', '30']),
       ts(3, 'The earth rotates 360° in 24 hours, so 15° of longitude equals ___ of time.', '1 hour', ['15 minutes', '4 hours', '1 day']),
       ts(4, 'When it is noon in Nairobi (about 37° E), what time is it at the prime meridian (0°) roughly?', 'about 9:30 a.m.', ['about 2:30 p.m.', 'noon', 'midnight']),
-      ts(5, 'Why do places near the equator have about 12 hours of daylight all year?', 'The sun is overhead near the equator and day length changes little.', ['The equator is closer to the moon.', 'The earth stops rotating there.', 'It never rains there.']),
+      ts(5, 'Why do places near the equator have about 12 hours of daylight all year?', 'The sun is overhead near the equator and day length changes little.', ['The equator is closer to the moon, which lights it at night.', 'The earth spins more slowly at the equator than at the poles.', 'There are no clouds at the equator, so the sun shines longer.']),
     ],
   },
   weather: {
@@ -1058,7 +1054,7 @@ const SOCIAL7: Record<string, STopic> = {
       ts(2, 'The average weather of a place over about 30 years is its ___.', 'climate', ['weather', 'season', 'relief']),
       ts(3, 'Temperature falls by about 6°C for every ___ m rise in altitude.', '1,000', ['100', '10', '5,000']),
       ts(4, 'Which climatic region has hot, dry summers and warm, wet winters?', 'Mediterranean', ['equatorial', 'desert', 'tropical savannah']),
-      ts(5, 'Why is the Congo Basin hot and wet all year?', 'It lies on the equator with high sun and rising moist air.', ['It is near the North Pole.', 'It is a desert.', 'It is on a high plateau.']),
+      ts(5, 'Why is the Congo Basin hot and wet all year?', 'It lies on the equator with high sun and rising moist air.', ['It lies near the coast and gets cold ocean currents.', 'It is a high plateau far from any large rivers.', 'It is in the tropics but has a long dry season.']),
     ],
   },
   history: {
@@ -1070,9 +1066,9 @@ const SOCIAL7: Record<string, STopic> = {
             ['the Kingdom of Kush (Meroe)', 'iron working on the Nile'],
             ['the Kingdom of Aksum', 'trade across the Red Sea and early coins'],
             ['Great Zimbabwe', 'massive stone walls built without mortar'],
-            ['the Swahili city-states', 'Indian Ocean trade at Kilwa, Mombasa and Lamu'],
+            ['the Swahili city-states', 'Indian Ocean trade at Kilwa and Lamu'],
           ],
-          ask: (a) => `What is ${a} known for?`,
+          ask: (a) => `What made ${a} famous?`,
           askBack: (b) => `Which early African civilisation is known for ${b}?`,
         },
       ],
@@ -1083,9 +1079,9 @@ const SOCIAL7: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'The study of the past through remains such as tools and bones is ___.', 'archaeology', ['geography', 'astronomy', 'botany']),
-      ts(3, 'Early people\'s discovery of fire helped them to ___.', 'cook food, keep warm and scare away wild animals', ['build cars', 'write books', 'grow cotton']),
+      ts(3, 'Early people\'s discovery of fire helped them to ___.', 'cook food, keep warm and scare away wild animals', ['make iron tools and build stone houses at once', 'write records and send messages to other groups', 'grow crops all year without any rainfall']),
       ts(4, 'Why did early civilisations develop along rivers such as the Nile?', 'Rivers provided water for farming and transport.', ['Rivers were cold.', 'There were no people elsewhere.', 'Rivers had gold only.']),
-      ts(5, 'Which development allowed early people to settle in one place?', 'farming (the agrarian revolution)', ['hunting only', 'gathering only', 'nomadism']),
+      ts(5, 'Which development allowed early people to settle in one place?', 'farming (the agrarian revolution)', ['hunting large wild animals', 'gathering wild fruits only', 'moving with their herds']),
     ],
   },
   resources: {
@@ -1111,9 +1107,9 @@ const SOCIAL7: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'Resources that can be replaced naturally are called ___ resources.', 'renewable', ['non-renewable', 'artificial', 'human']),
-      ts(3, 'Which is a threat to forests in Africa?', 'clearing land for farming and charcoal', ['tree planting', 'rainfall', 'forest guards']),
-      ts(4, 'Why are wildlife parks important to Kenya\'s economy?', 'They attract tourists who bring foreign exchange.', ['They produce oil.', 'They grow tea.', 'They mine gold.']),
-      ts(5, 'Which is the best way to make mineral wealth benefit a country?', 'process minerals locally and invest the earnings', ['export all raw minerals', 'stop mining entirely', 'mine without rules']),
+      ts(3, 'Which is a threat to forests in Africa?', 'clearing land for farming and charcoal', ['planting trees on bare hillsides', 'employing more forest guards', 'steady rainfall through the year']),
+      ts(4, 'Why are wildlife parks important to Kenya\'s economy?', 'They attract tourists who bring foreign exchange.', ['They are used to grow tea and coffee for export.', 'They supply most of the timber used in Kenya.', 'They hold the country\'s largest gold mines.']),
+      ts(5, 'Which is the best way to make mineral wealth benefit a country?', 'process minerals locally and invest the earnings', ['export all minerals raw and spend the money', 'allow mining anywhere without any rules', 'stop all mining to protect the land']),
     ],
   },
   economy: {
@@ -1138,7 +1134,7 @@ const SOCIAL7: Record<string, STopic> = {
     bank: [
       ts(2, 'The fastest mode of transport over long distances is ___.', 'air', ['road', 'water', 'pipeline']),
       ts(3, 'Which is the cheapest way to move large amounts of oil inland?', 'pipeline', ['air', 'road tankers only', 'bicycles']),
-      ts(4, 'Why did trans-Saharan trade grow in early Africa?', 'Camels made it possible to cross the desert with goods like gold and salt.', ['There were railways.', 'Ships crossed the desert.', 'The Sahara was a forest.']),
+      ts(4, 'Why did trans-Saharan trade grow in early Africa?', 'Camels made it possible to cross the desert with goods like gold and salt.', ['Railways were built across the desert to carry goods to the coast.', 'The Sahara was a forest with many rivers that boats could follow.', 'Ships sailed up the Nile and crossed the desert on canals.']),
       ts(5, 'How has mobile money changed trade in Kenya?', 'It allows fast, safe payments even in rural areas.', ['It stopped all trade.', 'It needs banks in every village.', 'It works only abroad.']),
     ],
   },
@@ -1189,7 +1185,7 @@ const SOCIAL7: Record<string, STopic> = {
       ts(2, 'A person who belongs to a country by law is a ___.', 'citizen', ['tourist', 'visitor', 'refugee only']),
       ts(3, 'Kenyans get a national identity card at the age of ___.', '18', ['12', '16', '21']),
       ts(4, 'Which action shows patriotism?', 'taking part in a community clean-up', ['damaging public property', 'avoiding tax', 'spreading hate speech']),
-      ts(5, 'How can young people promote national unity?', 'making friends across communities and rejecting tribalism', ['joining one community only', 'spreading rumours', 'refusing to vote']),
+      ts(5, 'How can young people promote national unity?', 'making friends across communities and rejecting tribalism', ['joining only clubs made up of their own community', 'avoiding all talk about other communities\' cultures', 'supporting leaders because they come from their area']),
     ],
   },
 }
@@ -1215,7 +1211,7 @@ const SOCIAL8: Record<string, STopic> = {
       ts(2, 'Lines joining places of equal height on a map are ___.', 'contours', ['isobars', 'isotherms', 'gridlines']),
       ts(3, 'The difference in height between two neighbouring contours is the ___.', 'contour interval', ['scale', 'gradient', 'bearing']),
       ts(4, 'Two points are 200 m apart in height and 2 km apart on the ground. What is the gradient?', '1 in 10', ['1 in 100', '1 in 2', '10 in 1']),
-      ts(5, 'Why do settlements on topographical maps often cluster along valleys?', 'Valleys have water, flatter land and easier transport.', ['Valleys are the coldest places.', 'Valleys have no roads.', 'Hills have more water.']),
+      ts(5, 'Why do settlements on topographical maps often cluster along valleys?', 'Valleys have water, flatter land and easier transport.', ['Valleys are colder, so food stays fresh for longer.', 'Hilltops have more water and better roads.', 'Valleys have fewer roads, so they are quieter.']),
     ],
   },
   earth: {
@@ -1242,8 +1238,8 @@ const SOCIAL8: Record<string, STopic> = {
     bank: [
       ts(2, 'The breaking down of rocks in their original place is called ___.', 'weathering', ['erosion', 'deposition', 'faulting']),
       ts(3, 'Hot springs and geysers at Lake Bogoria are linked to ___.', 'volcanic activity', ['glaciation', 'folding', 'wind deposition']),
-      ts(4, 'Why are earthquakes more common along the Rift Valley?', 'It lies along a zone where the earth\'s crust is splitting.', ['It is near the sea.', 'It has many rivers.', 'It is very cold.']),
-      ts(5, 'How do volcanic landscapes benefit people?', 'Fertile soils, geothermal energy and tourism.', ['They stop all farming.', 'They cause only droughts.', 'They have no use.']),
+      ts(4, 'Why are earthquakes more common along the Rift Valley?', 'It lies along a zone where the earth\'s crust is splitting.', ['It has more rivers and lakes than other regions.', 'It is the lowest and hottest part of the country.', 'Its rocks are softer because of the heavy rains.']),
+      ts(5, 'How do volcanic landscapes benefit people?', 'Fertile soils, geothermal energy and tourism.', ['Cold weather, snow and frequent heavy rain.', 'Flat land, deep rivers and many lakes.', 'Sandy soils, oil wells and desert plants.']),
     ],
   },
   weather: {
@@ -1258,7 +1254,7 @@ const SOCIAL8: Record<string, STopic> = {
       ts(2, 'The gradual warming of the earth\'s average temperature is called ___.', 'global warming', ['weathering', 'erosion', 'condensation']),
       ts(3, 'Which gas released by burning charcoal adds to global warming?', 'carbon dioxide', ['oxygen', 'nitrogen', 'helium']),
       ts(4, 'Why are the glaciers on Mount Kenya shrinking?', 'Rising temperatures are melting the ice.', ['More snow is falling.', 'The mountain is growing.', 'Tourists carry the ice away.']),
-      ts(5, 'Which farming practice helps farmers adapt to unpredictable rains?', 'planting drought-tolerant crops and harvesting water', ['planting only one crop', 'clearing all trees', 'burning crop remains']),
+      ts(5, 'Which farming practice helps farmers adapt to unpredictable rains?', 'planting drought-tolerant crops and harvesting water', ['planting the same crop on all land every season', 'burning crop remains to clear fields quickly', 'clearing all trees to make room for more crops']),
     ],
   },
   history: {
@@ -1266,14 +1262,14 @@ const SOCIAL8: Record<string, STopic> = {
       pairs: [
         {
           pairs: [
-            ['the Berlin Conference (1884–85)', 'European powers divided Africa among themselves'],
-            ['Nandi resistance', 'Koitalel arap Samoei led opposition to the railway'],
-            ['Giriama resistance', 'Mekatilili wa Menza led her people against colonial rule'],
-            ['the Mau Mau movement', 'an armed struggle for land and freedom in Kenya'],
+            ['the Berlin Conference (1884–85)', 'the meeting where European powers divided Africa among themselves'],
+            ['Nandi resistance', 'opposition to the railway, led by Koitalel arap Samoei'],
+            ['Giriama resistance', 'opposition to colonial rule, led by Mekatilili wa Menza'],
+            ['the Mau Mau movement', 'a struggle for land and freedom in Kenya'],
             ['the Lancaster House conferences', 'talks in London that prepared Kenya for independence'],
           ],
           ask: (a) => `What is ${a} known for?`,
-          askBack: (b) => `Which event or movement is linked to the fact that ${b}?`,
+          askBack: (b) => `Which event or movement was ${b}?`,
         },
         {
           pairs: [
@@ -1289,8 +1285,8 @@ const SOCIAL8: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'The division of Africa by European powers in the late 1800s is called the ___.', 'Scramble for Africa', ['Great Trek', 'Industrial Revolution', 'Cold War']),
-      ts(3, 'Britain ruled Kenya mainly through a system called ___.', 'direct rule with appointed chiefs', ['assimilation', 'apartheid', 'self-rule']),
-      ts(4, 'Why did many Africans resist colonial rule?', 'They lost land and freedom and were forced to pay taxes.', ['They wanted more taxes.', 'They enjoyed forced labour.', 'They had no land to lose.']),
+      ts(3, 'Britain ruled Kenya mainly through a system called ___.', 'direct rule with appointed chiefs', ['indirect rule through kings', 'assimilation into French culture', 'self-rule by elected councils']),
+      ts(4, 'Why did many Africans resist colonial rule?', 'They lost land and freedom and were forced to pay taxes.', ['They wanted the colonial rulers to build more roads.', 'They preferred to work on settler farms for wages.', 'They wanted to join the colonial government quickly.']),
       ts(5, 'Which leader became Ghana\'s first president and inspired African independence movements?', 'Kwame Nkrumah', ['Julius Nyerere', 'Jomo Kenyatta', 'Nelson Mandela']),
     ],
   },
@@ -1315,9 +1311,9 @@ const SOCIAL8: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'Farming mainly to feed one\'s own family is ___ farming.', 'subsistence', ['commercial', 'plantation', 'industrial']),
-      ts(3, 'Why do cement factories locate near limestone deposits?', 'Limestone is the main raw material and is heavy to transport.', ['Limestone is light.', 'Cement uses water only.', 'Workers like limestone.']),
-      ts(4, 'Which is a benefit of industries to Kenya?', 'They create jobs and add value to raw materials.', ['They reduce exports.', 'They waste raw materials.', 'They stop trade.']),
-      ts(5, 'Which challenge most limits irrigation farming in arid areas?', 'high cost of water and equipment', ['too much rain', 'too many rivers', 'cold weather']),
+      ts(3, 'Why do cement factories locate near limestone deposits?', 'Limestone is the main raw material and is heavy to transport.', ['Limestone is light, so it is cheap to move it far away.', 'Cement is made mainly from water, and limestone holds water.', 'Workers prefer to live in areas with limestone rocks.']),
+      ts(4, 'Which is a benefit of industries to Kenya?', 'They create jobs and add value to raw materials.', ['They reduce the amount of goods Kenya exports.', 'They use up raw materials without producing goods.', 'They stop farmers from selling their produce.']),
+      ts(5, 'Which challenge most limits irrigation farming in arid areas?', 'high cost of water and equipment', ['too much rain during the year', 'cold weather and frost at night', 'too many permanent rivers']),
     ],
   },
   economy: {
@@ -1339,8 +1335,8 @@ const SOCIAL8: Record<string, STopic> = {
     bank: [
       ts(2, 'Trade between countries in the same region is called ___ trade.', 'regional', ['local', 'barter', 'retail']),
       ts(3, 'The headquarters of the East African Community are in ___.', 'Arusha', ['Nairobi', 'Kampala', 'Addis Ababa']),
-      ts(4, 'How does a customs union help member countries?', 'Goods move between members without import duties.', ['It raises taxes on members.', 'It closes borders.', 'It stops exports.']),
-      ts(5, 'Which is a challenge facing regional trade in Africa?', 'poor transport links and border delays', ['too many good roads', 'no goods to trade', 'too much cooperation']),
+      ts(4, 'How does a customs union help member countries?', 'Goods move between members without import duties.', ['Each member sets its own taxes on the others.', 'Members must close their borders to trade.', 'Only raw materials may cross the borders.']),
+      ts(5, 'Which is a challenge facing regional trade in Africa?', 'poor transport links and border delays', ['too many good roads and railways', 'too much cooperation between states', 'no goods for countries to trade']),
     ],
   },
   governance: {
@@ -1365,8 +1361,8 @@ const SOCIAL8: Record<string, STopic> = {
     bank: [
       ts(2, 'Kenya has ___ county governments.', '47', ['8', '42', '290']),
       ts(3, 'Elections in Kenya are conducted by the ___.', 'IEBC', ['KRA', 'KWS', 'KEMSA']),
-      ts(4, 'Why is devolution important?', 'It brings services and decision-making closer to the people.', ['It removes all leaders.', 'It stops elections.', 'It closes counties.']),
-      ts(5, 'A county plans a new market. Which shows public participation?', 'holding meetings where residents give their views', ['deciding secretly', 'ignoring traders', 'building without plans']),
+      ts(4, 'Why is devolution important?', 'It brings services and decision-making closer to the people.', ['It allows each county to make its own national laws.', 'It removes the need for a national government.', 'It stops elections from being held in the counties.']),
+      ts(5, 'A county plans a new market. Which shows public participation?', 'holding meetings where residents give their views', ['letting officials choose the site on their own', 'announcing the plan after building has started', 'asking only the contractor what is best']),
     ],
   },
   citizenship: {
@@ -1391,8 +1387,8 @@ const SOCIAL8: Record<string, STopic> = {
     bank: [
       ts(2, 'A state of harmony without war or violence is called ___.', 'peace', ['conflict', 'trade', 'devolution']),
       ts(3, 'Which is the first step in resolving a conflict peacefully?', 'listening to both sides', ['shouting', 'ignoring the problem', 'taking sides']),
-      ts(4, 'Why is hate speech dangerous?', 'It can spread hatred and lead to violence.', ['It promotes unity.', 'It is a form of prayer.', 'It is a type of song.']),
-      ts(5, 'Two communities dispute a watering point. Which solution is most lasting?', 'agree on fair sharing and build more water points together', ['let the strongest group take it', 'close the point forever', 'move all animals away']),
+      ts(4, 'Why is hate speech dangerous?', 'It can spread hatred and lead to violence.', ['It is only a problem when it is written down.', 'It makes people speak more than one language.', 'It helps communities settle their differences.']),
+      ts(5, 'Two communities dispute a watering point. Which solution is most lasting?', 'agree on fair sharing and build more water points together', ['let the larger community use the point and the other move away', 'close the watering point until the next rainy season', 'let each community guard the point on alternate days']),
     ],
   },
 }
@@ -1452,9 +1448,9 @@ const SOCIAL9: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'Mining by digging a large open hole in the ground is ___ mining.', 'open-cast', ['shaft', 'placer', 'drift']),
-      ts(3, 'Which energy source does Kenya get most of its electricity from today?', 'geothermal and hydroelectric power', ['coal only', 'nuclear', 'diesel only']),
-      ts(4, 'Why is soda ash from Lake Magadi valuable?', 'It is used to make glass, soaps and detergents.', ['It is eaten as food.', 'It is used as fuel.', 'It is a type of gold.']),
-      ts(5, 'Why must a mining company carry out an environmental impact assessment?', 'to identify and reduce harm to the environment before work starts', ['to increase pollution', 'to avoid paying workers', 'to skip planning']),
+      ts(3, 'Which energy source does Kenya get most of its electricity from today?', 'geothermal and hydroelectric power', ['coal and diesel generators', 'nuclear power stations', 'imported natural gas']),
+      ts(4, 'Why is soda ash from Lake Magadi valuable?', 'It is used to make glass, soaps and detergents.', ['It is burned as fuel in power stations.', 'It is a kind of gold sold to other countries.', 'It is used to make roofs and iron sheets.']),
+      ts(5, 'Why must a mining company carry out an environmental impact assessment?', 'to identify and reduce harm to the environment before work starts', ['to find out how much gold the company will earn in a year', 'to decide how many workers to employ at the mine', 'to get permission to mine without any further checks']),
     ],
   },
   weather: {
@@ -1476,9 +1472,9 @@ const SOCIAL9: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'The largest hot desert in the world is the ___.', 'Sahara', ['Kalahari', 'Chalbi', 'Namib']),
-      ts(3, 'Trees in tropical rainforests are ___.', 'tall and evergreen with buttress roots', ['short and thorny', 'leafless all year', 'needle-leaved conifers']),
+      ts(3, 'Trees in tropical rainforests are ___.', 'tall and evergreen with buttress roots', ['short and thorny with very small leaves', 'needle-leaved conifers that shed snow', 'leafless for most of the dry season']),
       ts(4, 'Why do coniferous trees have needle-shaped leaves?', 'to reduce water loss and shed snow', ['to catch more rain', 'to attract insects', 'to grow faster in deserts']),
-      ts(5, 'Which human activity most threatens the world\'s rainforests?', 'clearing land for logging and farming', ['bird watching', 'research', 'tree planting']),
+      ts(5, 'Which human activity most threatens the world\'s rainforests?', 'clearing land for logging and farming', ['research by scientists and students', 'bird watching and nature walks', 'planting new trees in cleared areas']),
     ],
   },
   history: {
@@ -1497,14 +1493,14 @@ const SOCIAL9: Record<string, STopic> = {
         },
       ],
       categories: [
-        { one: 'an effect of the world wars on Africa', many: 'effects of the world wars on Africa', items: ['Africans served as soldiers and carriers', 'growth of nationalism', 'economic hardship', 'new ideas about freedom'], set: 'e' },
+        { one: 'an effect of the world wars on Africa', many: 'effects of the world wars on Africa', items: ['Africans served as soldiers', 'growth of nationalism', 'economic hardship', 'new ideas about freedom'], set: 'e' },
         { one: 'an organisation formed after the Second World War', many: 'organisations formed after the Second World War', items: ['the United Nations', 'the World Bank', 'the IMF', 'UNICEF'], set: 'e' },
       ],
     },
     bank: [
       ts(2, 'The international organisation formed after the Second World War to keep peace is the ___.', 'United Nations', ['League of Nations', 'Commonwealth', 'EAC']),
       ts(3, 'The United Nations headquarters is in ___.', 'New York', ['Nairobi', 'Geneva', 'London']),
-      ts(4, 'Why did African soldiers who returned from the Second World War support independence movements?', 'They had seen that colonial powers could be challenged and wanted freedom.', ['They wanted more colonies.', 'They were paid by the colonial government.', 'They disliked their homes.']),
+      ts(4, 'Why did African soldiers who returned from the Second World War support independence movements?', 'They had seen that colonial powers could be challenged and wanted freedom.', ['They were rewarded with large farms by the colonial government.', 'They wanted Britain to take over more colonies in Africa.', 'They had been promised top jobs in the colonial army.']),
       ts(5, 'Which UN agency based in Nairobi deals with the environment?', 'UNEP', ['UNICEF', 'WHO', 'UNESCO']),
     ],
   },
@@ -1516,9 +1512,9 @@ const SOCIAL9: Record<string, STopic> = {
       ],
     },
     bank: [
-      ts(2, 'Keeping fish in ponds is called ___.', 'fish farming (aquaculture)', ['trawling', 'forestry', 'horticulture']),
-      ts(3, 'Which is a challenge facing fishing in Lake Victoria?', 'overfishing and water hyacinth', ['too few fish types', 'snow', 'lack of water']),
-      ts(4, 'Why is ecotourism encouraged?', 'It earns income while conserving nature and benefiting local people.', ['It destroys habitats.', 'It stops tourists.', 'It removes wildlife.']),
+      ts(2, 'Keeping fish in ponds is called ___.', 'fish farming (aquaculture)', ['trawling in open water', 'horticulture on small farms', 'forestry along river banks']),
+      ts(3, 'Which is a challenge facing fishing in Lake Victoria?', 'overfishing and water hyacinth', ['too few kinds of fish to catch', 'the lake drying up every year', 'ice covering the lake in July']),
+      ts(4, 'Why is ecotourism encouraged?', 'It earns income while conserving nature and benefiting local people.', ['It brings as many tourists as possible into the parks every day.', 'It allows visitors to hunt animals in a controlled way.', 'It replaces farming as the main activity in rural areas.']),
       ts(5, 'Which policy would best protect Kenya\'s forests while meeting timber needs?', 'licensed harvesting with replanting', ['clearing forests for farms', 'banning all trees', 'unregulated logging']),
     ],
   },
@@ -1543,9 +1539,9 @@ const SOCIAL9: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'When a country buys more than it sells abroad, it has a trade ___.', 'deficit', ['surplus', 'balance', 'profit']),
-      ts(3, 'Which is a benefit of globalisation to Kenya?', 'access to bigger markets and new technology', ['less trade', 'fewer jobs always', 'no communication']),
-      ts(4, 'Why do countries impose tariffs?', 'to protect local industries and raise revenue', ['to lower prices of imports', 'to stop all trade', 'to reduce taxes']),
-      ts(5, 'How can Kenya reduce its trade deficit?', 'add value to exports and produce more goods locally', ['import more fuel', 'stop exporting tea', 'close all factories']),
+      ts(3, 'Which is a benefit of globalisation to Kenya?', 'access to bigger markets and new technology', ['fewer foreign goods in local shops', 'less contact with other countries', 'lower demand for Kenyan exports']),
+      ts(4, 'Why do countries impose tariffs?', 'to protect local industries and raise revenue', ['to make imported goods cheaper for buyers', 'to reduce the taxes that citizens pay', 'to stop all trade with other countries']),
+      ts(5, 'How can Kenya reduce its trade deficit?', 'add value to exports and produce more goods locally', ['import more fuel and machinery from other countries', 'stop exporting tea, coffee and cut flowers', 'close local factories and buy finished goods instead']),
     ],
   },
   governance: {
@@ -1565,14 +1561,14 @@ const SOCIAL9: Record<string, STopic> = {
       ],
       categories: [
         { one: 'an organ of the United Nations', many: 'UN organs', items: ['the General Assembly', 'the Security Council', 'the International Court of Justice', 'the Secretariat'], set: 'o' },
-        { one: 'an organ of the African Union', many: 'AU organs', items: ['the Assembly of Heads of State', 'the Pan-African Parliament', 'the African Court on Human and Peoples\' Rights', 'the AU Commission'], set: 'o' },
+        { one: 'an organ of the African Union', many: 'AU organs', items: ['the Assembly of Heads of State', 'the Pan-African Parliament', 'the Peace and Security Council', 'the AU Commission'], set: 'o' },
       ],
     },
     bank: [
       ts(2, 'The organisation of African countries formed in 2002 is the ___.', 'African Union', ['OAU', 'EAC', 'Commonwealth']),
       ts(3, 'Which UN organ has five permanent members with veto power?', 'the Security Council', ['the General Assembly', 'the Secretariat', 'the Trusteeship Council']),
-      ts(4, 'Why do countries join international organisations?', 'to cooperate on peace, trade and development', ['to stop trade', 'to start wars', 'to avoid neighbours']),
-      ts(5, 'Which shows Kenya playing a role in international peace?', 'sending peacekeepers on UN and AU missions', ['closing embassies', 'refusing all treaties', 'leaving the UN']),
+      ts(4, 'Why do countries join international organisations?', 'to cooperate on peace, trade and development', ['to avoid working with neighbouring countries', 'to give up control of their own laws', 'to stop trade with countries outside it']),
+      ts(5, 'Which shows Kenya playing a role in international peace?', 'sending peacekeepers on UN and AU missions', ['closing its embassies in neighbouring states', 'leaving the UN to focus on local matters', 'refusing to sign any regional agreements']),
     ],
   },
   citizenship: {
@@ -1595,9 +1591,9 @@ const SOCIAL9: Record<string, STopic> = {
     },
     bank: [
       ts(2, 'Rights that every person has simply because they are human are ___ rights.', 'human', ['county', 'school', 'family']),
-      ts(3, 'Which body in Kenya fights corruption?', 'the Ethics and Anti-Corruption Commission', ['the IEBC', 'KWS', 'KEBS']),
-      ts(4, 'Why is integrity important for leaders?', 'It builds public trust and ensures resources are used well.', ['It makes them richer.', 'It keeps them in power forever.', 'It is not important.']),
-      ts(5, 'Which is the best way for learners to act as global citizens?', 'joining environmental and community service projects', ['ignoring world issues', 'wasting resources', 'mocking other cultures']),
+      ts(3, 'Which body in Kenya fights corruption?', 'the Ethics and Anti-Corruption Commission', ['the Independent Electoral Commission', 'the Kenya Bureau of Standards', 'the Kenya Wildlife Service']),
+      ts(4, 'Why is integrity important for leaders?', 'It builds public trust and ensures resources are used well.', ['It helps leaders stay in power for as long as they like.', 'It allows leaders to make decisions without consulting anyone.', 'It makes sure leaders become richer than other citizens.']),
+      ts(5, 'Which is the best way for learners to act as global citizens?', 'joining environmental and community service projects', ['learning only about their own country\'s problems', 'buying as many imported goods as they can', 'avoiding news about events in other countries']),
     ],
   },
 }

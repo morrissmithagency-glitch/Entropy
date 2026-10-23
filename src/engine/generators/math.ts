@@ -3,7 +3,7 @@
 // difficulty stays controlled. Level 4–5 matches end-term paper standard.
 import type { ArtId } from '../../components/art/objects'
 import { artName } from '../../components/art/objects'
-import { KENYAN_NAMES, artOptions, choice, numberOptions, numberWord, plural, textOptions, uid } from '../helpers'
+import { KENYAN_NAMES, artOptions, choice, numberOptions, numberWord, plural, textOptions, uid, countOf, An, an } from '../helpers'
 import type { Generator, Level, NumberQuestion, Rng, ShapeKind, ShapeSpec } from '../types'
 
 const COUNTABLE: ArtId[] = ['mango', 'orange', 'banana', 'egg', 'ball', 'pencil', 'book', 'cup', 'goat', 'hen', 'fish', 'bird', 'flower', 'star', 'leaf', 'tomato']
@@ -173,7 +173,7 @@ export const wholeNumbers: Generator = (rng, level) => {
         const ones = rng.int(0, 9)
         return num('whole', level, 'How many altogether? Count the tens, then the ones.', tens * 10 + ones, {
           visual: { kind: 'tens', tens, ones },
-          explain: `${tens} tens and ${ones} ones make ${tens * 10 + ones}.`,
+          explain: `${countOf(tens, 'ten')} and ${countOf(ones, 'one')} make ${tens * 10 + ones}.`,
         })
       }
       if (kind === 1) {
@@ -216,7 +216,7 @@ export const wholeNumbers: Generator = (rng, level) => {
       if (kind === 1) {
         const t = rng.int(1, 9)
         const o = rng.int(0, 9)
-        return num('whole', level, `What number has ${t} ${plural(t, 'ten', 'tens')} and ${o} ${plural(o, 'one', 'ones')}?`, t * 10 + o, { explain: `${t} tens = ${t * 10}, plus ${o} makes ${t * 10 + o}.` })
+        return num('whole', level, `What number has ${t} ${plural(t, 'ten', 'tens')} and ${o} ${plural(o, 'one', 'ones')}?`, t * 10 + o, { explain: `${countOf(t, 'ten')} = ${t * 10}, plus ${o} makes ${t * 10 + o}.` })
       }
       if (kind === 2) {
         const n = rng.int(12, 89)
@@ -257,7 +257,7 @@ function word(rng: Rng, op: '+' | '−', a: number, b: number): string {
     `${name} had ${a} ${items[0]}. ${name} gave ${friend} ${b}. How many ${items[0]} are left?`,
     `There were ${a} people in a matatu. ${b} got off at the stage. How many are still in the matatu?`,
     `Mama had ${a} eggs. ${b} eggs broke. How many eggs are not broken?`,
-    `A tree had ${a} birds. ${b} birds flew away. How many birds stayed?`,
+    `A tree had ${a} birds. ${countOf(b, 'bird')} flew away. How many birds stayed?`,
   ])
 }
 
@@ -346,7 +346,7 @@ export const subtraction: Generator = (rng, level) => {
       if (kind === 1) {
         const a = rng.int(2, 9) * 10
         const b = rng.int(1, a / 10 - 1) * 10
-        return num('sub', level, 'Subtract.', a - b, { visual: { kind: 'sum', a, b, op: '−', result: null }, explain: `${a / 10} tens − ${b / 10} tens = ${(a - b) / 10} tens = ${a - b}.` })
+        return num('sub', level, 'Subtract.', a - b, { visual: { kind: 'sum', a, b, op: '−', result: null }, explain: `${countOf(a / 10, 'ten')} − ${countOf(b / 10, 'ten')} = ${countOf((a - b) / 10, 'ten')} = ${a - b}.` })
       }
       const a = rng.int(6, 10)
       const b = rng.int(1, a - 1)
@@ -442,7 +442,7 @@ export const mass: Generator = (rng, level) => {
     const opts = [heavy, light].map((a) => ({ id: a, art: a }))
     return choice('mass', level, level === 1 ? 'Look at the balance. Which one is heavier?' : `Which one is ${askHeavy ? 'heavier' : 'lighter'}?`, rng.shuffle(opts), askHeavy ? heavy : light, {
       visual: level === 1 ? { kind: 'balance', left: heavyLeft ? heavy : light, right: heavyLeft ? light : heavy, heavier: heavyLeft ? 'left' : 'right' } : { kind: 'art', art: [heavy, light] },
-      explain: level === 1 ? 'The heavier side goes down.' : `A ${artName(heavy)} is heavier than a ${artName(light)}.`,
+      explain: level === 1 ? 'The heavier side goes down.' : `${An(artName(heavy))} is heavier than ${an(artName(light))}.`,
     })
   }
   if (level === 3) {
@@ -473,7 +473,7 @@ export const mass: Generator = (rng, level) => {
       ['bag of beans', 'stones'],
       ['pot', 'cups'],
     ])
-    return num('mass', level, `A ${thing} balances ${n} ${unit}. Two ${thing}s will balance how many ${unit}?`, n * 2, { explain: `${n} + ${n} = ${n * 2}.` })
+    return num('mass', level, `${An(thing)} balances ${n} ${unit}. Two ${thing}s will balance how many ${unit}?`, n * 2, { explain: `${n} + ${n} = ${n * 2}.` })
   }
   const a = rng.int(8, 16)
   const b = rng.int(3, a - 2)
@@ -496,7 +496,7 @@ export const capacity: Generator = (rng, level) => {
     const askMore = level === 1 ? true : rng.next() < 0.5
     const opts = rng.shuffle([big, small]).map((a) => ({ id: a, art: a }))
     return choice('cap', level, `Which one holds ${askMore ? 'more' : 'less'} water?`, opts, askMore ? big : small, {
-      explain: `A ${big === 'spoonful' ? 'basin' : big} holds more water than a ${small === 'spoonful' ? 'spoon' : small}.`,
+      explain: `${An(big === 'spoonful' ? 'basin' : big)} holds more water than ${an(small === 'spoonful' ? 'spoon' : small)}.`,
     })
   }
   if (level === 3) {
@@ -648,7 +648,7 @@ export const lines: Generator = (rng, level) => {
       { id: 'b', visual: { kind: 'lines' as const, lines: [other], variant: 0 } },
       { id: 'c', visual: { kind: 'lines' as const, lines: [other], variant: 1 } },
     ])
-    return choice('lines', level, `Which is a ${want} line?`, opts, 'a', { explain: want === 'straight' ? 'A straight line does not bend.' : 'A curved line bends like a rainbow.' })
+    return choice('lines', level, `Which is ${an(want)} line?`, opts, 'a', { explain: want === 'straight' ? 'A straight line does not bend.' : 'A curved line bends like a rainbow.' })
   }
   if (level === 3) {
     const ls = Array.from({ length: rng.int(4, 7) }, () => rng.pick(['straight', 'curved'] as const))
@@ -686,19 +686,19 @@ export const shapes: Generator = (rng, level) => {
   if (level === 1) {
     const want = rng.pick(SHAPES)
     const opts = rng.shuffle(rng.sample(SHAPES.filter((s) => s !== want), 2).concat(want)).map((k, i) => ({ id: k, visual: { kind: 'shapes' as const, shapes: [{ kind: k, color: SHAPE_COLORS[i] }] } }))
-    return choice('shapes', level, `Which one is a ${want}?`, opts, want, { explain: `This is a ${want}${SIDES[want] ? ` — it has ${SIDES[want]} sides` : ' — it is round'}.` })
+    return choice('shapes', level, `Which one is ${an(want)}?`, opts, want, { explain: `This is ${an(want)}${SIDES[want] ? ` — it has ${SIDES[want]} sides` : ' — it is round'}.` })
   }
   if (level === 2) {
     if (rng.next() < 0.5) {
       const k = rng.pick<ShapeKind>(['triangle', 'rectangle', 'square'])
-      return num('shapes', level, `How many sides does a ${k} have?`, SIDES[k], { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(SHAPE_COLORS) }] }, explain: `A ${k} has ${SIDES[k]} sides.` })
+      return num('shapes', level, `How many sides does ${an(k)} have?`, SIDES[k], { visual: { kind: 'shapes', shapes: [{ kind: k, color: rng.pick(SHAPE_COLORS) }] }, explain: `${An(k)} has ${SIDES[k]} sides.` })
     }
     const [want, ans, wrong] = rng.pick<[string, ArtId, ArtId[]]>([
       ['circle', 'orange', ['book', 'pencil', 'house']],
       ['rectangle', 'book', ['ball', 'orange', 'egg']],
       ['circle', 'ball', ['book', 'bag', 'stool']],
     ])
-    return choice('shapes', level, `Which object is shaped like a ${want}?`, artOptions(rng, ans, wrong), ans, { explain: `A ${artName(ans)} looks like a ${want}.` })
+    return choice('shapes', level, `Which object is shaped like ${an(want)}?`, artOptions(rng, ans, wrong), ans, { explain: `${An(artName(ans))} looks like ${an(want)}.` })
   }
   if (level === 3) {
     const list: ShapeSpec[] = Array.from({ length: rng.int(6, 9) }, () => ({ kind: rng.pick(SHAPES), color: rng.pick(SHAPE_COLORS) }))

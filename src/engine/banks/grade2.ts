@@ -1,3 +1,4 @@
+import { An, an } from '../helpers'
 // Grade 2 Environmental Activities, Creative Activities and CRE: checked fact tables (turned
 // into many questions by factGenerator) plus written "what should you do" questions.
 import { labelOptions as opts } from '../generators/english'
@@ -71,9 +72,9 @@ const FACTS: Record<string, FactSet> = {
       {
         pairs: [
           ['black', 'the people of Kenya'],
-          ['red', 'the sacrifices made to win our freedom'],
-          ['green', 'our land'],
-          ['white', 'peace'],
+          ['red', 'the sacrifices for our freedom'],
+          ['green', 'our land and its plants'],
+          ['white', 'peace and honesty'],
         ],
         ask: (a) => `On our flag, the colour ${a} stands for ___.`,
         askBack: (b) => `Which colour on the flag stands for ${b}?`,
@@ -203,8 +204,8 @@ const FACTS: Record<string, FactSet> = {
           ['cat', 'kitten'],
           ['sheep', 'lamb'],
         ],
-        ask: (a) => `The young one of a ${a} is a ___.`,
-        askBack: (b) => `A ${b} is the young one of a ___.`,
+        ask: (a) => `The young one of ${an(a)} is a ___.`,
+        askBack: (b) => `${An(b)} is the young one of a ___.`,
       },
       {
         pairs: [
@@ -215,7 +216,7 @@ const FACTS: Record<string, FactSet> = {
           ['donkey', 'brays'],
           ['hen', 'clucks'],
         ],
-        ask: (a) => `A ${a} ___.`,
+        ask: (a) => `${An(a)} ___.`,
         askBack: (b) => `Which animal ${b}?`,
       },
     ],
@@ -284,13 +285,13 @@ const FACTS: Record<string, FactSet> = {
   'sc-movement': {
     categories: [
       { one: 'a way of moving from place to place', many: 'ways of moving from place to place', items: ['walking', 'running', 'jumping', 'hopping', 'skipping', 'crawling', 'galloping', 'marching', 'tiptoeing'] },
-      { one: 'a way of moving on the spot', many: 'ways of moving on the spot', items: ['turning', 'bending', 'stretching', 'twisting', 'swinging our arms', 'nodding', 'shaking our hands', 'rolling our shoulders'] },
+      { one: 'a way of moving on the spot', many: 'ways of moving on the spot', items: ['turning', 'bending', 'stretching', 'twisting', 'arm swinging', 'nodding', 'hand shaking', 'shoulder rolling'] },
     ],
   },
   'sc-ball': {
     categories: [
       { one: 'a ball skill', many: 'ball skills', items: ['throwing', 'catching', 'kicking', 'rolling', 'bouncing', 'dribbling', 'passing', 'heading'] },
-      { one: 'a safety rule for ball games', many: 'safety rules for ball games', items: ['play on clear ground', 'do not throw at faces', 'warm up first', 'wait for your turn', 'use a soft ball', 'keep away from roads', 'stop when the teacher blows the whistle'], set: 'b' },
+      { one: 'a safety rule for ball games', many: 'safety rules for ball games', items: ['play on clear ground', 'do not throw at faces', 'warm up first', 'wait for your turn', 'use a soft ball', 'keep away from roads', 'stop at the whistle'], set: 'b' },
       { one: 'an unsafe thing in ball games', many: 'unsafe things in ball games', items: ['throwing at faces', 'playing near the road', 'kicking stones', 'pushing during the game'], set: 'b' },
     ],
     pairs: [
@@ -380,10 +381,10 @@ const FACTS: Record<string, FactSet> = {
     pairs: [
       {
         pairs: [
-          ['the sun', 'gives us light and heat during the day'],
+          ['the sun', 'gives us light and heat'],
           ['the moon', 'shines at night'],
           ['the stars', 'twinkle in the night sky'],
-          ['the clouds', 'bring rain'],
+          ['the clouds', 'bring us rain'],
         ],
         ask: (a) => `God made ${a}. It ___.`,
         askBack: (b) => `Which one ${b}?`,
@@ -456,7 +457,7 @@ export const GRADE2_FACT_GENERATORS: Record<string, Generator> = Object.fromEntr
 export const GRADE2_BANKS: Record<string, BankQuestion[]> = {
   'sv-home': [
     t(3, 'Why should each person have their own toothbrush?', 'to stop germs spreading', ['to make the bathroom full', 'because toothbrushes are cheap']),
-    t(4, 'Mama has finished cooking. Where should the knives be kept?', 'in a safe place away from children', ['on the floor', 'under the pillow', 'in the school bag']),
+    t(4, 'Mama has finished cooking. Where should the knives be kept?', 'in a safe place away from children', ['on the floor near the door', 'under the pillow on the bed', 'on the table where we eat']),
     tf(5, 'Medicine should be kept where small children can reach it.', false),
   ],
   'sv-needs': [
@@ -501,8 +502,8 @@ export const GRADE2_BANKS: Record<string, BankQuestion[]> = {
   ],
   'sv-water': [
     t(3, 'Which water is safe to drink?', 'boiled water', ['water from a puddle', 'dirty river water']),
-    t(4, 'Where should we keep drinking water?', 'in a clean covered container', ['in an open bucket', 'in a dirty tin', 'in a plastic bag']),
-    t(5, 'A tap is leaking at school. What should you do?', 'tell the teacher so it is repaired', ['leave it', 'open it more', 'play with the water']),
+    t(4, 'Where should we keep drinking water?', 'in a clean covered container', ['in an open bucket outside', 'in an old paint tin', 'in a used plastic bag']),
+    t(5, 'A tap is leaking at school. What should you do?', 'tell the teacher so it is repaired', ['leave it because it is not yours', 'open it more to see the water', 'play with the water at break time']),
   ],
   'sv-plants': [
     t(3, 'Plants need water, air and ___ to grow.', 'sunlight', ['plastic', 'darkness']),
@@ -532,12 +533,12 @@ export const GRADE2_BANKS: Record<string, BankQuestion[]> = {
   'sc-games': [
     t(3, 'In a singing game, we sing and ___.', 'move together', ['sleep', 'read']),
     t(4, 'Why do we take turns in a game?', 'so everyone can play', ['to finish quickly', 'to make others sad', 'to stop the game']),
-    t(5, 'A new child wants to join your game. What should you do?', 'welcome them and teach them the song', ['send them away', 'laugh at them', 'stop playing']),
+    t(5, 'A new child wants to join your game. What should you do?', 'welcome them and teach them the song', ['tell them to wait until tomorrow', 'stop the game and go home', 'let them watch but not play']),
   ],
   'sc-movement': [
     t(3, 'Jumping on one leg is called ___.', 'hopping', ['crawling', 'walking']),
     t(4, 'Before running we should ___.', 'warm up', ['eat a big meal', 'sleep', 'sit still']),
-    t(5, 'Why should we look around before we start running?', 'so we do not bump into others', ['to see the sky', 'to find a book', 'to count trees']),
+    t(5, 'Why should we look around before we start running?', 'so we do not bump into others', ['so we can count the trees', 'so we can find our books', 'so we can see the clouds']),
   ],
   'sc-ball': [
     t(3, 'To catch a ball, keep your eyes on the ___.', 'ball', ['sky', 'ground']),
@@ -547,7 +548,7 @@ export const GRADE2_BANKS: Record<string, BankQuestion[]> = {
   'sc-water': [
     t(3, 'Children should swim only when an ___ is watching.', 'adult', ['animal', 'stranger']),
     t(4, 'Why should we not run near a swimming pool?', 'the floor is slippery', ['it is too sunny', 'the water will get hot', 'the pool will break']),
-    t(5, 'You see a child struggling in water. What should you do?', 'shout for an adult to help', ['jump in yourself', 'walk away', 'throw stones']),
+    t(5, 'You see a child struggling in water. What should you do?', 'shout for an adult to help', ['jump into the water yourself', 'throw stones into the water', 'walk away and say nothing']),
   ],
   'sc-songs': [
     t(3, 'The National Anthem is a prayer for ___.', 'Kenya', ['our toys', 'the market']),
@@ -557,12 +558,12 @@ export const GRADE2_BANKS: Record<string, BankQuestion[]> = {
   'sr-self': [
     t(3, 'Who made me?', 'God', ['my friend', 'my teacher']),
     t(4, 'Everyone is special because ___.', 'God made each of us', ['some people are rich', 'some people are tall', 'some people are loud']),
-    t(5, 'A classmate cannot walk well. How should we treat them?', 'with love, because God made them special too', ['laugh at them', 'leave them out of games', 'call them names']),
+    t(5, 'A classmate cannot walk well. How should we treat them?', 'with love, because God made them special too', ['kindly, but leave them out of running games', 'politely, but only when the teacher is near', 'the same as others, but without talking to them']),
   ],
   'sr-family': [
     t(3, 'Who gave us our families?', 'God', ['the teacher', 'the shopkeeper']),
     t(4, 'Which shows love in a family?', 'helping Mama to fetch water', ['fighting with your brother', 'hiding food', 'shouting at Baba']),
-    t(5, 'Your little sister is crying because she is hungry. What should you do?', 'share your food and tell Mama', ['eat all your food', 'laugh at her', 'go out to play']),
+    t(5, 'Your little sister is crying because she is hungry. What should you do?', 'share your food and tell Mama', ['eat your food quickly first', 'go out to play with friends', 'tell her to stop crying now']),
   ],
   'sr-creation': [
     t(3, 'Who made the sun, moon and stars?', 'God', ['people', 'animals']),
@@ -582,6 +583,6 @@ export const GRADE2_BANKS: Record<string, BankQuestion[]> = {
   'sr-living': [
     t(3, 'We talk to God through ___.', 'prayer', ['shouting', 'sleeping']),
     t(4, 'Which is a good choice?', 'telling the truth', ['telling lies', 'stealing a pencil', 'fighting']),
-    t(5, 'You find a lost pencil in class. What should you do?', 'give it to the teacher or the owner', ['keep it', 'break it', 'throw it away']),
+    t(5, 'You find a lost pencil in class. What should you do?', 'give it to the teacher or the owner', ['keep it in your bag for later', 'use it and then throw it away', 'give it to your best friend']),
   ],
 }

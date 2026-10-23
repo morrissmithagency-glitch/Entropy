@@ -68,7 +68,7 @@ const IDIOMS: [J, string, string][] = [
   [7, 'hit the books', 'study hard'],
   [7, 'let the cat out of the bag', 'reveal a secret'],
   [7, 'cost an arm and a leg', 'be very expensive'],
-  [8, 'break the ice', 'start a conversation in an awkward moment'],
+  [8, 'break the ice', 'ease tension and start talking'],
   [8, 'see eye to eye', 'agree with someone'],
   [8, 'burn the midnight oil', 'work late into the night'],
   [8, 'call it a day', 'stop working for now'],
@@ -245,6 +245,14 @@ const PHRASE_CLAUSE: [string, string][] = [
   ['who sells vegetables', 'clause'],
   ['after the long journey', 'phrase'],
   ['if you work hard', 'clause'],
+  ['across the busy road', 'phrase'],
+  ['although the bus was late', 'clause'],
+  ['a basket of ripe mangoes', 'phrase'],
+  ['before the bell rang', 'clause'],
+  ['during the school holidays', 'phrase'],
+  ['that we planted last year', 'clause'],
+  ['near the river bank', 'phrase'],
+  ['as soon as the guests arrived', 'clause'],
 ]
 
 export const sentencesJ = (g: J): Generator =>
@@ -255,6 +263,13 @@ export const sentencesJ = (g: J): Generator =>
       return q(level, `What kind of sentence is this?\n"${s}"`, t, ['declarative', 'interrogative', 'imperative', 'exclamatory'].filter((x) => x !== t))
     }
     if (form === 1) {
+      if (level >= 3) {
+        // One clause hidden among phrases, or one phrase among clauses.
+        const want = rng.pick(['clause', 'phrase'] as const)
+        const [right] = rng.pick(PHRASE_CLAUSE.filter(([, k]) => k === want))
+        const wrong = rng.sample(PHRASE_CLAUSE.filter(([, k]) => k !== want).map(([x]) => x), 3)
+        return q(level, `Which of these is a ${want}?`, right, wrong, 'A clause has its own subject and verb; a phrase does not.')
+      }
       const [s, t] = rng.pick(PHRASE_CLAUSE)
       return q(level, `Is this group of words a phrase or a clause?\n"${s}"`, t, [t === 'phrase' ? 'clause' : 'phrase'], 'A clause has its own verb; a phrase does not.')
     }
@@ -396,10 +411,10 @@ const easier = (bank: BankQuestion[]) => bank.filter((b) => b.level >= 3).map((b
 const COMP_J: BankQuestion[] = [
   ...passage(3, 'The Water Project', 'When the borehole in Kaptembwo dried up, girls in the village spent up to four hours a day fetching water from a stream on the other side of the hill. Their school attendance dropped, and many fell behind. A group of Grade 9 learners decided to act. They measured the school roofs, calculated how much rain could be collected, and presented their findings to the county officer. Impressed, the county agreed to fund gutters and two large tanks if the community provided labour. Within a term, the tanks were full, and the girls returned to class. The learners now plan to share their method with nearby schools.', [
     ['Why did school attendance drop in Kaptembwo?', 'Girls spent hours fetching water.', ['The school was closed.', 'The teachers were absent.', 'The roads were flooded.']],
-    ['What did the learners do first?', 'They measured the roofs and calculated rainfall to be collected.', ['They dug a new borehole.', 'They bought tanks.', 'They wrote to the president.']],
+    ['What did the learners do first?', 'They measured the roofs and calculated rainfall to be collected.', ['They bought two large tanks with money from their parents.', 'They dug a new borehole on the other side of the hill.', 'They wrote a letter to the president asking for help.']],
     ['What condition did the county set?', 'The community had to provide labour.', ['The learners had to pay.', 'The school had to close.', 'The girls had to leave school.']],
     ['Which word best describes the learners?', 'resourceful', ['careless', 'boastful', 'lazy']],
-    ['What is the main lesson of the passage?', 'Young people can solve real problems with knowledge and teamwork.', ['Boreholes never dry up.', 'Counties always pay for everything.', 'Fetching water is a good exercise.']],
+    ['What is the main lesson of the passage?', 'Young people can solve real problems with knowledge and teamwork.', ['Counties will always pay for every project that learners suggest.', 'Boreholes never dry up if they are dug deep enough.', 'Fetching water every day is good exercise for girls.']],
   ]),
   ...passage(4, 'The Night Market', 'Every evening, as the sun sinks behind the hills of Kisii, the road outside the bus park transforms. Traders unfold tables, light lanterns and arrange bananas, roasted maize, sukuma wiki and second-hand books. The air fills with the smell of frying mandazi and the calls of sellers competing for attention. For many families, the night market is a lifeline: mothers who work on farms during the day earn extra income, and students buy affordable books. Yet the market faces challenges. There is no proper lighting, and when it rains the ground turns to mud. The traders\' association has asked the county to install solar lamps and build a shed, arguing that a safer market would attract more customers and more revenue.', [
     ['When does the market begin?', 'in the evening as the sun sets', ['early in the morning', 'at midday', 'on Sundays only']],
@@ -411,18 +426,18 @@ const COMP_J: BankQuestion[] = [
   ...passage(5, 'Digital Footprints', 'Every photo you post, comment you write and website you visit leaves a trace known as a digital footprint. Unlike footprints in sand, these traces are not easily washed away. Employers, universities and even future friends may search online to learn about a person. A careless joke written at fourteen could be read many years later. However, a digital footprint is not only a risk; it can also be an opportunity. A learner who shares science projects, writes thoughtful blog posts or volunteers online builds a positive record. Experts advise young people to think before posting, to keep personal details such as home addresses private, and to ask: "Would I be comfortable if my teacher or grandmother saw this?"', [
     ['What is a digital footprint?', 'the trace a person leaves online', ['a footprint in the sand', 'a computer virus', 'a type of shoe']],
     ['Why does the writer compare digital footprints to footprints in sand?', 'to show that online traces are not easily removed', ['to show that the internet is like a beach', 'to explain how to walk safely', 'to describe holidays']],
-    ['How can a digital footprint be an opportunity?', 'Sharing good work builds a positive record.', ['It can be deleted easily.', 'It hides personal details.', 'It makes posting faster.']],
+    ['How can a digital footprint be an opportunity?', 'Sharing good work builds a positive record.', ['It can be deleted easily at any time.', 'It hides personal details from others.', 'It makes posting photos much faster.']],
     ['Which advice is given in the passage?', 'Keep personal details private.', ['Post your home address.', 'Never use the internet.', 'Share every photo you take.']],
     ['What is the tone of the passage?', 'advisory', ['angry', 'humorous', 'sad']],
   ]),
   ...passage(2, 'A Visit to the Bomas', 'Our class visited the Bomas of Kenya, where traditional homesteads of different communities are displayed. We saw a Maasai manyatta made of mud and cow dung, a Mijikenda house with a grass-thatched roof that almost touched the ground, and a Luo homestead with separate huts for each member of the family. In the afternoon, dancers performed songs from across the country. Our guide explained that the Bomas helps Kenyans to understand and appreciate each other\'s cultures.', [
-    ['What is displayed at the Bomas of Kenya?', 'traditional homesteads of different communities', ['modern buildings', 'wild animals', 'old cars']],
+    ['What is displayed at the Bomas of Kenya?', 'traditional homesteads of different communities', ['modern buildings from Kenya\'s major cities', 'wild animals from the national parks', 'old cars and trains from colonial times']],
     ['What was the Maasai manyatta made of?', 'mud and cow dung', ['bricks and iron', 'stones and cement', 'wood and glass']],
     ['Which community\'s house had a roof that almost touched the ground?', 'Mijikenda', ['Maasai', 'Luo', 'Kikuyu']],
-    ['According to the guide, what is the purpose of the Bomas?', 'to help Kenyans appreciate each other\'s cultures', ['to sell houses', 'to train dancers only', 'to keep visitors away']],
+    ['According to the guide, what is the purpose of the Bomas?', 'to help Kenyans appreciate each other\'s cultures', ['to sell traditional houses to visitors', 'to train dancers for national competitions', 'to keep old buildings safe from the weather']],
   ]),
   ...passage(4, 'The Inventor from Kibera', 'At sixteen, Kelvin noticed that families in his neighbourhood spent a large part of their income on paraffin. Using scrap metal, an old bicycle dynamo and a small solar panel, he built a lamp that could also charge a phone. His first three designs failed: one overheated, another was too heavy and the third broke easily. Instead of giving up, he asked a technician at a nearby garage for advice and studied videos at the community library. His fourth design worked. Today, a local youth group makes and sells the lamps, and Kelvin is training other young people to repair them.', [
-    ['What problem did Kelvin notice?', 'Families spent much of their income on paraffin.', ['There was no water.', 'Phones were too expensive.', 'Bicycles kept breaking.']],
+    ['What problem did Kelvin notice?', 'Families spent much of their income on paraffin.', ['Bicycles in the area kept breaking down.', 'Phones were too expensive for families.', 'There was no clean water in the area.']],
     ['Which material did Kelvin NOT use?', 'plastic bottles', ['scrap metal', 'a bicycle dynamo', 'a small solar panel']],
     ['How many designs failed before one worked?', 'three', ['one', 'two', 'four']],
     ['What does Kelvin\'s story mainly show?', 'Persistence and learning from failure lead to success.', ['Inventions always work the first time.', 'Libraries are only for reading novels.', 'Garages sell lamps.']],
@@ -432,14 +447,14 @@ const COMP_J: BankQuestion[] = [
     ['Why were camels chosen instead of trucks?', 'Trucks could not cross the sandy tracks.', ['Camels are faster than trucks.', 'Trucks were too expensive to paint.', 'The children preferred camels.']],
     ['How often does the library visit?', 'once a week, on Thursdays', ['every day', 'once a month', 'only during holidays']],
     ['Which argument did critics make against the project?', 'Tablets would be cheaper and more modern.', ['Camels eat the books.', 'Children do not like reading.', 'Libraries should only be in towns.']],
-    ['What does the librarian\'s remark "A camel never needs a password" suggest?', 'Camels are simpler and more reliable than technology in that area.', ['Camels can use computers.', 'Passwords are dangerous.', 'Children forget their passwords.']],
+    ['What does the librarian\'s remark "A camel never needs a password" suggest?', 'Camels are simpler and more reliable than technology in that area.', ['Camels are clever enough to learn how to use computers.', 'The children often forget the passwords to their tablets.', 'Passwords are dangerous, so the library avoids technology.']],
     ['Which word best describes the librarian?', 'innovative', ['careless', 'impatient', 'boastful']],
   ]),
   ...passage(4, 'The Debate', 'Our school held a debate on the motion "Mobile phones should be allowed in junior schools." Achieng\', speaking for the motion, argued that phones help learners research and keep in touch with parents. Wekesa, opposing, replied that phones distract learners and expose them to cyberbullying. The audience laughed when he held up a phone and announced that it had received forty notifications during the morning lesson alone. In the end, the judges ruled that the opposers had won, but the teacher on duty praised both sides for presenting facts calmly and listening to each other.', [
     ['What was the motion of the debate?', 'Mobile phones should be allowed in junior schools.', ['Junior schools should be closed.', 'Teachers should use phones.', 'Debates should be banned.']],
     ['What was Achieng\'s main argument?', 'Phones help learners research and contact parents.', ['Phones cause cyberbullying.', 'Phones are too expensive.', 'Phones should be used by teachers only.']],
-    ['Why did the audience laugh?', 'Wekesa showed that a phone had received forty notifications in one lesson.', ['Achieng\' dropped her phone.', 'The judges fell asleep.', 'The teacher sang a song.']],
-    ['What did the teacher praise?', 'Both sides presented facts calmly and listened.', ['Only the winners\' jokes.', 'The loudest speaker.', 'The length of the debate.']],
+    ['Why did the audience laugh?', 'Wekesa showed that a phone had received forty notifications in one lesson.', ['Achieng\' dropped her phone while she was speaking on the stage.', 'The judges fell asleep in the middle of the long debate.', 'The teacher on duty sang a song at the end of the debate.']],
+    ['What did the teacher praise?', 'Both sides presented facts calmly and listened.', ['The winners told the funniest jokes.', 'The debate lasted longer than usual.', 'The loudest speaker kept everyone awake.']],
   ]),
 ]
 
@@ -516,6 +531,16 @@ const TAMATHALI: [J, string, string][] = [
   [9, 'Mlango ulifungwa paa!', 'tanakali sauti'],
   [9, 'Alianguka majini chubwi!', 'tanakali sauti'],
   [9, 'Polepole, polepole, alikaribia mlango.', 'takriri'],
+  [7, 'Macho yake yanang\'aa kama nyota.', 'tashbihi'],
+  [7, 'Sauti yake ni tamu mithili ya asali.', 'tashbihi'],
+  [7, 'Mwalimu wetu ni taa ya darasa.', 'sitiari'],
+  [7, 'Elimu ni ufunguo wa maisha.', 'sitiari'],
+  [7, 'Miti ilicheza na upepo.', 'tashihisi'],
+  [8, 'Nyota zilitukonyezea usiku kucha.', 'tashihisi'],
+  [8, 'Alikula chakula cha watu kumi peke yake.', 'chuku'],
+  [8, 'Mvua ilinyesha mwaka mzima bila kukoma.', 'chuku'],
+  [9, 'Kengele ililia ngri ngri ngri!', 'tanakali sauti'],
+  [9, 'Haraka, haraka, haraka tukaondoka.', 'takriri'],
 ]
 const TAMATHALI_ALL = ['tashbihi', 'sitiari', 'tashihisi', 'chuku', 'tanakali sauti', 'takriri']
 
@@ -533,7 +558,7 @@ export const fasihiJ = (g: J): Generator =>
     }
     const rows = rowsFor(TAMATHALI, g)
     const [s, t] = rng.pick(rows)
-    return q(level, `Ni tamathali gani ya usemi imetumika?\n"${s}"`, t, rng.sample(TAMATHALI_ALL.filter((x) => x !== t && rows.some(([, y]) => y === x)), 3))
+    return q(level, `Ni tamathali gani ya usemi imetumika?\n"${s}"`, t, rng.sample(TAMATHALI_ALL.filter((x) => x !== t), 3))
   }, methaliU(6))
 
 const AINA: [string, string][] = [
@@ -632,15 +657,15 @@ export const usemiJ = (g: J): Generator =>
 
 const UFAHAMU_J: BankQuestion[] = [
   ...passage(3, 'Mradi wa Maji', 'Kisima cha kijiji cha Kaptembwo kilipokauka, wasichana walilazimika kutembea saa nne kila siku kuchota maji mtoni. Wengi walikosa masomo. Wanafunzi wa Gredi ya Tisa waliamua kuchukua hatua. Walipima mapaa ya shule, wakakadiria kiasi cha maji ya mvua yanayoweza kuvunwa, kisha wakawasilisha matokeo yao kwa afisa wa kaunti. Kaunti ilikubali kununua mifereji na matangi mawili makubwa ikiwa wanakijiji wangetoa nguvukazi. Baada ya muhula mmoja, matangi yalijaa na wasichana wakarejea darasani.', [
-    ['Kwa nini wasichana walikosa masomo?', 'Walitumia saa nyingi kuchota maji.', ['Shule ilifungwa.', 'Walimu hawakufika.', 'Barabara zilifurika.']],
-    ['Wanafunzi walifanya nini kwanza?', 'Walipima mapaa na kukadiria maji ya mvua.', ['Walichimba kisima kipya.', 'Walinunua matangi.', 'Walimwandikia rais.']],
+    ['Kwa nini wasichana walikosa masomo?', 'Walitumia saa nyingi kuchota maji.', ['Shule ilifungwa kwa muda mrefu.', 'Walimu hawakufika shuleni.', 'Barabara zilifurika wakati wote.']],
+    ['Wanafunzi walifanya nini kwanza?', 'Walipima mapaa na kukadiria maji ya mvua.', ['Walichimba kisima kipya karibu na shule.', 'Walimwandikia rais barua ya kuomba msaada.', 'Walinunua matangi mawili kwa pesa zao.']],
     ['Kaunti iliweka sharti gani?', 'Wanakijiji watoe nguvukazi.', ['Wanafunzi walipe pesa.', 'Shule ifungwe.', 'Wasichana waache shule.']],
     ['Methali ipi inafaa kifungu hiki?', 'Kidole kimoja hakivunji chawa', ['Haraka haraka haina baraka', 'Mwenye macho haambiwi tazama', 'Mchelea mwana kulia hulia yeye']],
     ['Neno "nguvukazi" lina maana gani?', 'watu wa kufanya kazi', ['pesa nyingi', 'vyakula', 'mashine']],
   ]),
   ...passage(5, 'Alama za Kidijitali', 'Kila picha unayoweka mtandaoni, maoni unayoandika na tovuti unayotembelea huacha alama inayoitwa alama ya kidijitali. Tofauti na nyayo mchangani, alama hizi hazifutiki kwa urahisi. Waajiri, vyuo na hata marafiki wa baadaye wanaweza kuchunguza mtandaoni ili kumjua mtu. Hata hivyo, alama ya kidijitali si hatari peke yake; inaweza pia kuwa fursa. Mwanafunzi anayeshiriki miradi ya sayansi au kuandika makala yenye busara hujijengea sifa njema. Wataalamu wanawashauri vijana wafikiri kabla ya kuweka chochote mtandaoni na wasitoe anwani zao za nyumbani.', [
     ['Alama ya kidijitali ni nini?', 'alama anayoacha mtu mtandaoni', ['nyayo mchangani', 'kirusi cha kompyuta', 'aina ya kiatu']],
-    ['Kwa nini mwandishi analinganisha alama hizi na nyayo mchangani?', 'kuonyesha kwamba alama za mtandaoni hazifutiki kwa urahisi', ['kuonyesha kwamba mtandao ni ufukwe', 'kueleza jinsi ya kutembea', 'kuelezea likizo']],
+    ['Kwa nini mwandishi analinganisha alama hizi na nyayo mchangani?', 'kuonyesha kwamba alama za mtandaoni hazifutiki kwa urahisi', ['kuonyesha kwamba mtandao ni kama ufukwe wa bahari', 'kueleza jinsi ya kutembea ufukweni bila kuacha nyayo', 'kuelezea likizo ambayo mwandishi alienda pwani']],
     ['Alama ya kidijitali inawezaje kuwa fursa?', 'Kushiriki kazi nzuri hujenga sifa njema.', ['Inafutika kwa urahisi.', 'Inaficha anwani.', 'Inafanya kuweka picha kuwe haraka.']],
     ['Wataalamu wanashauri nini?', 'Fikiri kabla ya kuweka chochote mtandaoni.', ['Weka anwani yako ya nyumbani.', 'Usitumie mtandao kamwe.', 'Weka kila picha unayopiga.']],
     ['Kichwa kingine kinachofaa kifungu hiki ni kipi?', 'Tumia Mtandao kwa Hekima', ['Nyayo za Ufukweni', 'Kompyuta Mpya', 'Safari ya Shule']],
@@ -648,19 +673,19 @@ const UFAHAMU_J: BankQuestion[] = [
   ]),
   ...passage(4, 'Maktaba ya Ngamia', 'Katika maeneo kame ya kaskazini mwa Kenya, ambako shule ziko mbali na vitabu ni haba, maktaba hufika kila Alhamisi juu ya migongo ya ngamia watatu. Wazo hili lilianza mkutubi mmoja wa Garissa alipogundua kwamba watoto wa vijiji vya mbali walikuwa wamemaliza kusoma vitabu vichache vya shule zao. Magari hayakuweza kupita kwenye njia za mchanga, lakini ngamia waliweza. Kila ngamia hubeba masanduku mawili yenye vitabu karibu mia mbili. Msafara unapoonekana kwa mbali, watoto hukimbia kuulaki wakiwa wamebeba vitabu walivyoazima wiki iliyopita.', [
     ['Kwa nini ngamia walitumiwa badala ya magari?', 'Magari hayakuweza kupita kwenye njia za mchanga.', ['Ngamia ni wepesi kuliko magari.', 'Watoto waliwapenda ngamia.', 'Magari yalikuwa ghali kupaka rangi.']],
-    ['Maktaba hufika mara ngapi?', 'mara moja kwa wiki, kila Alhamisi', ['kila siku', 'mara moja kwa mwezi', 'wakati wa likizo tu']],
+    ['Maktaba hufika mara ngapi?', 'mara moja kwa wiki, kila Alhamisi', ['kila siku asubuhi na jioni', 'mara moja kwa mwezi, kila Ijumaa', 'wakati wa likizo ya Desemba tu']],
     ['Neno "haba" lina maana gani?', 'kidogo', ['vingi', 'vizuri', 'vipya']],
-    ['Watoto hufanya nini wanapoona msafara?', 'Hukimbia kuulaki wakiwa na vitabu walivyoazima.', ['Hujificha.', 'Huenda shambani.', 'Hulala.']],
+    ['Watoto hufanya nini wanapoona msafara?', 'Hukimbia kuulaki wakiwa na vitabu walivyoazima.', ['Hujificha nyumbani hadi ngamia waondoke.', 'Huenda shambani kuwasaidia wazazi wao.', 'Huwafukuza ngamia kwa kelele na mawe.']],
     ['Mkutubi anaweza kuelezwa kuwa mtu wa aina gani?', 'mbunifu', ['mvivu', 'mwenye kiburi', 'mzembe']],
   ]),
   ...passage(4, 'Mjadala Shuleni', 'Shule yetu iliandaa mjadala kuhusu hoja: "Simu za mkononi zinafaa kuruhusiwa katika shule za sekondari msingi." Achieng\', aliyeunga mkono hoja, alisema kwamba simu huwasaidia wanafunzi kufanya utafiti na kuwasiliana na wazazi. Wekesa, aliyepinga, alijibu kwamba simu huwasumbua wanafunzi na kuwaweka katika hatari ya uonevu mtandaoni. Hadhira ilicheka alipoinua simu na kutangaza kwamba ilikuwa imepokea arifa arobaini wakati wa kipindi kimoja cha asubuhi. Mwishowe, waamuzi walitangaza kwamba wapinzani walishinda, lakini mwalimu wa zamu aliwapongeza wote kwa kuwasilisha hoja kwa utulivu na kusikilizana.', [
-    ['Hoja ya mjadala ilikuwa ipi?', 'Simu za mkononi zinafaa kuruhusiwa shuleni.', ['Shule zifungwe.', 'Walimu watumie simu.', 'Mijadala ipigwe marufuku.']],
-    ['Hoja kuu ya Achieng\' ilikuwa ipi?', 'Simu husaidia utafiti na mawasiliano na wazazi.', ['Simu husababisha uonevu.', 'Simu ni ghali.', 'Simu zitumiwe na walimu tu.']],
-    ['Kwa nini hadhira ilicheka?', 'Wekesa alionyesha simu iliyopokea arifa arobaini katika kipindi kimoja.', ['Achieng\' aliangusha simu.', 'Waamuzi walilala.', 'Mwalimu aliimba.']],
-    ['Mwalimu wa zamu aliwapongeza kwa nini?', 'Kuwasilisha hoja kwa utulivu na kusikilizana.', ['Kupiga kelele.', 'Kuchelewa.', 'Kumaliza mapema.']],
+    ['Hoja ya mjadala ilikuwa ipi?', 'Simu za mkononi zinafaa kuruhusiwa shuleni.', ['Walimu wanafaa kutumia simu darasani.', 'Mijadala inafaa kupigwa marufuku shuleni.', 'Shule za sekondari msingi zinafaa kufungwa.']],
+    ['Hoja kuu ya Achieng\' ilikuwa ipi?', 'Simu husaidia utafiti na mawasiliano na wazazi.', ['Simu husababisha uonevu mtandaoni miongoni mwa wanafunzi.', 'Simu ni ghali mno kwa wazazi wengi kununua.', 'Simu zinafaa kutumiwa na walimu peke yao shuleni.']],
+    ['Kwa nini hadhira ilicheka?', 'Wekesa alionyesha simu iliyopokea arifa arobaini katika kipindi kimoja.', ['Achieng\' aliangusha simu yake alipokuwa akizungumza jukwaani.', 'Mwalimu wa zamu aliimba wimbo mwishoni mwa mjadala.', 'Waamuzi walilala usingizi wakati wa hotuba ndefu.']],
+    ['Mwalimu wa zamu aliwapongeza kwa nini?', 'Kuwasilisha hoja kwa utulivu na kusikilizana.', ['Kumaliza mjadala mapema kabla ya saa.', 'Kupiga kelele ili hadhira isikie vizuri.', 'Kuleta simu nyingi shuleni siku hiyo.']],
   ]),
   ...passage(5, 'Mikoko ya Gazi', 'Katika pwani ya Kenya, misitu ya mikoko hulinda ufuo dhidi ya mawimbi makali na huwa mazalia ya samaki. Kwa miaka mingi, misitu hii ilikatwa ili kupata kuni na nguzo za ujenzi, jambo lililosababisha kupungua kwa samaki. Kikundi cha wanawake wa Gazi kiliamua kurekebisha hali hii. Mbali na kupanda maelfu ya miche, walijenga njia ya mbao ambapo watalii hulipa ili kutembea ndani ya msitu. Mapato hutumiwa kusaidia shule za eneo hilo. Kama wanawake hao wasingechukua hatua, msitu huo ungeweza kutoweka kabisa.', [
-    ['Mikoko husaidia vipi pwani?', 'Hulinda ufuo dhidi ya mawimbi na kuwa mazalia ya samaki.', ['Huleta mvua kubwa.', 'Huzuia watalii.', 'Hukausha bahari.']],
+    ['Mikoko husaidia vipi pwani?', 'Hulinda ufuo dhidi ya mawimbi na kuwa mazalia ya samaki.', ['Huleta mvua kubwa na kufanya maji ya bahari kuwa matamu.', 'Huzuia watalii kufika ufuoni na kuharibu mazingira.', 'Hukausha bahari ili wavuvi wapate samaki kwa urahisi.']],
     ['Ni nini kilisababisha kupungua kwa samaki?', 'Ukataji wa mikoko.', ['Mvua nyingi.', 'Watalii wengi.', 'Upandaji wa miche.']],
     ['Mapato ya njia ya mbao hutumiwa kufanya nini?', 'kusaidia shule za eneo hilo', ['kununua magari', 'kukata miti zaidi', 'kujenga hoteli']],
     ['Methali ipi inafaa juhudi za wanawake hawa?', 'Umoja ni nguvu, utengano ni udhaifu', ['Mgema akisifiwa tembo hulitia maji', 'Ukiona vyaelea vimeundwa', 'Asiyesikia la mkuu huvunjika guu']],
