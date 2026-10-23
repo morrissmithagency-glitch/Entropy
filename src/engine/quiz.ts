@@ -29,6 +29,7 @@ import { jssLanguageBanks, jssLanguageGenerators } from './generators/jss-langua
 import { JSS_SCIENCE_BANKS, JSS_SCIENCE_GENERATORS } from './banks/jss-science'
 import { JSS_MORE_BANKS, JSS_MORE_GENERATORS } from './banks/jss-more'
 import { MORE_PASSAGES } from './banks/passages-more'
+import { EXTRA_FACTS } from './banks/extra-facts'
 import { EXTRA_READING } from './banks/extra-reading'
 import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
 import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
@@ -70,7 +71,7 @@ Object.assign(BANKS, upperEnglishBanks(), upperKiswahiliBanks(), UPPER_SCIENCE_B
 Object.assign(GENERATORS, GRADE1_ENV_GENERATORS, { 'e-polite': G1.polite1, 'k-salamu': G1.salamu2 })
 BANKS['e-comprehension'] = [...BANKS['e-comprehension'], ...G1.COMP1_MORE]
 BANKS['k-ufahamu'] = [...BANKS['k-ufahamu'], ...G1.UFAHAMU1_MORE]
-for (const extra of [MORE_PASSAGES, EXTRA_READING]) for (const [id, qs] of Object.entries(extra)) BANKS[id] = [...(BANKS[id] ?? []), ...qs]
+for (const extra of [MORE_PASSAGES, EXTRA_READING, EXTRA_FACTS]) for (const [id, qs] of Object.entries(extra)) BANKS[id] = [...(BANKS[id] ?? []), ...qs]
 
 // Pre-primary. Some topics are the gentlest Grade 1 questions (picture choices with three
 // options), re-levelled so each pre-primary year climbs slowly; the rest have their own makers.
@@ -105,7 +106,8 @@ for (const year of [1, 2] as const) {
     if (gen) GENERATORS[id] = (rng, level) => ({ ...gen(rng, map[level - 1]), level })
     const bank = BANKS[src] as BankQuestion[] | undefined
     // A bank question joins at the first pre-primary level that uses its Grade 1 level.
-    if (bank) BANKS[id] = bank.filter((q) => map.includes(q.level)).map((q) => ({ ...q, level: (map.indexOf(q.level) + 1) as Level }))
+    // Pre-primary keeps any questions written for it, alongside the borrowed ones.
+    if (bank) BANKS[id] = [...(BANKS[id] ?? []), ...bank.filter((q) => map.includes(q.level)).map((q) => ({ ...q, level: (map.indexOf(q.level) + 1) as Level }))]
   }
 }
 
