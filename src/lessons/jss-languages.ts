@@ -151,7 +151,7 @@ export const JSS_KISWAHILI_LESSONS: Record<string, Lesson> = {
   'jk-kauli': {
     intro: 'Mnyambuliko hubadilisha kitenzi kupata maana mpya.',
     steps: [
-      { title: 'Kauli kuu', text: 'Kutenda (pika), kutendea (pikia), kutendwa (pikwa), kutendeka (pikika), kutendesha (pikisha), kutendana (pikiana).' },
+      { title: 'Kauli kuu', text: 'Kutenda (pika), kutendea (pikia), kutendwa (pikwa), kutendeka (pikika), kutendesha (pikisha), kutendana (pendana).' },
       { title: 'Mfano', text: 'Andika → andikia barua, andikwa na mwalimu, andikika vizuri, andikisha wanafunzi.' },
       { title: 'Kutendana', text: 'Huonyesha kitendo cha pande mbili: pendana, saidiana, salimiana.' },
     ],
@@ -178,7 +178,7 @@ export const JSS_KISWAHILI_LESSONS: Record<string, Lesson> = {
   'jk-uakifishaji': {
     intro: 'Alama za uakifishaji huongoza msomaji kuelewa maana.',
     steps: [
-      { title: 'Alama kuu', text: 'Nukta (.) humaliza sentensi. Koma (,) hutenganisha orodha. Kiulizi (?) huuliza. Hisi (!) huonyesha hisia.' },
+      { title: 'Alama kuu', text: 'Nukta (.) humaliza sentensi. Koma (,) hutenganisha orodha. Alama ya kuuliza (?) humaliza swali. Alama ya hisi (!) huonyesha hisia.' },
       { title: 'Herufi kubwa', text: 'Mwanzo wa sentensi na majina ya pekee: Nairobi, Juma, Jumatatu.' },
       { title: 'Alama za kunukuu', text: 'Hutumiwa kwa maneno halisi ya msemaji: "Karibu," alisema.' },
     ],

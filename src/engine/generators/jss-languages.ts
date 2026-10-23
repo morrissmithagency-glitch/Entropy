@@ -684,7 +684,7 @@ const UFAHAMU_J: BankQuestion[] = [
   ...passage(4, 'Maktaba ya Ngamia', 'Katika maeneo kame ya kaskazini mwa Kenya, ambako shule ziko mbali na vitabu ni haba, maktaba hufika kila Alhamisi juu ya migongo ya ngamia watatu. Wazo hili lilianza mkutubi mmoja wa Garissa alipogundua kwamba watoto wa vijiji vya mbali walikuwa wamemaliza kusoma vitabu vichache vya shule zao. Magari hayakuweza kupita kwenye njia za mchanga, lakini ngamia waliweza. Kila ngamia hubeba masanduku mawili yenye vitabu karibu mia mbili. Msafara unapoonekana kwa mbali, watoto hukimbia kuulaki wakiwa wamebeba vitabu walivyoazima wiki iliyopita.', [
     ['Kwa nini ngamia walitumiwa badala ya magari?', 'Magari hayakuweza kupita kwenye njia za mchanga.', ['Ngamia ni wepesi kuliko magari.', 'Watoto waliwapenda ngamia.', 'Magari yalikuwa ghali kupaka rangi.']],
     ['Maktaba hufika mara ngapi?', 'mara moja kwa wiki, kila Alhamisi', ['kila siku asubuhi na jioni', 'mara moja kwa mwezi, kila Ijumaa', 'wakati wa likizo ya Desemba tu']],
-    ['Neno "haba" lina maana gani?', 'kidogo', ['vingi', 'vizuri', 'vipya']],
+    ['Neno "haba" lina maana gani katika kifungu?', 'vichache', ['vingi', 'vizuri', 'vipya']],
     ['Watoto hufanya nini wanapoona msafara?', 'Hukimbia kuulaki wakiwa na vitabu walivyoazima.', ['Hujificha nyumbani hadi ngamia waondoke.', 'Huenda shambani kuwasaidia wazazi wao.', 'Huwafukuza ngamia kwa kelele na mawe.']],
     ['Mkutubi anaweza kuelezwa kuwa mtu wa aina gani?', 'mbunifu', ['mvivu', 'mwenye kiburi', 'mzembe']],
   ]),

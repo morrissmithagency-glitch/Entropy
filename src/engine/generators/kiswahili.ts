@@ -16,7 +16,7 @@ const s = (neno: string, art: ArtId, silabi: string) => ({ neno, art, silabi: si
 export const MANENO: Neno[] = [
   s('kuku', 'hen', 'ku-ku'),
   s('paka', 'cat', 'pa-ka'),
-  s('mbwa', 'dog', 'mbwa'),
+  s('mbwa', 'dog', 'm-bwa'),
   s('mbuzi', 'goat', 'mbu-zi'),
   s('ng\'ombe', 'cow', 'ng\'o-mbe'),
   s('samaki', 'fish', 'sa-ma-ki'),

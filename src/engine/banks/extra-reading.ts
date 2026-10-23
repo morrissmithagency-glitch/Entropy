@@ -46,7 +46,7 @@ const G1_EN: BankQuestion[] = [
 const G1_SW: BankQuestion[] = [
   ...passage(1, 'Mpira Wangu', 'Nina mpira mwekundu. Ninacheza na Juma.', [
     ['Nina nini?', 'mpira', ['kikombe', 'kitabu']],
-    ['Mpira una rangi gani?', 'mwekundu', ['mweupe', 'mweusi']],
+    ['Mpira una rangi gani?', 'nyekundu', ['nyeupe', 'nyeusi']],
     ['Ninacheza na nani?', 'Juma', ['Mama', 'Bibi']],
   ]),
   ...passage(2, 'Paka na Maziwa', 'Paka wetu anaitwa Pili. Anapenda maziwa. Kila asubuhi Mama humpa maziwa kidogo. Pili hulala jikoni.', [
@@ -71,7 +71,7 @@ const G1_SW: BankQuestion[] = [
     ['Bibi ana kuku wangapi?', 'kumi', ['watano', 'wawili']],
     ['Akinyi huwapa kuku nini?', 'mahindi na maji', ['mkate na chai', 'nyasi na maziwa']],
     ['Akinyi aliona mayai mangapi?', 'matano', ['mawili', 'kumi']],
-    ['Bibi alisema Akinyi ni nini?', 'msaidizi mzuri', ['mtoto mvivu', 'mwalimu mkubwa']],
+    ['Bibi alisema Akinyi ni msaidizi wa aina gani?', 'mzuri', ['mvivu', 'mbaya']],
   ]),
 ]
 
@@ -112,7 +112,7 @@ const G2_EN: BankQuestion[] = [
 const G2_SW: BankQuestion[] = [
   ...passage(1, 'Ng\'ombe Wetu', 'Tuna ng\'ombe mmoja. Jina lake ni Bahati. Anatupa maziwa mengi.', [
     ['Tuna ng\'ombe wangapi?', 'mmoja', ['wawili', 'watatu']],
-    ['Jina la ng\'ombe ni nani?', 'Bahati', ['Pili', 'Simba']],
+    ['Ng\'ombe anaitwa nani?', 'Bahati', ['Pili', 'Simba']],
     ['Ng\'ombe anatupa nini?', 'maziwa', ['mayai', 'asali']],
   ]),
   ...passage(2, 'Sokoni', 'Mama na Juma walienda sokoni. Walinunua nyanya, vitunguu na sukuma wiki. Juma alibeba kikapu. Waliporudi nyumbani, Mama alipika chakula kitamu.', [
@@ -383,18 +383,18 @@ const G6_SW: BankQuestion[] = [
     ['Neno "vijijini" lina maana gani?', 'mashambani mbali na miji', ['katikati ya jiji', 'baharini']],
   ]),
   ...passage(3, 'Mlima Kenya', 'Mlima Kenya ndio mlima mrefu zaidi nchini Kenya. Kilele chake kina theluji ingawa kiko karibu na ikweta. Mito mingi kama Tana na Ewaso Ng\'iro huanzia mlimani. Misitu yake huhifadhi maji na ni makao ya wanyama wengi. Kwa sababu hiyo, ni muhimu kuitunza misitu hiyo.', [
-    ['Mlima Kenya ni upi kwa urefu nchini?', 'mrefu zaidi', ['mfupi zaidi', 'wa tatu']],
+    ['Kwa mujibu wa kifungu, Mlima Kenya ukoje kwa urefu nchini?', 'ndio mrefu zaidi', ['ndio mfupi zaidi', 'ni wa tatu kwa urefu']],
     ['Kilele cha mlima kina nini?', 'theluji', ['jangwa', 'ziwa la chumvi']],
     ['Mito ipi imetajwa kuanzia mlimani?', 'Tana na Ewaso Ng\'iro', ['Nzoia na Yala', 'Nile na Kongo']],
     ['Kwa nini misitu ya mlima itunzwe?', 'huhifadhi maji na ni makao ya wanyama', ['huzalisha mafuta ya petroli', 'huleta watu wengi mjini']],
   ]),
-  ...passage(4, 'Kongamano la Wanafunzi', 'Wanafunzi wa darasa la sita kutoka shule tano walikutana katika kongamano kuhusu haki za watoto. Mwezeshaji aliwaeleza kwamba kila mtoto ana haki ya elimu, afya, kulindwa na kusikilizwa. Wanafunzi walijadili namna ya kuwasaidia wenzao wanaoacha shule. Mwishowe waliandika mapendekezo na kuyapeleka kwa afisa wa elimu wa kaunti.', [
+  ...passage(4, 'Kongamano la Wanafunzi', 'Wanafunzi wa Gredi ya Sita kutoka shule tano walikutana katika kongamano kuhusu haki za watoto. Mwezeshaji aliwaeleza kwamba kila mtoto ana haki ya elimu, afya, kulindwa na kusikilizwa. Wanafunzi walijadili namna ya kuwasaidia wenzao wanaoacha shule. Mwishowe waliandika mapendekezo na kuyapeleka kwa afisa wa elimu wa kaunti.', [
     ['Kongamano lilihusu nini?', 'haki za watoto', ['michezo ya shule', 'ujenzi wa barabara']],
     ['Shule ngapi zilihudhuria?', 'tano', ['tatu', 'kumi']],
     ['Wanafunzi walijadili kuwasaidia akina nani?', 'wenzao wanaoacha shule', ['walimu wapya', 'wazazi wao']],
     ['Mapendekezo yalipelekwa kwa nani?', 'afisa wa elimu wa kaunti', ['mkuu wa polisi', 'mwenyekiti wa soko']],
   ]),
-  ...passage(5, 'Ufugaji wa Samaki', 'Bi. Wanjiku alichimba bwawa dogo shambani mwake na kuweka vifaranga vya samaki aina ya sato. Kila siku aliwalisha chakula maalum na kuhakikisha maji ni safi. Baada ya miezi sita, samaki walikuwa wakubwa na tayari kuuzwa. Alipata faida nzuri na sasa huwafundisha majirani jinsi ya kufuga samaki. Ufugaji huu umeongeza lishe bora kijijini na kupunguza utegemezi wa samaki wa ziwani.', [
+  ...passage(5, 'Ufugaji wa Samaki', 'Bi. Wanjiku alichimba bwawa dogo shambani mwake na kuweka vifaranga wa samaki aina ya sato. Kila siku aliwalisha chakula maalum na kuhakikisha maji ni safi. Baada ya miezi sita, samaki walikuwa wakubwa na tayari kuuzwa. Alipata faida nzuri na sasa huwafundisha majirani jinsi ya kufuga samaki. Ufugaji huu umeongeza lishe bora kijijini na kupunguza utegemezi wa samaki wa ziwani.', [
     ['Bi. Wanjiku alichimba nini?', 'bwawa dogo', ['kisima kirefu', 'mfereji wa barabara']],
     ['Alifuga samaki aina gani?', 'sato', ['papa', 'kambare wa baharini']],
     ['Samaki walikuwa tayari baada ya muda gani?', 'miezi sita', ['wiki moja', 'miaka mitano']],
@@ -511,7 +511,7 @@ const G7_SW: BankQuestion[] = [
     ['Mitaa ya Lamu ikoje?', 'myembamba', ['mipana sana', 'yenye magari mengi']],
     ['Watu husafiri vipi mjini Lamu?', 'kwa miguu au kwa punda', ['kwa treni', 'kwa ndege']],
     ['Nyumba za Lamu zimejengwa kwa nini?', 'mawe ya matumbawe', ['chuma na kioo', 'nyasi na matope']],
-    ['Neno "zilizonakshiwa" lina maana gani katika kifungu?', 'zilizopambwa kwa michoro', ['zilizovunjika', 'zilizopakwa matope']],
+    ['Neno "iliyonakshiwa" lina maana gani katika kifungu?', 'iliyopambwa kwa michoro', ['iliyovunjika', 'iliyopakwa matope']],
   ]),
   ...passage(3, 'Mchezaji Chipukizi', 'Faith alianza kukimbia akiwa na miaka kumi, akikimbia kwenda shuleni na kurudi nyumbani kila siku. Kocha wa kaunti alimwona katika mashindano ya shule na kumkaribisha kwenye kambi ya mazoezi mjini Iten. Licha ya kuamka alfajiri kufanya mazoezi, Faith hakuacha masomo yake. Alisema, "Riadha na elimu ni mabawa mawili ya ndege mmoja."', [
     ['Faith alianza kukimbia akiwa na miaka mingapi?', 'kumi', ['sita', 'kumi na tano']],
@@ -525,10 +525,10 @@ const G7_SW: BankQuestion[] = [
     ['Wazee walisema nini kuhusu ukame?', 'unatokea mara nyingi zaidi siku hizi', ['haujawahi kutokea kamwe', 'huleta mvua nyingi']],
     ['Wataalamu wanawashauri wafugaji kufanya nini?', 'kuhifadhi malisho na kuuza mifugo mapema', ['kuongeza mifugo wakati wa ukame', 'kuhamia mjini wote']],
   ]),
-  ...passage(5, 'Methali ya Bibi', 'Bibi alikuwa na tabia ya kujibu kila swali kwa methali. Siku moja nilimlalamikia kwamba hisabati ilikuwa ngumu na kwamba nilitaka kuacha. Alinitazama kwa upole na kusema, "Mwanzo wa chanzo ni mbegu." Sikuelewa mara moja. Baadaye nilitambua kwamba kila jambo kubwa huanza kidogo, na kwamba nikiendelea kufanya mazoezi kidogo kila siku, ugumu ungepungua. Mwishoni mwa muhula, alama zangu za hisabati zilikuwa zimepanda.', [
+  ...passage(5, 'Methali ya Bibi', 'Bibi alikuwa na tabia ya kujibu kila swali kwa methali. Siku moja nilimlalamikia kwamba hisabati ilikuwa ngumu na kwamba nilitaka kuacha. Alinitazama kwa upole na kusema, "Haba na haba hujaza kibaba." Sikuelewa mara moja. Baadaye nilitambua kwamba juhudi ndogo hukusanyika kuwa kubwa, na kwamba nikiendelea kufanya mazoezi kidogo kila siku, ugumu ungepungua. Mwishoni mwa muhula, alama zangu za hisabati zilikuwa zimepanda.', [
     ['Bibi alikuwa na tabia gani?', 'kujibu kwa methali', ['kuimba nyimbo', 'kukaa kimya']],
     ['Msimulizi alilalamikia somo gani?', 'hisabati', ['Kiswahili', 'sayansi']],
-    ['Methali ya Bibi ilimfundisha nini?', 'kila jambo kubwa huanza kidogo', ['mbegu hazipandwi shuleni', 'hisabati haina faida']],
+    ['Methali ya Bibi ilimfundisha nini?', 'juhudi ndogo hukusanyika kuwa kubwa', ['kibaba hakijazwi kamwe', 'hisabati haina faida']],
     ['Nini kilitokea mwishoni mwa muhula?', 'alama zake za hisabati zilipanda', ['aliacha shule', 'Bibi alihamia mjini']],
   ]),
 ]
@@ -551,7 +551,7 @@ const G8_SW: BankQuestion[] = [
     ['Reli hii imepunguza nini barabarani?', 'msongamano wa malori', ['idadi ya watoto', 'mvua']],
     ['Baadhi ya wafanyabiashara walilalamika kuhusu nini?', 'kupungua kwa biashara yao', ['kelele za treni usiku', 'bei ya tiketi']],
   ]),
-  ...passage(4, 'Kijana Mbunifu', 'Brian, mwanafunzi wa darasa la nane, aliona kwamba mama yake alitumia muda mwingi kupepeta nafaka. Alitumia vipande vya mbao, feni ya zamani na betri ya sola kutengeneza mashine ndogo ya kupepeta. Mashine hiyo iliokoa muda na nguvu. Majirani walipoiona, walimwomba awatengenezee pia. Sasa Brian anaweka akiba kutokana na mapato hayo ili aendeleze masomo ya uhandisi.', [
+  ...passage(4, 'Kijana Mbunifu', 'Brian, mwanafunzi wa Gredi ya Nane, aliona kwamba mama yake alitumia muda mwingi kupepeta nafaka. Alitumia vipande vya mbao, feni ya zamani na betri ya sola kutengeneza mashine ndogo ya kupepeta. Mashine hiyo iliokoa muda na nguvu. Majirani walipoiona, walimwomba awatengenezee pia. Sasa Brian anaweka akiba kutokana na mapato hayo ili aendeleze masomo ya uhandisi.', [
     ['Brian aliona mama yake akitumia muda mwingi kufanya nini?', 'kupepeta nafaka', ['kufua nguo', 'kupika chakula']],
     ['Brian alitumia nini kutengeneza mashine?', 'mbao, feni ya zamani na betri ya sola', ['chuma kipya na umeme wa gridi', 'karatasi na gundi']],
     ['Majirani walifanya nini walipoona mashine?', 'walimwomba awatengenezee', ['waliivunja', 'walimcheka']],
@@ -577,8 +577,8 @@ const G9_SW: BankQuestion[] = [
     ['Faida moja ya nishati hii ni ipi?', 'haitegemei mvua', ['ni rahisi sana kuchimba', 'hutoa moshi mwingi']],
     ['Changamoto iliyotajwa ni ipi?', 'uchimbaji ni ghali', ['haizalishi umeme', 'huharibu mvua']],
   ]),
-  ...passage(3, 'Mahojiano ya Kazi', 'Wanjiru alihojiwa kwa nafasi ya mwanafunzi-mafunzo katika hoteli. Alipoulizwa udhaifu wake, alikiri kwamba alikuwa na woga wa kuzungumza mbele ya watu, lakini akaeleza kwamba alijiunga na klabu ya mdahalo ili kuushinda. Msimamizi alivutiwa na ukweli wake na juhudi zake za kujiboresha, akampa nafasi hiyo.', [
-    ['Wanjiru alihojiwa kwa nafasi gani?', 'mwanafunzi-mafunzo hotelini', ['mwalimu wa shule', 'dereva wa basi']],
+  ...passage(3, 'Mahojiano ya Kazi', 'Wanjiru alihojiwa kwa nafasi ya mwanagenzi katika hoteli. Alipoulizwa udhaifu wake, alikiri kwamba alikuwa na woga wa kuzungumza mbele ya watu, lakini akaeleza kwamba alijiunga na klabu ya mdahalo ili kuushinda. Msimamizi alivutiwa na ukweli wake na juhudi zake za kujiboresha, akampa nafasi hiyo.', [
+    ['Wanjiru alihojiwa kwa nafasi gani?', 'mwanagenzi hotelini', ['mwalimu wa shule', 'dereva wa basi']],
     ['Alikiri udhaifu gani?', 'woga wa kuzungumza mbele ya watu', ['kuchelewa kazini', 'kukosa adabu']],
     ['Alifanya nini kushinda udhaifu huo?', 'alijiunga na klabu ya mdahalo', ['aliacha shule', 'alinunua simu mpya']],
     ['Kwa nini msimamizi alimpa nafasi?', 'ukweli wake na juhudi za kujiboresha', ['alikuwa na ujuzi mwingi', 'alikuwa jirani yake']],

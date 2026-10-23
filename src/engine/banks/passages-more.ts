@@ -103,7 +103,7 @@ const G1_SW: BankQuestion[] = [
     ['Darasa lina nini?', 'bustani ndogo', ['shamba kubwa', 'kisima kirefu']],
     ['Walipanda nini?', 'sukuma wiki na karoti', ['mahindi na maharagwe', 'maua na nyasi']],
     ['Nani humwagilia mimea?', 'wanafunzi wawili', ['mwalimu mkuu', 'mpishi wa shule']],
-    ['Karoti zilikuwaje?', 'tamu', ['chungu', 'chumvi']],
+    ['Karoti zilikuwaje?', 'tamu', ['chungu', 'chachu']],
   ]),
   ...passage(5, 'Mbwa Mwaminifu', 'Baba ana mbwa anayeitwa Simba. Kila usiku, Simba hulinda nyumba. Usiku mmoja, Simba alibweka kwa sauti kubwa. Baba aliamka na kuona kwamba mbuzi walikuwa wametoka zizini. Aliwarudisha ndani na kumpa Simba mfupa kama zawadi.', [
     ['Mbwa anaitwa nani?', 'Simba', ['Kiki', 'Tama']],

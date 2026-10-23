@@ -32,7 +32,7 @@ export const KISWAHILI3_LESSONS: Record<string, Lesson> = {
     steps: [
       {
         title: 'Vifaa na kazi zake',
-        text: 'Ufagio hutumika kufagia. Kifyekeo hutumika kufyeka nyasi. Dodoki hutumika kupiga deki. Shoka hukata kuni.',
+        text: 'Ufagio hutumika kufagia. Kifyekeo hutumika kufyeka nyasi. Dodoki hutumika kujisugua mwili tunapooga. Shoka hukata kuni.',
       },
       {
         title: 'Watu na kazi zao',
@@ -60,12 +60,12 @@ export const KISWAHILI3_LESSONS: Record<string, Lesson> = {
       },
       {
         title: "ng' na ng",
-        text: "ng' (yenye kibainishi) ni sauti ya puani, kama katika ng'ombe. ng bila kibainishi ni kama katika ngoma.",
+        text: "ng' (yenye ritifaa) ni sauti ya puani, kama katika ng'ombe. ng bila ritifaa ni kama katika ngoma.",
         example: ["ng': ng'ombe, ng'ambo", 'ng: ngoma, nguo'],
       },
       {
         title: 'dh, th na gh',
-        text: 'Sauti hizi zinatoka katika maneno mengi ya Kiswahili.',
+        text: 'Sauti hizi zinapatikana katika maneno mengi ya Kiswahili, hasa yaliyotoka Kiarabu.',
         example: ['dh: dhahabu, dhoruba', 'th: thelathini, thamani', 'gh: ghali, ghorofa'],
       },
     ],

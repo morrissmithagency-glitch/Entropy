@@ -283,7 +283,7 @@ export const viulizi2 = factGenerator({
 
 export const UFAHAMU2: BankQuestion[] = [
   ...passage(1, 'Paka', 'Nina paka. Jina lake ni Pusi. Pusi ni mweupe. Anapenda maziwa.', [
-    ['Jina la paka ni nani?', 'Pusi', ['Simba', 'Toto']],
+    ['Paka anaitwa nani?', 'Pusi', ['Simba', 'Toto']],
     ['Pusi ana rangi gani?', 'nyeupe', ['nyeusi', 'kahawia']],
     ['Pusi anapenda nini?', 'maziwa', ['chai', 'maji']],
   ]),
@@ -302,15 +302,15 @@ export const UFAHAMU2: BankQuestion[] = [
     ['Mbwa hulinda nini?', 'nyumba', ['shamba', 'shule']],
     ['Baraka humpa mbwa chakula lini?', 'kila jioni', ['kila asubuhi', 'Jumapili']],
   ]),
-  ...passage(3, 'Mvua', 'Jana mvua kubwa ilinyesha. Watoto hawakucheza nje. Walikaa ndani na kusoma vitabu. Mama aliwapikia chai moto.', [
+  ...passage(3, 'Mvua', 'Jana mvua kubwa ilinyesha. Watoto hawakucheza nje. Walikaa ndani na kusoma vitabu. Mama aliwapikia chai ya moto.', [
     ['Mvua ilinyesha lini?', 'jana', ['leo', 'kesho']],
     ['Kwa nini watoto hawakucheza nje?', 'mvua ilinyesha', ['walikuwa wagonjwa', 'walikuwa wamelala']],
     ['Watoto walifanya nini ndani?', 'walisoma vitabu', ['walipika', 'walilala']],
-    ['Mama aliwapikia nini?', 'chai moto', ['wali', 'uji baridi']],
+    ['Mama aliwapikia nini?', 'chai ya moto', ['wali', 'uji wa baridi']],
   ]),
   ...passage(4, 'Shamba la Mama', 'Mama ana shamba dogo nyuma ya nyumba. Analima sukuma wiki, nyanya na vitunguu. Kila asubuhi mimi humsaidia kumwagilia maji. Tunapovuna, tunauza baadhi ya mboga sokoni.', [
     ['Shamba la Mama liko wapi?', 'nyuma ya nyumba', ['karibu na shule', 'mjini']],
-    ['Mama analima mboga ngapi?', 'tatu', ['mbili', 'nne']],
+    ['Mama analima aina ngapi za mboga?', 'tatu', ['mbili', 'nne']],
     ['Mtoto humsaidia Mama kufanya nini?', 'kumwagilia maji', ['kupika', 'kufagia']],
     ['Mboga nyingine hupelekwa wapi?', 'sokoni', ['shuleni', 'kanisani']],
   ]),

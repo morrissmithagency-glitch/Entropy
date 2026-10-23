@@ -379,7 +379,7 @@ const VIUNGANISHI: [G, string, string, string[]][] = [
   [4, 'Ningependa kwenda ___ sina nauli.', 'lakini', ['ili', 'na', 'kwa sababu']],
   [4, 'Utasoma kitabu ___ utaandika insha?', 'au', ['na', 'ili', 'wala']],
   [4, 'Wanafunzi waliimba ___ kucheza ngoma.', 'na', ['wala', 'ili', 'lakini']],
-  [5, '___ ulikuwa umechoka, ungepumzika kwanza.', 'Kama', ['Ili', 'Wala', 'Kisha']],
+  [5, '___ umechoka, pumzika kwanza.', 'Kama', ['Ili', 'Wala', 'Kisha']],
   [5, 'Hatukwenda sokoni ___ mvua ilinyesha sana.', 'kwa kuwa', ['ingawa', 'ili', 'wala']],
   [5, 'Alikimbia haraka ___ alichelewa.', 'hata hivyo', ['kwa hivyo', 'ili', 'kwa sababu']],
   [6, 'Fanya kazi kwa bidii ___ ufaulu maishani.', 'ili', ['licha', 'ingawa', 'wala']],
@@ -427,7 +427,7 @@ const SAHIHI: [G, string, string[]][] = [
   [4, 'Halima anaishi Garissa.', ['Halima anaishi garissa.', 'halima anaishi Garissa.', 'Halima anaishi Garissa?']],
   [4, 'Tunahitaji sukari, chumvi na majani ya chai.', ['Tunahitaji sukari chumvi na majani ya chai.', 'tunahitaji sukari, chumvi na majani ya chai.', 'Tunahitaji, sukari, chumvi, na, majani ya chai.']],
   [4, 'Ajabu! Umekua mrefu sana!', ['Ajabu? Umekua mrefu sana?', 'ajabu! umekua mrefu sana!', 'Ajabu. Umekua mrefu sana.']],
-  [5, 'Daktari Achieng hufanya kazi katika hospitali ya Kenyatta.', ['daktari Achieng hufanya kazi katika hospitali ya Kenyatta.', 'Daktari achieng hufanya kazi katika hospitali ya Kenyatta.', 'Daktari Achieng hufanya kazi katika hospitali ya kenyatta.']],
+  [5, 'Daktari Achieng hufanya kazi mjini Kisumu.', ['daktari Achieng hufanya kazi mjini Kisumu.', 'Daktari achieng hufanya kazi mjini Kisumu.', 'Daktari Achieng hufanya kazi mjini kisumu.']],
 ]
 
 const MATUMIZI: [G, string, string][] = [
@@ -438,7 +438,7 @@ const MATUMIZI: [G, string, string][] = [
   [5, 'kuonyesha sauti ya ng\' kama katika ng\'ombe', "'"],
   [5, 'kutanguliza orodha ya vitu', ':'],
   [6, 'kunukuu maneno halisi ya msemaji', '" "'],
-  [6, 'kuunganisha maneno kama mama-mkwe', '-'],
+  [6, 'kuonyesha kwamba neno limekatwa mwishoni mwa mstari', '-'],
   [6, 'kuzingira maelezo ya ziada', '( )'],
 ]
 
@@ -772,10 +772,10 @@ export const CLOZE_K: BankQuestion[] = [
     ['kwa nguvu', ['kwa nguvuni', 'nguvu za', 'nguvuni']],
     ['juhudi', ['juhudisha', 'kujuhudi', 'mjuhudi']],
   ]),
-  ...cloze(5, 'Nyuki na Wakulima', 'Nyuki ni (1) ya wadudu wenye manufaa makubwa duniani. Wanapotoka ua moja hadi jingine, hubeba chavua (2) husaidia mimea kutoa matunda. Bila nyuki, mazao mengi (3) kidogo. Wakulima wanaofuga nyuki pia hupata asali na nta. (4), nyuki wako hatarini kutokana na matumizi mabaya ya dawa. Kwa hivyo wakulima wanashauriwa kunyunyizia dawa (5) inapohitajika tu.', [
+  ...cloze(5, 'Nyuki na Wakulima', 'Nyuki ni (1) ya wadudu wenye manufaa makubwa duniani. Wanapotoka ua moja hadi jingine, hubeba chavua (2) husaidia mimea kutoa matunda. Bila nyuki, mazao mengi (3). Wakulima wanaofuga nyuki pia hupata asali na nta. (4), nyuki wako hatarini kutokana na matumizi mabaya ya dawa. Kwa hivyo wakulima wanashauriwa kunyunyizia dawa (5) inapohitajika tu.', [
     ['baadhi', ['mmoja', 'kila', 'wote']],
     ['ambayo', ['ambaye', 'ambao', 'ambacho']],
-    ['yangezaa', ['litazaa', 'kingezaa', 'angezaa']],
+    ['yangepungua', ['litapungua', 'kingepungua', 'angepungua']],
     ['Hata hivyo', ['Kwa sababu', 'Ili', 'Wala']],
     ['pale', ['mahali', 'ndani', 'juu']],
   ]),
@@ -841,11 +841,11 @@ export const UFAHAMU_K: BankQuestion[] = [
     ['Kioko alisoma vipi usiku?', 'kwa taa ya mafuta ya taa', ['kwa umeme', 'kwa mwezi', 'kwa simu']],
     ['Ni methali ipi inayofaa hadithi hii?', 'Penye nia pana njia', ['Haraka haraka haina baraka', 'Mgeni njoo mwenyeji apone', 'Mwenye macho haambiwi tazama']],
   ]),
-  ...ufahamu(1, 'Paka wa Neema', 'Neema ana paka mweupe anayeitwa Pamba. Pamba hupenda kulala juani. Kila asubuhi Neema humpa maziwa. Siku moja Pamba alipotea. Neema alilia sana. Jioni, Pamba alirudi akiwa na vitoto vitatu.', [
+  ...ufahamu(1, 'Paka wa Neema', 'Neema ana paka mweupe anayeitwa Pamba. Pamba hupenda kulala juani. Kila asubuhi Neema humpa maziwa. Siku moja Pamba alipotea. Neema alilia sana. Jioni, Pamba alirudi akiwa na watoto watatu.', [
     ['Paka wa Neema anaitwa nani?', 'Pamba', ['Simba', 'Neema', 'Chui']],
     ['Paka huyo ana rangi gani?', 'nyeupe', ['nyeusi', 'kahawia', 'kijivu']],
     ['Neema humpa paka nini kila asubuhi?', 'maziwa', ['nyama', 'maji', 'mkate']],
-    ['Pamba alirudi na vitoto vingapi?', 'vitatu', ['viwili', 'vinne', 'kimoja']],
+    ['Pamba alirudi na watoto wangapi?', 'watatu', ['wawili', 'wanne', 'mmoja']],
   ]),
   ...ufahamu(1, 'Bustani ya Shule', 'Shule yetu ina bustani ndogo. Tunapanda sukumawiki, spinachi na karoti. Kila Jumanne tunamwagilia mimea na kung\'oa magugu. Wiki iliyopita tulivuna sukumawiki nyingi. Mpishi aliipika kwa chakula cha mchana.', [
     ['Shule ina nini?', 'bustani ndogo', ['shamba la chai', 'ziwa', 'msitu']],

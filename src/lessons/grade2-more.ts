@@ -110,7 +110,7 @@ export const KISWAHILI2_LESSONS: Record<string, Lesson> = {
   'sk-salamu': {
     intro: 'Tunasalimiana kwa adabu. Kila salamu ina jibu lake.',
     steps: [
-      { title: 'Salamu na majibu', text: 'Hujambo? Jibu: Sijambo. Shikamoo? Jibu: Marahaba.', example: ['Hamjambo? → Hatujambo'] },
+      { title: 'Salamu na majibu', text: 'Hujambo? Jibu: Sijambo. Shikamoo. Jibu: Marahaba.', example: ['Hamjambo? → Hatujambo'] },
       { title: 'Salamu za nyakati', text: 'Asubuhi: Habari za asubuhi? Mchana: Habari za mchana? Jioni: Habari za jioni? Usiku: Usiku mwema.' },
       { title: 'Maneno ya adabu', text: 'Asante tukipewa kitu. Samahani tukimkosea mtu. Pole mtu akiumia.' },
     ],

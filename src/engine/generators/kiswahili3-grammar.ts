@@ -187,7 +187,7 @@ const vifaaNaKazi = factGenerator({
       pairs: [
         ['ufagio', 'kufagia'],
         ['kifyekeo', 'kufyeka nyasi'],
-        ['dodoki', 'kupiga deki'],
+        ['dodoki', 'kujisugua mwili tunapooga'],
         ['shoka', 'kukata kuni'],
         ['sindano', 'kushona nguo'],
         ['jembe', 'kulima shamba'],

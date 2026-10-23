@@ -96,7 +96,7 @@ export const KISWAHILI1_LESSONS: Record<string, Lesson> = {
   'k-salamu': {
     intro: 'Tunasalimiana kwa adabu kila siku.',
     steps: [
-      { title: 'Salamu', text: 'Hujambo? Jibu: Sijambo. Shikamoo? Jibu: Marahaba.' },
+      { title: 'Salamu', text: 'Hujambo? Jibu: Sijambo. Shikamoo. Jibu: Marahaba.' },
       { title: 'Maneno ya adabu', text: 'Tafadhali tunapoomba. Asante tunapopewa. Pole mtu akiumia.' },
     ],
     remember: 'Hujambo → Sijambo. Asante → Karibu.',

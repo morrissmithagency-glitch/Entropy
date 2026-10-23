@@ -259,3 +259,5 @@ export function starsFor(correct: number, total: number): 0 | 1 | 2 | 3 {
   if (p >= 0.6) return 1
   return 0
 }
+/** Read-only view of the written banks, for content audits. */
+export const BANKS_FOR_AUDIT: Readonly<Record<string, readonly BankQuestion[]>> = BANKS
