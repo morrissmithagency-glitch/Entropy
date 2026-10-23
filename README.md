@@ -1,8 +1,8 @@
 # CBC Helper
 
 Calm, nature-themed practice for Kenyan learners on the Competency-Based Curriculum (CBC/CBE).
-PP1 and PP2, and Grades 1 to 6 are live, with KPSEA practice papers for Grade 6; Grades 7–9
-show as "Coming soon".
+Every grade from PP1 to Grade 9 is live: pre-primary, lower and upper primary (with KPSEA
+practice papers for Grade 6) and junior school (Grades 7–9).
 
 Learners pick a **world** (learning area) and walk a path **strand by strand**. Each
 sub-strand is a stop with five levels that grow like a tree:
@@ -51,6 +51,27 @@ the KPSEA format.
 
 See [`research/upper-primary-strands.md`](research/upper-primary-strands.md).
 
+## What's in Grades 7, 8 and 9 (junior school)
+
+Nine worlds per grade, following the KICD junior school designs: Mathematics, English,
+Kiswahili, Integrated Science, Pre-Technical Studies, Social Studies, Agriculture and Nutrition,
+Creative Arts and Sports, and CRE. 233 sub-strands (77, 78 and 78), each world a Kenyan place
+(Mount Longonot, Olkaria Research Centre, Konza Tech City, Mount of Beatitudes…).
+
+* **Mathematics.** Generators for every topic, from integers, indices and standard form to
+  simultaneous equations, circles, density, speed, similarity, trigonometry and probability.
+  Signed, fractional and algebraic answers are multiple choice; whole numbers are typed.
+* **English and Kiswahili.** Junior school grammar (phrases and clauses, transformations,
+  phrasal verbs, idioms; *kauli*, *usemi wa taarifa*, *tamathali za usemi*, *nahau*)
+  blended with harder Grade 6 makers, plus new comprehension and cloze passages.
+* **Sciences and humanities.** Fact tables and written scenario questions for Integrated
+  Science, Pre-Technical Studies, Social Studies (a new focus each year), Agriculture and
+  Nutrition, Creative Arts and Sports, and CRE.
+* **Lessons.** One lesson per topic (`src/lessons/jss-*.ts`); Social Studies lessons have a
+  step for each grade's focus.
+
+See [`research/junior-school-strands.md`](research/junior-school-strands.md).
+
 ## Child-safe content
 
 `src/engine/__tests__/safety.test.ts` scans every question, wrong answer and lesson for
@@ -91,7 +112,7 @@ commercial papers (JESMA etc.) were used only as a guide to format and difficult
 ## Enough to practise for a term
 
 Every Grade 1, 2 and 3 sub-strand has at least 15 different questions at every level (comprehension:
-7, because stories are written by hand), and most have hundreds. Grades 4–6 have at least 10
+7, because stories are written by hand), and most have hundreds. Grades 4–9 have at least 10
 (passages: 8), and most have hundreds. The test
 `src/engine/__tests__/depth.test.ts` keeps it that way. Quizzes mix two sources:
 
