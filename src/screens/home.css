@@ -39,35 +39,56 @@
   left: -6px;
   top: 50%;
   translate: 0 -54%;
-  opacity: 0.62;
-  filter: saturate(0.9);
+  opacity: 0.6;
   -webkit-mask-image: radial-gradient(closest-side, #000 55%, rgba(0, 0, 0, 0.55) 80%, transparent 100%);
   mask-image: radial-gradient(closest-side, #000 55%, rgba(0, 0, 0, 0.55) 80%, transparent 100%);
   pointer-events: none;
 }
 
+/* Each slice only moves and fades a shadow over itself: both run on the GPU, so the ripple
+   costs nothing per frame. (Animating filter: brightness repainted every slice each frame.) */
 .kf-slice {
   position: absolute;
   top: 0;
   height: 100%;
   background-repeat: no-repeat;
   animation: kf-wave 2.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.kf-slice::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  animation: kf-shade 2.4s ease-in-out infinite;
+  animation-delay: inherit;
 }
 
 @keyframes kf-wave {
   0%,
   100% {
     transform: translateY(-1.6px);
-    filter: brightness(1.12);
   }
   50% {
     transform: translateY(1.6px);
-    filter: brightness(0.82);
+  }
+}
+
+@keyframes kf-shade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.2;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kf-slice {
+  .kf-slice,
+  .kf-slice::after {
     animation: none;
   }
 }

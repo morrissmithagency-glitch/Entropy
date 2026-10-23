@@ -119,7 +119,9 @@ const PROVERBS: [string, string][] = [
   ['Usipoziba ufa utajenga ukuta', 'Fix the crack, or build the whole wall'],
 ]
 
-type Run = (swap: () => void) => Promise<void>
+/** `cloth` is the full kanga sweep with a proverb; `fade` is a quick dusk veil for everyday moves. */
+export type Transition = 'cloth' | 'fade'
+type Run = (swap: () => void, kind?: Transition) => Promise<void>
 const CurtainContext = createContext<Run>(async (swap) => swap())
 export const useCurtain = () => useContext(CurtainContext)
 
@@ -128,8 +130,12 @@ let covering = false
 export const curtainCovering = () => covering
 
 
-const COVER_MS = 1300
-const REVEAL_MS = 1400
+// The cloth is kept for the big moments (choosing a grade, entering a world), so it can be
+// unhurried; everyday moves use a short fade so a quiz session never waits on scenery.
+const COVER_MS = 900
+const HOLD_MS = 700
+const REVEAL_MS = 1000
+const FADE_MS = 180
 
 export function CurtainProvider({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -182,7 +188,8 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
     const g = glRef.current
     const canvas = canvasRef.current
     if (!g || !canvas) return
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+    // The cloth is soft and moving; drawing it at screen resolution keeps phone GPUs smooth.
+    const dpr = 1
     const w = Math.round(window.innerWidth * dpr)
     const h = Math.round(window.innerHeight * dpr)
     if (canvas.width !== w || canvas.height !== h) {
@@ -215,24 +222,29 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
     [draw, mode],
   )
 
+  const [veil, setVeil] = useState(false)
   const run: Run = useCallback(
-    async (swap) => {
+    async (swap, kind = 'cloth') => {
       if (busy.current) return
       busy.current = true
       covering = true
-      setActive(true)
-      if (mode === 'fade') {
-        await new Promise((r) => setTimeout(r, 160))
+      if (mode === 'fade' || kind === 'fade') {
+        setVeil(true)
+        await new Promise((r) => setTimeout(r, FADE_MS))
         swap()
-        await new Promise((r) => setTimeout(r, 160))
+        // Two frames: one for the new screen to mount, one for it to paint.
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+        setVeil(false)
+        await new Promise((r) => setTimeout(r, FADE_MS))
       } else {
+        setActive(true)
         sfx.whoosh()
         await animate(0, 1, COVER_MS)
         proverbIdx.current = (proverbIdx.current + 1) % PROVERBS.length
         setProverb(PROVERBS[proverbIdx.current])
         swap()
         // Let the new screen mount and paint under the cloth, and the proverb be read.
-        await new Promise((r) => setTimeout(r, 1100))
+        await new Promise((r) => setTimeout(r, HOLD_MS))
         setProverb(null)
         await animate(1, 2, REVEAL_MS)
         if (mode === 'gl') draw(2, 0)
@@ -253,7 +265,10 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
         style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', zIndex: 100, pointerEvents: active ? 'auto' : 'none', display: mode === 'gl' ? 'block' : 'none' }}
       />
       {mode === 'css' && active && <CssCloth prog={cssProg} />}
-      {mode === 'fade' && <motion.div aria-hidden animate={{ opacity: active ? 1 : 0 }} style={{ position: 'fixed', inset: 0, background: 'var(--night-900)', zIndex: 100, pointerEvents: 'none' }} />}
+      <div
+        aria-hidden
+        style={{ position: 'fixed', inset: 0, background: 'var(--night-900)', zIndex: 100, pointerEvents: veil ? 'auto' : 'none', opacity: veil ? 1 : 0, transition: `opacity ${FADE_MS}ms ease` }}
+      />
       <AnimatePresence>
         {proverb && (
           <motion.div

@@ -1,5 +1,5 @@
 import { MotionConfig } from 'framer-motion'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { CurtainProvider, useCurtain } from './components/Curtain'
 import type { AreaId, GradeId } from './curriculum'
 import type { Level } from './engine/types'
@@ -36,6 +36,9 @@ export type Screen =
   | ({ name: 'results'; correct: number; total: number } & QuizTarget)
 
 type Go = (s: Screen, opts?: { replace?: boolean; cloth?: boolean }) => void
+
+/** The kanga cloth marks the big steps inward: choosing a grade and entering a world. */
+const bigStep = (from: Screen, to: Screen) => (from.name === 'home' && to.name === 'worlds') || (from.name === 'worlds' && to.name === 'map')
 const NavContext = createContext<Go>(() => {})
 export const useNav = () => useContext(NavContext)
 
@@ -69,6 +72,10 @@ function Router() {
   const [screen, setScreen] = useState<Screen>(initialScreen)
   const curtain = useCurtain()
 
+  // Read inside go() without making it change on every screen.
+  const current = useRef(screen)
+  current.current = screen
+
   const go: Go = useCallback(
     (next, { replace = false, cloth = true } = {}) => {
       const swap = () => {
@@ -76,7 +83,7 @@ function Router() {
         setScreen(next)
         window.scrollTo(0, 0)
       }
-      if (cloth) void curtain(swap)
+      if (cloth) void curtain(swap, bigStep(current.current, next) ? 'cloth' : 'fade')
       else swap()
     },
     [curtain],
@@ -86,7 +93,7 @@ function Router() {
     remember(screen, true)
     const onPop = (e: PopStateEvent) => {
       const s = (e.state as Screen | null) ?? { name: 'home' }
-      void curtain(() => setScreen(s.name === 'quiz' || s.name === 'results' || s.name === 'learn' ? { name: 'map', area: s.area } : s))
+      void curtain(() => setScreen(s.name === 'quiz' || s.name === 'results' || s.name === 'learn' ? { name: 'map', area: s.area } : s), 'fade')
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)

@@ -198,13 +198,53 @@ function useParallax() {
   return { sx: useSpring(x, { stiffness: 30, damping: 20 }), sy: useSpring(y, { stiffness: 30, damping: 20 }) }
 }
 
-function Layer({ sx, sy, depth, children }: { sx: MotionValue<number>; sy: MotionValue<number>; depth: number; children: ReactNode }) {
-  const tx = useTransform(sx, (v) => v * -depth)
-  const ty = useTransform(sy, (v) => v * -depth * 0.35)
-  return <motion.g style={{ x: tx, y: ty }}>{children}</motion.g>
+const SVG_STYLE = { position: 'absolute', inset: 0, display: 'block', overflow: 'visible' } as const
+
+/** One drawing of the scene, the same size and framing as every other. */
+function Art({ children }: { children: ReactNode }) {
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice" width="100%" height="100%" style={SVG_STYLE}>
+      {children}
+    </svg>
+  )
 }
 
-/** Stars that twinkle and fireflies that wander, drifting gently toward the pointer. */
+/**
+ * One depth of the landscape. It is its own GPU layer, so parallax only slides it. The still
+ * shapes are painted once; anything that drifts or sways is passed as `moving` and drawn in
+ * a separate, mostly empty layer above, so each frame repaints only those few shapes.
+ */
+function Layer({ sx, sy, depth, children, moving }: { sx: MotionValue<number>; sy: MotionValue<number>; depth: number; children?: ReactNode; moving?: ReactNode }) {
+  const tx = useTransform(sx, (v) => v * -depth)
+  const ty = useTransform(sy, (v) => v * -depth * 0.35)
+  return (
+    <motion.div style={{ position: 'absolute', inset: 0, x: tx, y: ty, willChange: 'transform' }}>
+      {children && <Art>{children}</Art>}
+      {moving && <Art>{moving}</Art>}
+    </motion.div>
+  )
+}
+
+/** A soft round glow drawn once, so each firefly is a cheap image copy rather than a new gradient every frame. */
+function glowSprite(color: string, size: number) {
+  const c = document.createElement('canvas')
+  c.width = c.height = size
+  const g = c.getContext('2d')!
+  const r = size / 2
+  const grad = g.createRadialGradient(r, r, 0, r, r, r)
+  grad.addColorStop(0, `rgba(${color}, 0.85)`)
+  grad.addColorStop(0.25, `rgba(${color}, 0.25)`)
+  grad.addColorStop(1, `rgba(${color}, 0)`)
+  g.fillStyle = grad
+  g.fillRect(0, 0, size, size)
+  return c
+}
+
+/**
+ * Stars that twinkle and fireflies that wander, drifting gently toward the pointer.
+ * Drawn at 30 frames a second and at screen resolution: the motion is slow and the light
+ * is soft, so the eye cannot tell, and phones keep their frames for the rest of the page.
+ */
 function Sky({ stars, motes, horizon, starAlpha = 1 }: { stars: number; motes: { count: number; color: string }; horizon: number; starAlpha?: number }) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
@@ -212,15 +252,13 @@ function Sky({ stars, motes, horizon, starAlpha = 1 }: { stars: number; motes: {
     const ctx = c?.getContext('2d')
     if (!c || !ctx) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const dpr = Math.min(1.5, window.devicePixelRatio || 1)
     let w = 0
     let h = 0
     const resize = () => {
       w = c.clientWidth
       h = c.clientHeight
-      c.width = w * dpr
-      c.height = h * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      c.width = w
+      c.height = h
     }
     resize()
     const ro = new ResizeObserver(resize)
@@ -228,6 +266,8 @@ function Sky({ stars, motes, horizon, starAlpha = 1 }: { stars: number; motes: {
     const rng = createRng(7)
     const starList = Array.from({ length: stars }, () => ({ x: rng.next(), y: rng.next() * (horizon / H) * 0.85, r: 0.4 + rng.next() * 1.1, p: rng.next() * 6.28, s: 0.5 + rng.next() * 1.5 }))
     const moteList = Array.from({ length: Math.round(motes.count * 0.45) }, () => ({ x: rng.next(), y: 0.5 + rng.next() * 0.45, vx: 0, vy: 0, p: rng.next() * 6.28, r: 0.6 + rng.next() * 1.1 }))
+    const sprite = glowSprite(motes.color, 48)
+    const starDot = glowSprite('255, 250, 235', 8)
     let px = 0.5
     let py = 0.6
     const onMove = (e: PointerEvent) => {
@@ -235,43 +275,46 @@ function Sky({ stars, motes, horizon, starAlpha = 1 }: { stars: number; motes: {
       px = (e.clientX - b.left) / b.width
       py = (e.clientY - b.top) / b.height
     }
-    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointermove', onMove, { passive: true })
     let raf = 0
+    let last = 0
     const draw = (t: number) => {
+      if (!reduce) raf = requestAnimationFrame(draw)
+      if (t - last < 32) return
+      // Two steps of drift per drawn frame keep the old pace at half the frames.
+      const steps = last ? Math.min(3, Math.round((t - last) / 16.7)) : 1
+      last = t
       ctx.clearRect(0, 0, w, h)
       const time = t / 1000
-      for (const s of starList) {
-        const a = starAlpha * (0.35 + 0.45 * (0.5 + 0.5 * Math.sin(time * s.s + s.p)))
-        ctx.fillStyle = `rgba(255, 250, 235, ${a})`
-        ctx.beginPath()
-        ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2)
-        ctx.fill()
-      }
+      if (starAlpha > 0.05)
+        for (const s of starList) {
+          ctx.globalAlpha = starAlpha * (0.35 + 0.45 * (0.5 + 0.5 * Math.sin(time * s.s + s.p)))
+          const d = s.r * 4
+          ctx.drawImage(starDot, s.x * w - d / 2, s.y * h - d / 2, d, d)
+        }
       for (const m of moteList) {
-        m.p += 0.01
-        m.vx += (Math.sin(m.p * 1.3) * 0.00004) + (px - m.x) * 0.000006
-        m.vy += (Math.cos(m.p) * 0.00004) + (py - m.y) * 0.000006
-        m.vx *= 0.97
-        m.vy *= 0.97
-        m.x += m.vx
-        m.y += m.vy
+        for (let k = 0; k < steps; k++) {
+          m.p += 0.01
+          m.vx += Math.sin(m.p * 1.3) * 0.00004 + (px - m.x) * 0.000006
+          m.vy += Math.cos(m.p) * 0.00004 + (py - m.y) * 0.000006
+          m.vx *= 0.97
+          m.vy *= 0.97
+          m.x += m.vx
+          m.y += m.vy
+        }
         if (m.x < -0.05) m.x = 1.05
         if (m.x > 1.05) m.x = -0.05
-        const glow = 0.25 + 0.75 * (0.5 + 0.5 * Math.sin(time * 1.6 + m.p * 3))
-        const g = ctx.createRadialGradient(m.x * w, m.y * h, 0, m.x * w, m.y * h, m.r * 6)
-        g.addColorStop(0, `rgba(${motes.color}, ${0.85 * glow})`)
-        g.addColorStop(0.25, `rgba(${motes.color}, ${0.25 * glow})`)
-        g.addColorStop(1, `rgba(${motes.color}, 0)`)
-        ctx.fillStyle = g
-        ctx.beginPath()
-        ctx.arc(m.x * w, m.y * h, m.r * 6, 0, Math.PI * 2)
-        ctx.fill()
+        ctx.globalAlpha = 0.25 + 0.75 * (0.5 + 0.5 * Math.sin(time * 1.6 + m.p * 3))
+        const d = m.r * 12
+        ctx.drawImage(sprite, m.x * w - d / 2, m.y * h - d / 2, d, d)
       }
-      if (!reduce) raf = requestAnimationFrame(draw)
+      ctx.globalAlpha = 1
     }
-    raf = requestAnimationFrame(draw)
+    if (reduce) draw(1000)
+    else raf = requestAnimationFrame(draw)
     const onVis = () => {
       cancelAnimationFrame(raf)
+      last = 0
       if (!document.hidden && !reduce) raf = requestAnimationFrame(draw)
     }
     document.addEventListener('visibilitychange', onVis)
@@ -400,6 +443,7 @@ function SceneArt({ id, sx, sy, time }: { id: SceneId; sx: MotionValue<number>; 
 
   return (
     <>
+      <Art>
       <defs>
         <linearGradient id={`sky-${id}`} x1="0" y1="0" x2="0" y2="1">
           {s.sky.map((c, i) => (
@@ -437,88 +481,126 @@ function SceneArt({ id, sx, sy, time }: { id: SceneId; sx: MotionValue<number>; 
       </defs>
 
       <rect x="-200" y="-200" width={W + 400} height={H + 400} fill={`url(#sky-${id})`} />
+      </Art>
 
-      <Layer sx={sx} sy={sy} depth={6}>
+      <Layer
+        sx={sx}
+        sy={sy}
+        depth={6}
+        moving={
+          (base === 'forest-mist' || base === 'golden-hills') && (
+            <g style={{ animation: 'rays 12s ease-in-out infinite alternate' }}>
+              {[0, 1, 2, 3].map((i) => (
+                <path key={i} d={`M${s.glow.x - 60 + i * 70} ${s.glow.y - 60} L${s.glow.x + 380 + i * 160} ${H} L${s.glow.x + 300 + i * 160} ${H} Z`} fill={`url(#rays-${id})`} />
+              ))}
+            </g>
+          )
+        }
+      >
         <circle cx={s.glow.x} cy={s.glow.y} r={s.glow.r} fill={`url(#glow-${id})`} />
         {s.glow.disc && <circle cx={s.glow.x} cy={s.glow.y} r={base === 'lake-dusk' ? 34 : 70} fill={s.glow.disc} opacity={base === 'lake-dusk' ? 0.95 : 0.85} />}
         {base === 'lake-dusk' && !sunUp && <circle cx={s.glow.x + 14} cy={s.glow.y - 8} r={30} fill={s.sky[1]} opacity={0.9} />}
-        {(base === 'forest-mist' || base === 'golden-hills') && (
-          <g style={{ animation: 'rays 12s ease-in-out infinite alternate' }}>
-            {[0, 1, 2, 3].map((i) => (
-              <path key={i} d={`M${s.glow.x - 60 + i * 70} ${s.glow.y - 60} L${s.glow.x + 380 + i * 160} ${H} L${s.glow.x + 300 + i * 160} ${H} Z`} fill={`url(#rays-${id})`} />
-            ))}
-          </g>
-        )}
       </Layer>
 
       {/* Distant ranges */}
-      <Layer sx={sx} sy={sy} depth={14}>
-        {(base === 'savanna-dawn' || base === 'tea-hills' || base === 'golden-hills') && <Clouds y={horizon - 420} opacity={base === 'tea-hills' ? 0.45 : 0.3} />}
-        {base === 'lake-dusk' && sunUp && <Clouds y={260} opacity={0.25} />}
+      <Layer
+        sx={sx}
+        sy={sy}
+        depth={14}
+        moving={
+          <>
+            {(base === 'savanna-dawn' || base === 'tea-hills' || base === 'golden-hills') && <Clouds y={horizon - 420} opacity={base === 'tea-hills' ? 0.45 : 0.3} />}
+            {base === 'lake-dusk' && sunUp && <Clouds y={260} opacity={0.25} />}
+            {base === 'savanna-dawn' && (
+              <g fill="none" stroke={L[3]} strokeWidth="3" strokeLinecap="round" opacity="0.6" style={{ animation: 'birds 24s ease-in-out infinite alternate' }}>
+                <path d="M560 300q12-12 24 0q12-12 24 0" />
+                <path d="M620 270q9-9 18 0q9-9 18 0" />
+                <path d="M520 330q8-8 16 0q8-8 16 0" />
+              </g>
+            )}
+          </>
+        }
+      >
         {ridges}
         {(base === 'savanna-dawn' || base === 'golden-hills' || base === 'tea-hills') && <path d={paths.far} fill={L[0]} />}
         {base === 'forest-mist' && <Canopy seed={5} base={horizon - 150} height={70} fill={L[0]} />}
-        {base === 'savanna-dawn' && (
-          <g fill="none" stroke={L[3]} strokeWidth="3" strokeLinecap="round" opacity="0.6" style={{ animation: 'birds 24s ease-in-out infinite alternate' }}>
-            <path d="M560 300q12-12 24 0q12-12 24 0" />
-            <path d="M620 270q9-9 18 0q9-9 18 0" />
-            <path d="M520 330q8-8 16 0q8-8 16 0" />
-          </g>
-        )}
         <rect x="-100" y={horizon - 200} width={W + 200} height="260" fill={`url(#${hazeId})`} />
       </Layer>
 
       {/* Water with a soft reflection of the sky glow */}
       {water && (
-        <Layer sx={sx} sy={sy} depth={18}>
+        <Layer
+          sx={sx}
+          sy={sy}
+          depth={18}
+          moving={
+            <>
+              <g style={{ animation: 'shimmer 6s ease-in-out infinite alternate' }}>
+                {Array.from({ length: 14 }, (_, i) => (
+                  <rect key={i} x={s.glow.x - 120 + ((i * 53) % 240)} y={horizon + 14 + i * 22} width={60 + ((i * 37) % 90)} height="2.5" rx="1.25" fill={s.glow.color} opacity={0.55 - i * 0.03} />
+                ))}
+              </g>
+              {base === 'coast-sunset' && (
+                <g className="ns-dhow">
+                  <Dhow x={1180} y={horizon + 40} s={0.8} fill="#1a1230" />
+                </g>
+              )}
+              {base === 'lake-dusk' && (
+                <g fill="none" stroke={s.glow.color} strokeWidth="2">
+                  {[
+                    [520, 70, 0],
+                    [1320, 130, 2.5],
+                    [880, 210, 5],
+                  ].map(([x, dy, d], i) => (
+                    <ellipse key={i} className="ns-ripple" style={{ animationDelay: `${d}s` }} cx={x} cy={horizon + dy} rx={40} ry={7} />
+                  ))}
+                </g>
+              )}
+              {base === 'flamingo-lake' && (
+                <g opacity="0.95">
+                  {[
+                    [820, 0.8],
+                    [870, 0.9],
+                    [930, 0.75],
+                    [1010, 0.85],
+                    [1060, 0.7],
+                    [1130, 0.8],
+                  ].map(([x, sc], i) => (
+                    <g key={i} className="ns-wade" style={{ animationDelay: `${i * 0.9}s` }}>
+                      <ellipse className="ns-ripple" style={{ animationDelay: `${i * 1.3}s` }} cx={x + 4} cy={horizon + 60 + (i % 3) * 14} rx={22} ry={4} fill="none" stroke="#f6c3b1" strokeWidth="1.6" />
+                      <Flamingo x={x} y={horizon + 60 + (i % 3) * 14} s={sc} fill="#3a2443" />
+                      <g transform={`translate(0 ${2 * (horizon + 60 + (i % 3) * 14)}) scale(1 -1)`} opacity="0.25">
+                        <Flamingo x={x} y={horizon + 60 + (i % 3) * 14} s={sc} fill="#3a2443" />
+                      </g>
+                    </g>
+                  ))}
+                </g>
+              )}
+            </>
+          }
+        >
           <rect x="-100" y={horizon} width={W + 200} height={H - horizon + 60} fill={`url(#water-${id})`} />
           <ellipse cx={s.glow.x} cy={horizon + 90} rx={base === 'coast-sunset' ? 170 : 120} ry="220" fill={`url(#refl-${id})`} />
-          <g style={{ animation: 'shimmer 6s ease-in-out infinite alternate' }}>
-            {Array.from({ length: 14 }, (_, i) => (
-              <rect key={i} x={s.glow.x - 120 + ((i * 53) % 240)} y={horizon + 14 + i * 22} width={60 + ((i * 37) % 90)} height="2.5" rx="1.25" fill={s.glow.color} opacity={0.55 - i * 0.03} />
-            ))}
-          </g>
-          {base === 'coast-sunset' && (
-            <g className="ns-dhow">
-              <Dhow x={1180} y={horizon + 40} s={0.8} fill="#1a1230" />
-            </g>
-          )}
-          {base === 'lake-dusk' && (
-            <g fill="none" stroke={s.glow.color} strokeWidth="2">
-              {[
-                [520, 70, 0],
-                [1320, 130, 2.5],
-                [880, 210, 5],
-              ].map(([x, dy, d], i) => (
-                <ellipse key={i} className="ns-ripple" style={{ animationDelay: `${d}s` }} cx={x} cy={horizon + dy} rx={40} ry={7} />
-              ))}
-            </g>
-          )}
-          {base === 'flamingo-lake' && (
-            <g opacity="0.95">
-              {[
-                [820, 0.8],
-                [870, 0.9],
-                [930, 0.75],
-                [1010, 0.85],
-                [1060, 0.7],
-                [1130, 0.8],
-              ].map(([x, sc], i) => (
-                <g key={i} className="ns-wade" style={{ animationDelay: `${i * 0.9}s` }}>
-                  <ellipse className="ns-ripple" style={{ animationDelay: `${i * 1.3}s` }} cx={x + 4} cy={horizon + 60 + (i % 3) * 14} rx={22} ry={4} fill="none" stroke="#f6c3b1" strokeWidth="1.6" />
-                  <Flamingo x={x} y={horizon + 60 + (i % 3) * 14} s={sc} fill="#3a2443" />
-                  <g transform={`translate(0 ${2 * (horizon + 60 + (i % 3) * 14)}) scale(1 -1)`} opacity="0.25">
-                    <Flamingo x={x} y={horizon + 60 + (i % 3) * 14} s={sc} fill="#3a2443" />
-                  </g>
-                </g>
-              ))}
-            </g>
-          )}
         </Layer>
       )}
 
       {/* Middle ground */}
-      <Layer sx={sx} sy={sy} depth={28}>
+      <Layer
+        sx={sx}
+        sy={sy}
+        depth={28}
+        moving={
+          <>
+            {base === 'golden-hills' && (
+              <g className="ns-sway-slow">
+                <Acacia x={1080} y={horizon - 90} s={0.9} fill={L[3]} />
+              </g>
+            )}
+            {id === 'rift-steam' && <Steam horizon={horizon} />}
+            <Mist y={horizon - 40} opacity={base === 'forest-mist' || base === 'tea-hills' ? 0.9 : 0.4} dur={80} />
+          </>
+        }
+      >
         {base === 'savanna-dawn' && (
           <>
             <path d={paths.mid} fill={L[1]} />
@@ -526,14 +608,7 @@ function SceneArt({ id, sx, sy, time }: { id: SceneId; sx: MotionValue<number>; 
             <Acacia x={1260} y={horizon - 70} s={0.55} fill={L[2]} />
           </>
         )}
-        {base === 'golden-hills' && (
-          <>
-            <path d={paths.mid} fill={L[1]} />
-            <g className="ns-sway-slow">
-              <Acacia x={1080} y={horizon - 90} s={0.9} fill={L[3]} />
-            </g>
-          </>
-        )}
+        {base === 'golden-hills' && <path d={paths.mid} fill={L[1]} />}
         {base === 'tea-hills' && (
           <>
             <path d={paths.mid} fill={L[1]} />
@@ -545,19 +620,45 @@ function SceneArt({ id, sx, sy, time }: { id: SceneId; sx: MotionValue<number>; 
           </>
         )}
         {base === 'forest-mist' && <Canopy seed={9} base={horizon - 40} height={95} fill={L[1]} />}
-        {id === 'rift-steam' && <Steam horizon={horizon} />}
-        <Mist y={horizon - 40} opacity={base === 'forest-mist' || base === 'tea-hills' ? 0.9 : 0.4} dur={80} />
       </Layer>
 
       {/* Foreground */}
-      <Layer sx={sx} sy={sy} depth={46}>
+      <Layer
+        sx={sx}
+        sy={sy}
+        depth={46}
+        moving={
+          <>
+            {base === 'savanna-dawn' && (
+              <g className="ns-sway-slow">
+                <Acacia x={1380} y={horizon + 140} s={1.5} fill={L[3]} />
+              </g>
+            )}
+            {base === 'forest-mist' && <Mist y={horizon + 120} opacity={0.6} dur={60} reverse />}
+            {base === 'lake-dusk' && (
+              <g fill="#070c1c" className="ns-sway">
+                {Array.from({ length: 12 }, (_, i) => (
+                  <path key={i} d={`M${430 + i * 22} ${H - 92 + (i % 3) * 6} q ${4 + (i % 2) * 3} -${40 + (i % 4) * 12} ${8 + (i % 3) * 3} -${70 + (i % 5) * 10} l3 0 q-2 30 -6 ${72 + (i % 4) * 10}z`} />
+                ))}
+              </g>
+            )}
+            {base === 'coast-sunset' && (
+              <>
+                <g className="ns-sway">
+                  <Palm x={160} y={H - 90} s={1.25} fill="#0d0819" />
+                </g>
+                <g className="ns-sway" style={{ animationDelay: '-3s' }}>
+                  <Palm x={1450} y={H - 80} s={1.05} fill="#0d0819" flip />
+                </g>
+              </>
+            )}
+          </>
+        }
+      >
         {base === 'savanna-dawn' && (
           <>
             <path d={paths.near} fill={L[2]} />
             <path d={paths.front} fill={L[3]} />
-            <g className="ns-sway-slow">
-              <Acacia x={1380} y={horizon + 140} s={1.5} fill={L[3]} />
-            </g>
           </>
         )}
         {base === 'golden-hills' && (
@@ -577,36 +678,14 @@ function SceneArt({ id, sx, sy, time }: { id: SceneId; sx: MotionValue<number>; 
             <path d={paths.front} fill={L[3]} />
           </>
         )}
-        {base === 'forest-mist' && (
-          <>
-            <Canopy seed={13} base={horizon + 90} height={130} fill={L[2]} />
-            <Mist y={horizon + 120} opacity={0.6} dur={60} reverse />
-            <Canopy seed={17} base={horizon + 220} height={170} fill={L[3]} />
-            <FallingLeaves fill={L[0]} />
-          </>
-        )}
+        {base === 'forest-mist' && <Canopy seed={13} base={horizon + 90} height={130} fill={L[2]} />}
         {base === 'lake-dusk' && (
           <>
             <path d={`M-100 ${H + 40} L-100 ${H - 120} Q 200 ${H - 170} 420 ${H - 110} Q 700 ${H - 50} 1000 ${H - 20} Q 1300 ${H} 1700 ${H - 10} L1700 ${H + 40}Z`} fill="#070c1c" />
             <Acacia x={170} y={H - 140} s={1.1} fill="#070c1c" />
-            <g fill="#070c1c" className="ns-sway">
-              {Array.from({ length: 12 }, (_, i) => (
-                <path key={i} d={`M${430 + i * 22} ${H - 92 + (i % 3) * 6} q ${4 + (i % 2) * 3} -${40 + (i % 4) * 12} ${8 + (i % 3) * 3} -${70 + (i % 5) * 10} l3 0 q-2 30 -6 ${72 + (i % 4) * 10}z`} />
-              ))}
-            </g>
           </>
         )}
-        {base === 'coast-sunset' && (
-          <>
-            <path d={`M-100 ${H + 40} L-100 ${H - 90} Q 300 ${H - 140} 700 ${H - 70} T 1700 ${H - 100} L1700 ${H + 40}Z`} fill="#140d26" />
-            <g className="ns-sway">
-              <Palm x={160} y={H - 90} s={1.25} fill="#0d0819" />
-            </g>
-            <g className="ns-sway" style={{ animationDelay: '-3s' }}>
-              <Palm x={1450} y={H - 80} s={1.05} fill="#0d0819" flip />
-            </g>
-          </>
-        )}
+        {base === 'coast-sunset' && <path d={`M-100 ${H + 40} L-100 ${H - 90} Q 300 ${H - 140} 700 ${H - 70} T 1700 ${H - 100} L1700 ${H + 40}Z`} fill="#140d26" />}
         {base === 'flamingo-lake' && (
           <>
             <path d={`M800 ${H + 40} Q 1100 ${H - 150} 1700 ${H - 130} L1700 ${H + 40}Z`} fill={L[2]} />
@@ -614,6 +693,13 @@ function SceneArt({ id, sx, sy, time }: { id: SceneId; sx: MotionValue<number>; 
           </>
         )}
       </Layer>
+
+      {/* The nearest forest canopy sits in front of the low mist, with leaves drifting past it. */}
+      {base === 'forest-mist' && (
+        <Layer sx={sx} sy={sy} depth={46} moving={<FallingLeaves fill={L[0]} />}>
+          <Canopy seed={17} base={horizon + 220} height={170} fill={L[3]} />
+        </Layer>
+      )}
     </>
   )
 }
@@ -630,9 +716,7 @@ export const NatureScene = memo(function NatureScene({ id, dim = 0, still = fals
   const s = SCENES[id]
   return (
     <div aria-hidden style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: s.sky[0] }}>
-      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice" width="100%" height="100%" style={{ display: 'block' }}>
-        <SceneArt id={id} sx={sx} sy={sy} time={time} />
-      </svg>
+      <SceneArt id={id} sx={sx} sy={sy} time={time} />
       {time && <div style={{ position: 'absolute', inset: 0, background: TINT[time].bg, mixBlendMode: TINT[time].blend, transition: 'opacity 2s' }} />}
       {!still && <Sky stars={s.stars} motes={s.motes} horizon={s.horizon ?? 760} starAlpha={time ? TINT[time].stars : 1} />}
       {dim > 0 && <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, rgba(7,13,27,${dim * 0.6}) 0%, rgba(7,13,27,${dim}) 100%)` }} />}

@@ -6,9 +6,23 @@
     <meta name="theme-color" content="#0b1426" />
     <title>CBC Helper</title>
     <link rel="icon" href="/kobe.svg" type="image/svg+xml" />
+    <!-- The splash is plain HTML so it shows the moment the page arrives, before the app's
+         script has been read. React replaces it on first render. -->
+    <style id="splash-style">
+      html, body { margin: 0; background: #0b1426; }
+      .splash { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px;
+        background: radial-gradient(120% 70% at 50% 100%, #2a2350 0%, #111d36 45%, #0b1426 100%);
+        color: #fbf6ec; font-family: 'Iowan Old Style', Georgia, serif; }
+      .splash h1 { margin: 0; font-size: 34px; font-weight: 600; letter-spacing: .01em; }
+      .splash p { margin: 0; font: 15px/1.4 system-ui, sans-serif; color: rgba(251, 246, 236, .62); }
+      .splash i { width: 10px; height: 10px; border-radius: 50%; background: #f1cf87; box-shadow: 0 0 18px 6px rgba(241, 207, 135, .45);
+        animation: splash-glow 1.6s ease-in-out infinite alternate; }
+      @keyframes splash-glow { from { opacity: .35; transform: scale(.8) } to { opacity: 1; transform: scale(1.1) } }
+      @media (prefers-reduced-motion: reduce) { .splash i { animation: none } }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><div class="splash" role="status"><i></i><h1>CBC Helper</h1><p>Lighting the path…</p></div></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
