@@ -2,6 +2,7 @@
 // mascot's whole personality is patient encouragement.
 import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
 import { useEffect, useId, useRef, useState, type PointerEvent as RPointerEvent } from 'react'
+import { useCalm } from '../state/calm'
 import { haptic } from './motion'
 
 export type Mood = 'idle' | 'happy' | 'cheer' | 'think' | 'oops'
@@ -46,6 +47,7 @@ interface KobeProps {
 }
 
 export function Kobe({ mood = 'idle', size = 220, className, interactive = true, flip = false, walking = false, nibbling = false, onPoke, gaze, asleep = false, yawning = false, flag = false, line: told }: KobeProps) {
+  const calm = useCalm()
   const ref = useRef<SVGSVGElement>(null)
   const [reaction, setReaction] = useState<Reaction | null>(null)
   const [line, setLine] = useState<string | null>(null)
@@ -175,6 +177,8 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
 
   return (
     <motion.svg
+      // Re-mounted when calm mode changes, so looping motion that already started stops.
+      key={calm ? 'calm' : 'full'}
       ref={ref}
       viewBox="0 0 230 180"
       width={size}

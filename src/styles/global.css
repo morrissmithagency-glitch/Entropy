@@ -315,3 +315,14 @@ button:focus-visible,
   font-size: 14px;
   color: var(--mist-soft);
 }
+
+/* Calm mode (see state/calm.ts): every CSS animation jumps to its last frame and stays
+   there, so drawings appear finished, scenery rests and nothing repaints on its own. */
+html[data-calm] *,
+html[data-calm] *::before,
+html[data-calm] *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}

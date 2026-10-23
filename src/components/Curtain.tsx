@@ -4,6 +4,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { sfx } from '../audio/sfx'
+import { isCalm } from '../state/calm'
 
 const VERT = `
 attribute vec2 aPos;
@@ -228,7 +229,7 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
       if (busy.current) return
       busy.current = true
       covering = true
-      if (mode === 'fade' || kind === 'fade') {
+      if (mode === 'fade' || kind === 'fade' || isCalm()) {
         setVeil(true)
         await new Promise((r) => setTimeout(r, FADE_MS))
         swap()

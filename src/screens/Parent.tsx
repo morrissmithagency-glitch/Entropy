@@ -6,6 +6,7 @@ import { NatureScene } from '../components/NatureScene'
 import { Chip, Icon, LevelGlyph, TopBar } from '../components/ui'
 import { findArea, LEVEL_NAMES } from '../curriculum'
 import { lessonFor } from '../lessons'
+import { calmChoice, setCalmChoice, useCalm } from '../state/calm'
 import { dueReview, useProgress } from '../state/progress'
 import { gradeReports, totals, type SubReport } from '../state/summary'
 import './parent.css'
@@ -13,6 +14,37 @@ import './parent.css'
 const pct = (x: number | null) => (x == null ? '–' : `${Math.round(x * 100)}%`)
 
 /** A small sum keeps children out of the grown-ups' page. */
+/** How much the app moves. Auto lets the app rest its animations on slower devices. */
+function MotionSetting() {
+  const calm = useCalm()
+  const [choice, setChoice] = useState(calmChoice)
+  const pick = (c: 'auto' | 'on' | 'off') => {
+    setCalmChoice(c)
+    setChoice(c)
+  }
+  const opts: ['auto' | 'on' | 'off', string][] = [
+    ['auto', 'Automatic'],
+    ['on', 'Calm'],
+    ['off', 'Full'],
+  ]
+  return (
+    <section className="pg-motion glass">
+      <h3 className="pr-h">Animations</h3>
+      <p>
+        Calm keeps the scenery and Kobe still, so the app stays quick on older phones. Automatic switches to calm when this device
+        is slow. {choice === 'auto' && <em>Right now: {calm ? 'calm' : 'full'}.</em>}
+      </p>
+      <div className="pg-motion-opts" role="radiogroup" aria-label="Animations">
+        {opts.map(([c, label]) => (
+          <button key={c} type="button" role="radio" aria-checked={choice === c} className={`btn ${choice === c ? 'primary' : 'quiet'}`} onClick={() => pick(c)}>
+            {label}
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function Gate({ onPass }: { onPass: () => void }) {
   const [a, b] = useMemo(() => [6 + Math.floor(Math.random() * 4), 6 + Math.floor(Math.random() * 4)], [])
   const options = useMemo(() => [a * b, a * b + a, a * b - b].sort(() => Math.random() - 0.5), [a, b])
@@ -164,6 +196,7 @@ export function Parent() {
             ))}
 
             <p className="pg-fine">Progress is kept on this device. Super Pro will add a weekly report sent to your phone.</p>
+            <MotionSetting />
           </motion.div>
         )}
       </div>

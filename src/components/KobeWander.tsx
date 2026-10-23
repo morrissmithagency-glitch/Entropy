@@ -5,6 +5,7 @@
 // floating z's) when nobody has touched the page for a while.
 import { motion, useMotionValue } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import { useCalm } from '../state/calm'
 import { Kobe } from './Kobe'
 
 interface Print {
@@ -50,6 +51,8 @@ export function KobeWander() {
   const [yawning, setYawning] = useState(false)
   const [flag] = useState(() => !!holiday())
   const sleeping = useRef(false)
+  // In calm mode Kobe sits and watches: no walking, no fireflies, no napping.
+  const calm = useCalm()
 
   const talk = (text: string) => setLine({ text, key: Date.now() })
 
@@ -81,6 +84,7 @@ export function KobeWander() {
 
   // Nap when the page has been left alone; wake gently on any touch.
   useEffect(() => {
+    if (calm) return
     let t: ReturnType<typeof setTimeout>
     const nap = () => {
       sleeping.current = true
@@ -107,7 +111,7 @@ export function KobeWander() {
       clearTimeout(t)
       events.forEach((ev) => window.removeEventListener(ev, stir))
     }
-  }, [])
+  }, [calm])
 
   useEffect(() => {
     const onResize = () => setSize(window.innerWidth < 760 ? 104 : 130)
@@ -122,8 +126,11 @@ export function KobeWander() {
     const bounds = () => [8, Math.max(8, el.clientWidth - kw() - 8)] as const
     // Start where Kobe has always sat: right on phones, a quarter across on wide screens.
     x.set(window.innerWidth < 760 ? bounds()[1] - 4 : el.clientWidth * 0.26)
-    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    if (still) return
+    if (calm) {
+      setWalking(false)
+      setFly(null)
+      return
+    }
 
     let alive = true
     let raf = 0
@@ -211,7 +218,7 @@ export function KobeWander() {
       cancelAnimationFrame(raf)
       timers.forEach(clearTimeout)
     }
-  }, [x])
+  }, [x, calm])
 
   useEffect(() => () => clearTimeout(resume.current), [])
 

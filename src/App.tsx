@@ -1,6 +1,7 @@
 import { MotionConfig } from 'framer-motion'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { CurtainProvider, useCurtain } from './components/Curtain'
+import { startFrameWatch, useCalm } from './state/calm'
 import type { AreaId, GradeId } from './curriculum'
 import type { Level } from './engine/types'
 import { Home } from './screens/Home'
@@ -115,8 +116,11 @@ function Router() {
 }
 
 export default function App() {
+  const calm = useCalm()
+  useEffect(() => startFrameWatch(), [])
   return (
-    <MotionConfig reducedMotion="user">
+    // In calm mode framer-motion skips movement and keeps only fades.
+    <MotionConfig reducedMotion={calm ? 'always' : 'user'}>
       <div style={{ minHeight: '100%' }}>
         <CurtainProvider>
           <Router />

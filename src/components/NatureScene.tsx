@@ -4,6 +4,7 @@
 import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from 'framer-motion'
 import { memo, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { createRng } from '../engine/rng'
+import { useCalm } from '../state/calm'
 
 export type SceneId = 'lake-dusk' | 'savanna-dawn' | 'forest-mist' | 'tea-hills' | 'coast-sunset' | 'flamingo-lake' | 'golden-hills' | 'rift-steam'
 
@@ -184,17 +185,18 @@ function MtKenya({ fill, snow }: { fill: string; snow: string }) {
   )
 }
 
-function useParallax() {
+function useParallax(on: boolean) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   useEffect(() => {
+    if (!on) return
     const onMove = (e: PointerEvent) => {
       x.set(e.clientX / window.innerWidth - 0.5)
       y.set(e.clientY / window.innerHeight - 0.5)
     }
     window.addEventListener('pointermove', onMove)
     return () => window.removeEventListener('pointermove', onMove)
-  }, [x, y])
+  }, [x, y, on])
   return { sx: useSpring(x, { stiffness: 30, damping: 20 }), sy: useSpring(y, { stiffness: 30, damping: 20 }) }
 }
 
@@ -711,8 +713,9 @@ const TINT: Record<SkyTime, { bg: string; blend: 'screen' | 'normal'; stars: num
   night: { bg: 'linear-gradient(180deg, rgba(3,6,18,.32) 0%, rgba(3,6,18,.18) 60%, rgba(3,6,18,.1) 100%)', blend: 'normal', stars: 1 },
 }
 
-export const NatureScene = memo(function NatureScene({ id, dim = 0, still = false, time }: { id: SceneId; dim?: number; still?: boolean; time?: SkyTime }) {
-  const { sx, sy } = useParallax()
+export const NatureScene = memo(function NatureScene({ id, dim = 0, still: stillProp = false, time }: { id: SceneId; dim?: number; still?: boolean; time?: SkyTime }) {
+  const still = useCalm() || stillProp
+  const { sx, sy } = useParallax(!still)
   const s = SCENES[id]
   return (
     <div aria-hidden style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: s.sky[0] }}>
