@@ -34,3 +34,16 @@ describe('Grade 4 to 6 depth', () => {
     }
   })
 })
+
+// Pre-primary pools are smaller by design (a few pictures, numbers to 10 or 15), but each
+// level still needs plenty of different questions for daily practice.
+describe('Pre-primary depth', () => {
+  const subs = [findGrade('pp1'), findGrade('pp2')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+  it.each(subs.map((s) => [s.id]))('%s has enough different questions at every level', (id) => {
+    for (const level of [1, 2, 3, 4, 5] as Level[]) {
+      const seen = new Set<string>()
+      for (let seed = 1; seed <= 120; seed++) for (const q of buildQuiz(id, level, seed * 7919)) if (q.level === level) seen.add(signature(q))
+      expect(seen.size, `${id} level ${level}`).toBeGreaterThanOrEqual(10)
+    }
+  })
+})

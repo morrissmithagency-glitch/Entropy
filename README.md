@@ -1,7 +1,7 @@
 # CBC Helper
 
 Calm, nature-themed practice for Kenyan learners on the Competency-Based Curriculum (CBC/CBE).
-Grades 1 to 6 are live, with KPSEA practice papers for Grade 6; PP1, PP2 and Grades 7–9
+PP1 and PP2, and Grades 1 to 6 are live, with KPSEA practice papers for Grade 6; Grades 7–9
 show as "Coming soon".
 
 Learners pick a **world** (learning area) and walk a path **strand by strand**. Each
@@ -18,6 +18,15 @@ sub-strand is a stop with five levels that grow like a tree:
 Each quiz has 8 questions and opens with two warm-ups one level lower. Passing (5/8) unlocks
 the next level. When every stop in a strand reaches Acacia, the strand's **Baobab Challenge**
 unlocks: 10 mixed questions at levels 4–5.
+
+## What's in PP1 and PP2 (pre-primary)
+
+Five picture-led worlds per year: Counting Meadow / Number Hills (Mathematical Activities),
+Story Hut / Reading Tree (Language), Little Shamba / Village Trail (Environmental), Rainbow
+Garden / Music Meadow (Psychomotor and Creative) and Sunrise Hill / Shepherd's Valley
+(Religious Education): 79 sub-strands (37 and 42). Questions are read aloud and answered by
+tapping pictures, shapes, colours and numbers; every topic has a short picture lesson. See
+[`research/pre-primary-strands.md`](research/pre-primary-strands.md).
 
 ## What's in Grades 4, 5 and 6 (upper primary and KPSEA)
 

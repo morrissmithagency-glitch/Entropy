@@ -1,6 +1,7 @@
 import { GRADE1 } from './grade1'
 import { GRADE2 } from './grade2'
 import { GRADE4, GRADE5, GRADE6 } from './upper'
+import { PP1, PP2 } from './pre'
 import { GRADE3 } from './grade3'
 import type { Grade, GradeId, LearningArea, Strand, SubStrand } from './types'
 
@@ -9,12 +10,14 @@ export * from './types'
 export const LEVEL_NAMES = ['Seed', 'Sprout', 'Sapling', 'Acacia', 'Baobab'] as const
 
 export const GRADES: Grade[] = [
-  { id: 'g1', number: 1, label: 'Grade 1', areas: GRADE1 },
-  { id: 'g2', number: 2, label: 'Grade 2', areas: GRADE2 },
-  { id: 'g3', number: 3, label: 'Grade 3', areas: GRADE3 },
-  { id: 'g4', number: 4, label: 'Grade 4', areas: GRADE4 },
-  { id: 'g5', number: 5, label: 'Grade 5', areas: GRADE5 },
-  { id: 'g6', number: 6, label: 'Grade 6', areas: GRADE6 },
+  { id: 'pp1', number: 0, mark: 'PP1', label: 'Pre-Primary 1', areas: PP1 },
+  { id: 'pp2', number: 0, mark: 'PP2', label: 'Pre-Primary 2', areas: PP2 },
+  { id: 'g1', number: 1, mark: '1', label: 'Grade 1', areas: GRADE1 },
+  { id: 'g2', number: 2, mark: '2', label: 'Grade 2', areas: GRADE2 },
+  { id: 'g3', number: 3, mark: '3', label: 'Grade 3', areas: GRADE3 },
+  { id: 'g4', number: 4, mark: '4', label: 'Grade 4', areas: GRADE4 },
+  { id: 'g5', number: 5, mark: '5', label: 'Grade 5', areas: GRADE5 },
+  { id: 'g6', number: 6, mark: '6', label: 'Grade 6', areas: GRADE6 },
 ]
 
 export const ALL_AREAS: LearningArea[] = GRADES.flatMap((g) => g.areas)
@@ -47,4 +50,7 @@ export function findStrand(id: string): { area: LearningArea; strand: Strand } {
   throw new Error(`Unknown strand ${id}`)
 }
 
-export { topicOf, upperGrade } from './upper'
+export { upperGrade } from './upper'
+
+/** The topic a sub-strand shares across years: u5m-frac → um-frac, p2m-count → pm-count. */
+export const topicOf = (subId: string) => subId.replace(/^u[456]/, 'u').replace(/^p[12]/, 'p')

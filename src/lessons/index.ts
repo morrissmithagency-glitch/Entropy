@@ -4,6 +4,7 @@ import { CRE1_LESSONS, CREATIVE1_LESSONS, ENVIRONMENTAL1_LESSONS, KISWAHILI1_LES
 import { ENGLISH2_LESSONS, MATH2_LESSONS } from './grade2-math-english'
 import { CRE2_LESSONS, CREATIVE2_LESSONS, ENVIRONMENTAL2_LESSONS, KISWAHILI2_LESSONS } from './grade2-more'
 import { GRADE3_LESSONS } from './grade3'
+import { PREPRIMARY_LESSONS } from './preprimary'
 import { UPPER_ENGLISH_LESSONS, UPPER_KISWAHILI_LESSONS } from './upper-languages'
 import { UPPER_MATH_LESSONS } from './upper-math'
 import { UPPER_AGRICULTURE_LESSONS, UPPER_SCIENCE_LESSONS } from './upper-science'
@@ -30,6 +31,7 @@ export const LESSONS: Record<string, Lesson> = {
 
 /** Upper-primary lessons are written once per topic (um-frac) and shared by every grade that has it. */
 export const TOPIC_LESSONS: Record<string, Lesson> = {
+  ...PREPRIMARY_LESSONS,
   ...UPPER_MATH_LESSONS,
   ...UPPER_ENGLISH_LESSONS,
   ...UPPER_KISWAHILI_LESSONS,

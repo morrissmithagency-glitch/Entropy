@@ -14,7 +14,7 @@ import { areaStars, useProgress } from '../state/progress'
 import { activePlan, useSubscription } from '../state/subscription'
 import './home.css'
 
-const SOON = ['PP1', 'PP2', '7', '8', '9']
+const SOON = ['7', '8', '9']
 
 function greeting(): string {
   const h = new Date().getHours()
@@ -61,7 +61,7 @@ export function Home() {
           learn today?
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, delay: 0.7 }}>
-          Practice for Kenya&rsquo;s curriculum, one strand at a time, at the pace of a tortoise.
+          <em className="home-methali">Haba na haba hujaza kibaba.</em> Little by little, strand by strand, every child grows into something bright.
         </motion.p>
 
         <div className="grade-cards">
@@ -79,7 +79,7 @@ export function Home() {
                     go({ name: 'worlds', grade: g.id })
                   }}
                 >
-                  <span className="display gc-num">{g.number}</span>
+                  <span className={`display gc-num${g.mark.length > 1 ? ' gc-num-pp' : ''}`}>{g.mark}</span>
                   <span className="gc-text">
                     <span className="gc-title">{g.label}</span>
                     <span className="gc-sub">

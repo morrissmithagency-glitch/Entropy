@@ -23,6 +23,7 @@ import { UPPER_SCIENCE_BANKS, UPPER_SCIENCE_GENERATORS } from './banks/upper-sci
 import { UPPER_AGRICULTURE_BANKS, UPPER_AGRICULTURE_GENERATORS } from './banks/upper-agriculture'
 import { UPPER_SOCIAL_BANKS, UPPER_SOCIAL_GENERATORS } from './banks/upper-social'
 import { UPPER_ARTS_CRE_BANKS, UPPER_ARTS_CRE_GENERATORS } from './banks/upper-arts-cre'
+import { preprimaryOwn } from './generators/preprimary'
 import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
 import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
 import { uid } from './helpers'
@@ -63,6 +64,43 @@ Object.assign(BANKS, upperEnglishBanks(), upperKiswahiliBanks(), UPPER_SCIENCE_B
 Object.assign(GENERATORS, GRADE1_ENV_GENERATORS, { 'e-polite': G1.polite1, 'k-salamu': G1.salamu2 })
 BANKS['e-comprehension'] = [...BANKS['e-comprehension'], ...G1.COMP1_MORE]
 BANKS['k-ufahamu'] = [...BANKS['k-ufahamu'], ...G1.UFAHAMU1_MORE]
+
+// Pre-primary. Some topics are the gentlest Grade 1 questions (picture choices with three
+// options), re-levelled so each pre-primary year climbs slowly; the rest have their own makers.
+const PP_REUSE: Record<string, string> = {
+  'e-greet': 'e-polite',
+  'e-listen': 'e-words',
+  'e-sounds': 'e-sounds',
+  'e-lines': 'm-lines',
+  'v-family': 'v-home',
+  'v-school': 'v-school',
+  'v-weather': 'v-weather',
+  'v-animals': 'v-animals',
+  'v-plants': 'v-plants',
+  'v-hygiene': 'v-body',
+  'c-picture': 'c-picture',
+  'c-music': 'c-instruments',
+  'c-movement': 'c-jump',
+  'c-games': 'c-games',
+  'r-creation': 'r-creation',
+  'r-bible': 'r-bible',
+  'r-jesus': 'r-jesus',
+  'r-values': 'r-living',
+}
+// Grade 1 level used at each pre-primary level, for PP1 and PP2.
+const PP_LEVELS: Record<1 | 2, Level[]> = { 1: [1, 1, 1, 2, 2], 2: [1, 1, 2, 2, 3] }
+for (const year of [1, 2] as const) {
+  Object.assign(GENERATORS, preprimaryOwn(year))
+  const map = PP_LEVELS[year]
+  for (const [topic, src] of Object.entries(PP_REUSE)) {
+    const id = `p${year}${topic}`
+    const gen = GENERATORS[src] as Generator | undefined
+    if (gen) GENERATORS[id] = (rng, level) => ({ ...gen(rng, map[level - 1]), level })
+    const bank = BANKS[src] as BankQuestion[] | undefined
+    // A bank question joins at the first pre-primary level that uses its Grade 1 level.
+    if (bank) BANKS[id] = bank.filter((q) => map.includes(q.level)).map((q) => ({ ...q, level: (map.indexOf(q.level) + 1) as Level }))
+  }
+}
 
 export function hasSource(subId: string): boolean {
   return subId in GENERATORS || subId in BANKS

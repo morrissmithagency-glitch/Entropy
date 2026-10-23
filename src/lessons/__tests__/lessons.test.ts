@@ -24,14 +24,14 @@ describe('Grade 1 to 3 lessons', () => {
   })
 })
 
-describe('Grade 4 to 6 lessons', () => {
-  const subs = [findGrade('g4'), findGrade('g5'), findGrade('g6')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+describe('Pre-primary and Grade 4 to 6 lessons', () => {
+  const subs = [findGrade('pp1'), findGrade('pp2'), findGrade('g4'), findGrade('g5'), findGrade('g6')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
 
   it.each(subs.map((s) => [s.id]))('%s has a full lesson', (id) => {
     const lesson = lessonFor(id)
     expect(lesson, `missing lesson for ${topicOf(id)}`).toBeDefined()
     expect(lesson!.intro.length).toBeGreaterThan(20)
-    expect(lesson!.steps.length).toBeGreaterThanOrEqual(3)
+    expect(lesson!.steps.length).toBeGreaterThanOrEqual(id.startsWith('p') ? 2 : 3)
     expect(lesson!.remember.length).toBeGreaterThan(15)
     for (const step of lesson!.steps) expect(step.text.length).toBeGreaterThan(15)
   })
