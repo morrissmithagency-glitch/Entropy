@@ -16,6 +16,7 @@ export const SCENE_FOR: Record<AreaKind, SceneId> = {
   science: 'lake-dusk',
   agriculture: 'tea-hills',
   social: 'savanna-dawn',
+  pretech: 'forest-mist',
 }
 
 const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }

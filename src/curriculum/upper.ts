@@ -10,10 +10,10 @@ import type { AreaKind, LearningArea, SubStrand } from './types'
 type Sub = [topic: string, title: string, blurb: string]
 type StrandSpec = [title: string, subs: Sub[]]
 
-const LETTER: Record<AreaKind, string> = { math: 'm', english: 'e', kiswahili: 'k', science: 's', agriculture: 'a', social: 'o', creative: 'c', cre: 'r', environmental: 'v' }
+const LETTER: Partial<Record<AreaKind, string>> = { math: 'm', english: 'e', kiswahili: 'k', science: 's', agriculture: 'a', social: 'o', creative: 'c', cre: 'r', environmental: 'v' }
 
 function area(grade: 4 | 5 | 6, kind: AreaKind, title: string, world: string, tagline: string, strands: StrandSpec[]): LearningArea {
-  const l = LETTER[kind]
+  const l = LETTER[kind]!
   return {
     id: `g${grade}-${kind}`,
     kind,

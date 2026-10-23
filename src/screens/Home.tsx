@@ -14,8 +14,6 @@ import { areaStars, useProgress } from '../state/progress'
 import { activePlan, useSubscription } from '../state/subscription'
 import './home.css'
 
-const SOON = ['7', '8', '9']
-
 function greeting(): string {
   const h = new Date().getHours()
   if (h < 12) return 'Habari ya asubuhi'
@@ -108,14 +106,6 @@ export function Home() {
           For parents: see how your child is growing
         </motion.button>
 
-        <motion.div className="soon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }}>
-          <span className="eyebrow">Coming soon</span>
-          <span className="soon-list">
-            {SOON.map((s) => (
-              <span key={s}>{s.startsWith('PP') ? s : `Grade ${s}`}</span>
-            ))}
-          </span>
-        </motion.div>
       </section>
 
       <KobeWander />

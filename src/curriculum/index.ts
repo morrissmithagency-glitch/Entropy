@@ -2,6 +2,7 @@ import { GRADE1 } from './grade1'
 import { GRADE2 } from './grade2'
 import { GRADE4, GRADE5, GRADE6 } from './upper'
 import { PP1, PP2 } from './pre'
+import { GRADE7, GRADE8, GRADE9 } from './jss'
 import { GRADE3 } from './grade3'
 import type { Grade, GradeId, LearningArea, Strand, SubStrand } from './types'
 
@@ -18,6 +19,9 @@ export const GRADES: Grade[] = [
   { id: 'g4', number: 4, mark: '4', label: 'Grade 4', areas: GRADE4 },
   { id: 'g5', number: 5, mark: '5', label: 'Grade 5', areas: GRADE5 },
   { id: 'g6', number: 6, mark: '6', label: 'Grade 6', areas: GRADE6 },
+  { id: 'g7', number: 7, mark: '7', label: 'Grade 7', areas: GRADE7 },
+  { id: 'g8', number: 8, mark: '8', label: 'Grade 8', areas: GRADE8 },
+  { id: 'g9', number: 9, mark: '9', label: 'Grade 9', areas: GRADE9 },
 ]
 
 export const ALL_AREAS: LearningArea[] = GRADES.flatMap((g) => g.areas)
@@ -53,4 +57,4 @@ export function findStrand(id: string): { area: LearningArea; strand: Strand } {
 export { upperGrade } from './upper'
 
 /** The topic a sub-strand shares across years: u5m-frac → um-frac, p2m-count → pm-count. */
-export const topicOf = (subId: string) => subId.replace(/^u[456]/, 'u').replace(/^p[12]/, 'p')
+export const topicOf = (subId: string) => subId.replace(/^u[456]/, 'u').replace(/^p[12]/, 'p').replace(/^j[789]/, 'j')
