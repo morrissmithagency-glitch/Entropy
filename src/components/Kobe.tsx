@@ -33,9 +33,19 @@ interface KobeProps {
   nibbling?: boolean
   /** Told when a child pokes Kobe, so whatever moves Kobe can pause. */
   onPoke?: () => void
+  /** Look in a fixed direction (each from −1 to 1) instead of following the pointer. */
+  gaze?: { x: number; y: number }
+  /** Eyes closed, head resting: a nap. */
+  asleep?: boolean
+  /** A big sleepy yawn. */
+  yawning?: boolean
+  /** Holds up a tiny Kenyan flag (national days). */
+  flag?: boolean
+  /** Something to say from outside; a new key shows it again. */
+  line?: { text: string; key: number }
 }
 
-export function Kobe({ mood = 'idle', size = 220, className, interactive = true, flip = false, walking = false, nibbling = false, onPoke }: KobeProps) {
+export function Kobe({ mood = 'idle', size = 220, className, interactive = true, flip = false, walking = false, nibbling = false, onPoke, gaze, asleep = false, yawning = false, flag = false, line: told }: KobeProps) {
   const ref = useRef<SVGSVGElement>(null)
   const [reaction, setReaction] = useState<Reaction | null>(null)
   const [line, setLine] = useState<string | null>(null)
@@ -98,6 +108,13 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
     }
   }, [mood, body, arm])
 
+  useEffect(() => {
+    if (!told) return
+    setLine(told.text)
+    const t = setTimeout(() => setLine(null), Math.max(2200, told.text.length * 110))
+    return () => clearTimeout(t)
+  }, [told])
+
   const say = (r: Reaction, ms: number) => {
     const options = LINES[r]
     setReaction(r)
@@ -150,7 +167,8 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
   }
 
   const shownMood: Mood = reaction === 'giggle' || reaction === 'tickle' ? 'happy' : reaction === 'grumpy' ? 'oops' : reaction === 'peek' ? 'think' : mood
-  const look2 = shownMood === 'think' ? { x: 0.3, y: -0.9 } : look
+  const look2 = gaze ?? (shownMood === 'think' ? { x: 0.3, y: -0.9 } : look)
+  const eyesShut = asleep || yawning
   const happyEyes = shownMood === 'happy' || shownMood === 'cheer'
   const px = look2.x * 3.6
   const py = look2.y * 3.2
@@ -179,7 +197,7 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
       </defs>
       {/* breathing wrapper */}
       <g transform={flip ? 'translate(230 0) scale(-1 1)' : undefined}>
-      <motion.g animate={{ scaleY: [1, 1.018, 1] }} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }} style={{ originY: 1 }}>
+      <motion.g animate={{ scaleY: asleep ? [1, 1.03, 1] : [1, 1.018, 1] }} transition={{ duration: asleep ? 4.6 : 3.2, repeat: Infinity, ease: 'easeInOut' }} style={{ originY: 1 }}>
         <ellipse cx="112" cy="166" rx="88" ry="10" fill={INK} opacity="0.16" />
         <motion.g animate={body}>
           {/* back legs */}
@@ -201,14 +219,26 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
           {/* front legs */}
           <motion.g animate={{ y: tucked ? -26 : walking ? [0, 0, -6, 0] : 0 }} transition={tucked || !walking ? { duration: 0.25 } : { duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}>
             <path d="M60 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
+            {flag && (
+              <g>
+                <path d="M74 132L58 52" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+                <motion.g animate={{ skewY: [0, -6, 0, 5, 0] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} style={{ originX: 1, originY: 0.5 }}>
+                  <rect x="20" y="50" width="38" height="26" rx="2" fill="#fff" stroke={INK} strokeWidth="2.4" />
+                  <rect x="21.2" y="51.2" width="35.6" height="7" fill="#1a1a1a" />
+                  <rect x="21.2" y="60" width="35.6" height="6" fill="#bb1f2b" />
+                  <rect x="21.2" y="67.8" width="35.6" height="7" fill="#1f7a3a" />
+                  <ellipse cx="39" cy="63" rx="4" ry="8" fill="#bb1f2b" stroke="#fff" strokeWidth="1" />
+                </motion.g>
+              </g>
+            )}
             <motion.g animate={arm} style={{ originX: 0.5, originY: 0.05 }}>
               <path d="M160 126c-4 14-2 26 6 32h20c4-10 4-22 0-32z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
             </motion.g>
           </motion.g>
           {/* neck + head (pulled into the shell when Kobe hides) */}
           <motion.g
-            animate={tucked ? { x: -34, y: 18, scale: 0.4, opacity: 0, rotate: 0 } : nibbling ? { x: [0, 4, 4, 0], y: [0, 16, 14, 0], scale: 1, opacity: 1, rotate: [0, 14, 12, 0] } : { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0 }}
-            transition={tucked ? { duration: 0.22, ease: 'easeOut' } : nibbling ? { duration: 1.4, repeat: Infinity, repeatDelay: 0.3, ease: 'easeInOut' } : { duration: 0.5, ease: 'easeOut' }}
+            animate={tucked ? { x: -34, y: 18, scale: 0.4, opacity: 0, rotate: 0 } : asleep ? { x: -4, y: 12, scale: 1, opacity: 1, rotate: 10 } : yawning ? { x: 0, y: -4, scale: 1, opacity: 1, rotate: -8 } : shownMood === 'think' && !nibbling ? { x: 0, y: 2, scale: 1, opacity: 1, rotate: -9 } : nibbling ? { x: [0, 4, 4, 0], y: [0, 16, 14, 0], scale: 1, opacity: 1, rotate: [0, 14, 12, 0] } : { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0 }}
+            transition={tucked ? { duration: 0.22, ease: 'easeOut' } : asleep ? { duration: 1.6, ease: 'easeInOut' } : nibbling ? { duration: 1.4, repeat: Infinity, repeatDelay: 0.3, ease: 'easeInOut' } : { duration: 0.5, ease: 'easeOut' }}
             style={{ originX: 0, originY: 1 }}
           >
           <path d="M172 104c4-14 12-22 20-24l10 26c-8 8-20 10-30-2z" fill={SKIN} stroke={INK} strokeWidth="3" strokeLinejoin="round" />
@@ -224,7 +254,9 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
             {/* eyes */}
             {[178, 204].map((cx, i) => (
               <g key={cx}>
-                {happyEyes ? (
+                {eyesShut ? (
+                  <path d={`M${cx - 8} ${74}q8 ${yawning ? -5 : 6} 16 0`} fill="none" stroke={INK} strokeWidth="3.4" strokeLinecap="round" />
+                ) : happyEyes ? (
                   <path d={`M${cx - 8} ${76}q8 -9 16 0`} fill="none" stroke={INK} strokeWidth="3.4" strokeLinecap="round" />
                 ) : (
                   <>
@@ -237,7 +269,7 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
                     )}
                   </>
                 )}
-                {(shownMood === 'oops' || shownMood === 'think') && (
+                {!eyesShut && (shownMood === 'oops' || shownMood === 'think') && (
                   // Worried brows lift at the inner ends; thinking raises one brow.
                   <path
                     d={shownMood === 'oops' ? (i === 0 ? `M${cx - 8} 61l13 -5` : `M${cx + 8} 61l-13 -5`) : i === 0 ? `M${cx - 8} 59l14 -1` : `M${cx + 8} 55l-14 1`}
@@ -252,7 +284,11 @@ export function Kobe({ mood = 'idle', size = 220, className, interactive = true,
             <ellipse cx="172" cy="88" rx="5" ry="3" fill="#e86a8a" opacity="0.55" />
             <ellipse cx="212" cy="88" rx="5" ry="3" fill="#e86a8a" opacity="0.55" />
             {/* mouth */}
-            {shownMood === 'think' ? (
+            {yawning ? (
+              <motion.ellipse cx="192" cy="93" rx="7" fill="#9c3b27" stroke={INK} strokeWidth="2.8" initial={{ ry: 2 }} animate={{ ry: [2, 9, 9, 2] }} transition={{ duration: 1.8, times: [0, 0.3, 0.7, 1] }} />
+            ) : asleep ? (
+              <path d="M187 91q5 3 10 0" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round" />
+            ) : shownMood === 'think' ? (
               <circle cx="192" cy="91" r="3.4" fill={INK} />
             ) : shownMood === 'oops' ? (
               <path d="M184 92q8 4 16 0" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round" />

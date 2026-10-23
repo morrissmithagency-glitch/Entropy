@@ -415,3 +415,8 @@
     font-size: 26px;
   }
 }
+
+.progress.vine {
+  display: block;
+  height: 30px;
+}

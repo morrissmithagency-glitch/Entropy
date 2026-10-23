@@ -290,3 +290,18 @@
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.04);
 }
+
+.j-body {
+  position: relative;
+}
+
+.j-print {
+  position: absolute;
+  z-index: 3;
+  width: 8px;
+  height: 12px;
+  border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(circle at 50% 40%, #fff6d8 0 30%, rgba(241, 207, 135, 0.85) 55%, rgba(241, 207, 135, 0) 75%);
+  box-shadow: 0 0 10px 3px rgba(241, 207, 135, 0.45);
+  pointer-events: none;
+}

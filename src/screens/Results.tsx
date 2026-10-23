@@ -1,11 +1,12 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useNav, type QuizTarget } from '../App'
 import { sfx, speak } from '../audio/sfx'
+import { GrowTree } from '../components/GrowTree'
 import { Kobe } from '../components/Kobe'
 import { CountUp } from '../components/motion'
 import { NatureScene } from '../components/NatureScene'
-import { LevelGlyph, SCENE_FOR, Star } from '../components/ui'
+import { SCENE_FOR, Star } from '../components/ui'
 import { findArea, findStrand, findSubStrand, LEVEL_NAMES } from '../curriculum'
 import { findPaper } from '../engine/kpsea'
 import { starsFor } from '../engine/quiz'
@@ -68,6 +69,62 @@ function Lights() {
   return <canvas ref={ref} aria-hidden style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }} />
 }
 
+/** A firefly rises from Kobe and settles into star slot `i`, which lights as it lands. */
+function StarFly({ i, delay }: { i: number; delay: number }) {
+  const sx = 150 - i * 55
+  return (
+    <motion.span
+      className="res-fly"
+      aria-hidden
+      initial={{ x: sx, y: 320, opacity: 0, scale: 0.6 }}
+      animate={{ x: [sx, sx * 0.35 + (i - 1) * 30, 0], y: [320, 120, 0], opacity: [0, 1, 1, 0], scale: [0.6, 1, 1.4, 0.4] }}
+      transition={{ delay, duration: 0.85, ease: 'easeInOut', times: [0, 0.55, 1], opacity: { delay, duration: 0.9, times: [0, 0.15, 0.85, 1] } }}
+    />
+  )
+}
+
+/** After a Baobab Challenge: the sky warms, a sun rises and birds lift off. */
+function Sunrise() {
+  const reduce = useReducedMotion()
+  if (reduce) return <div className="sunrise-warm" style={{ opacity: 0.5 }} aria-hidden />
+  const birds = [
+    [-30, 0, 0],
+    [-10, 30, 0.25],
+    [10, -20, 0.5],
+    [30, 18, 0.7],
+    [48, -6, 0.95],
+  ]
+  return (
+    <div className="sunrise" aria-hidden>
+      <motion.div className="sunrise-warm" initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ duration: 5, ease: 'easeOut' }} />
+      <motion.div className="sunrise-sun" initial={{ y: '40vh', opacity: 0 }} animate={{ y: '0vh', opacity: 1 }} transition={{ duration: 6, ease: [0.22, 1, 0.36, 1] }} />
+      {birds.map(([x, y, d], i) => (
+        <motion.svg
+          key={i}
+          className="sunrise-bird"
+          viewBox="0 0 24 10"
+          width="22"
+          height="10"
+          initial={{ x: `${x}vw`, y: `${30 + y / 4}vh`, opacity: 0 }}
+          animate={{ x: `${x + 70}vw`, y: `${-20 + y / 4}vh`, opacity: [0, 0.85, 0.85, 0] }}
+          transition={{ delay: 1.6 + d, duration: 9, ease: 'easeIn' }}
+        >
+          <motion.path
+            d="M1 8q5-7 11 0q6-7 11 0"
+            fill="none"
+            stroke="#2a2240"
+            strokeWidth="2"
+            strokeLinecap="round"
+            animate={{ scaleY: [1, -0.5, 1] }}
+            transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ originY: 0.8 }}
+          />
+        </motion.svg>
+      ))}
+    </div>
+  )
+}
+
 export function Results({ target, correct, total }: { target: QuizTarget; correct: number; total: number }) {
   const go = useNav()
   const area = findArea(target.area)
@@ -93,6 +150,8 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
       ? ([`${percent}%`, percent >= 75 ? 'Exam-ready on this paper. Keep it sharp with another one.' : percent >= 50 ? 'A solid paper. The questions you missed are waiting in your mistakes review.' : 'Every paper teaches. Your missed questions are saved for review, and the lessons will help.'] as const)
       : MESSAGES[stars]
   const canGrow = !isChallenge && !isReview && !isKpsea && stars >= 1 && target.level < 5
+  const topped = !isChallenge && !isReview && !isKpsea && stars >= 1 && target.level === 5
+  const sunrise = isChallenge && stars >= 1
   const lesson = !isChallenge && !isReview && !isKpsea && target.sub ? lessonFor(target.sub) : undefined
   const nextName = LEVEL_NAMES[Math.min(4, target.level)]
   const C = 2 * Math.PI * 76
@@ -103,7 +162,16 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
     if (isReview) return
     if (isKpsea) recordKpsea(target.kpsea!, percent)
     else if (isChallenge) recordChallenge(target.strand!, stars)
-    else recordQuiz(target.sub!, target.level, stars)
+    else {
+      recordQuiz(target.sub!, target.level, stars)
+      // The map lights a trail of footprints from this stop to the next one.
+      if (stars >= 1)
+        try {
+          sessionStorage.setItem('cbc:lit', target.sub!)
+        } catch {
+          /* private mode */
+        }
+    }
   }, [isChallenge, isReview, isKpsea, percent, stars, target])
 
   useEffect(() => {
@@ -114,7 +182,7 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
         setTimeout(() => {
           setShown(i + 1)
           sfx.star(i)
-        }, 1700 + i * 450),
+        }, 1850 + i * 450),
       )
     timers.push(setTimeout(() => void speak(`${headline}. ${correct} out of ${total}.`, area.kind === 'kiswahili' ? 'sw' : 'en'), 1900 + stars * 450))
     return () => timers.forEach(clearTimeout)
@@ -138,6 +206,7 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
   return (
     <main className="results">
       <NatureScene id={SCENE_FOR[area.kind]} dim={0.6} />
+      {sunrise && <Sunrise />}
       {stars > 0 && <Lights />}
       <section className="res gutter">
         <motion.div className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 1 }}>
@@ -174,7 +243,9 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
         <div className="res-stars">
           {[0, 1, 2].map((i) => (
             <span key={i} className={`s${i}`}>
+              {i < stars && <StarFly i={i} delay={1.05 + i * 0.45} />}
               <Star filled={i < shown} size={i === 1 ? 46 : 36} />
+              {i < shown && <motion.span className="res-burst" aria-hidden initial={{ scale: 0.3, opacity: 0.9 }} animate={{ scale: 2.2, opacity: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }} />}
             </span>
           ))}
         </div>
@@ -188,11 +259,21 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
 
         {canGrow && (
           <motion.div className="res-grow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4, duration: 1 }}>
-            <LevelGlyph level={target.level} size={30} />
-            <span className="res-line" />
-            <LevelGlyph level={target.level + 1} size={38} draw />
+            <span className="res-tree">
+              <GrowTree from={target.level} to={target.level + 1} size={78} delay={0.5} />
+            </span>
             <span>
               You grew to <b>{nextName}</b>
+            </span>
+          </motion.div>
+        )}
+        {topped && (
+          <motion.div className="res-grow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4, duration: 1 }}>
+            <span className="res-tree">
+              <GrowTree from={4} to={5} size={78} delay={0.5} />
+            </span>
+            <span>
+              A full <b>Baobab</b>: the top of the tree
             </span>
           </motion.div>
         )}
@@ -233,7 +314,7 @@ export function Results({ target, correct, total }: { target: QuizTarget; correc
         </motion.div>
       </section>
       <div className="res-kobe" aria-hidden>
-        <Kobe mood={stars >= 1 ? 'cheer' : 'happy'} size={120} />
+        <Kobe mood={stars >= 1 ? 'cheer' : 'happy'} size={120} gaze={sunrise ? { x: -0.5, y: -1 } : undefined} />
       </div>
     </main>
   )

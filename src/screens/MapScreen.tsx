@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useNav } from '../App'
 import { sfx } from '../audio/sfx'
+import { curtainCovering } from '../components/Curtain'
 import { NatureScene } from '../components/NatureScene'
 import { Sheet } from '../components/Sheet'
 import { Breath, Chip, Icon, LevelGlyph, SCENE_FOR, SettingsButtons, Stars, TopBar } from '../components/ui'
@@ -53,6 +54,66 @@ function Ring({ reached, size = 56 }: { reached: number; size?: number }) {
   )
 }
 
+interface Print {
+  id: number
+  x: number
+  y: number
+  rot: number
+  delay: number
+}
+
+/** Glowing footprints that walk from the stop just finished to the one up next. */
+function useTrail(body: React.RefObject<HTMLDivElement | null>, next: React.RefObject<HTMLLIElement | null>) {
+  const [prints, setPrints] = useState<Print[]>([])
+  useEffect(() => {
+    let lit: string | null = null
+    try {
+      // Removed only when the walk starts: React may run this effect twice in development.
+      lit = sessionStorage.getItem('cbc:lit')
+    } catch {
+      /* private mode */
+    }
+    if (!lit || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    let t: ReturnType<typeof setTimeout>
+    // Wait for the page-turn cloth to lift, so the walk is seen.
+    const wait = () => (curtainCovering() ? (t = setTimeout(wait, 200)) : (t = setTimeout(walk, 500)))
+    const walk = () => {
+      try {
+        sessionStorage.removeItem('cbc:lit')
+      } catch {
+        /* private mode */
+      }
+      const b = body.current
+      const from = b?.querySelector(`[data-sub="${CSS.escape(lit!)}"] .node`)
+      const to = next.current?.querySelector('.node')
+      if (!b || !from || !to || from === to) return
+      const box = b.getBoundingClientRect()
+      const a = from.getBoundingClientRect()
+      const c = to.getBoundingClientRect()
+      const ax = a.left + a.width / 2 - box.left
+      const ay = a.bottom - box.top + 4
+      const cx = c.left + c.width / 2 - box.left
+      const cy = c.top - box.top - 4
+      const len = Math.hypot(cx - ax, cy - ay)
+      if (len < 10) return
+      const n = Math.min(40, Math.max(3, Math.round(len / 20)))
+      const rot = (Math.atan2(cy - ay, cx - ax) * 180) / Math.PI + 90
+      const nx = -(cy - ay) / len
+      const ny = (cx - ax) / len
+      setPrints(
+        Array.from({ length: n }, (_, i) => {
+          const k = (i + 0.5) / n
+          const side = i % 2 ? 5 : -5
+          return { id: i, x: ax + (cx - ax) * k + nx * side, y: ay + (cy - ay) * k + ny * side, rot, delay: i * Math.min(0.16, 3 / n) }
+        }),
+      )
+    }
+    t = setTimeout(wait, 400)
+    return () => clearTimeout(t)
+  }, [body, next])
+  return prints
+}
+
 export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string }) {
   const go = useNav()
   const p = useProgress()
@@ -68,6 +129,8 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
     return null
   })
   const nextRef = useRef<HTMLLIElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const prints = useTrail(bodyRef, nextRef)
 
   useEffect(() => setLastArea(areaId), [areaId])
   useEffect(() => {
@@ -101,7 +164,18 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
         </div>
       </section>
 
-      <div className="j-body gutter">
+      <div className="j-body gutter" ref={bodyRef}>
+        {prints.map((f) => (
+          <motion.span
+            key={f.id}
+            className="j-print"
+            aria-hidden
+            style={{ left: f.x - 4, top: f.y - 6, rotate: f.rot }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: [0, 1, 0.8, 0], scale: [0.5, 1, 1, 1] }}
+            transition={{ delay: f.delay, duration: 3.2, times: [0, 0.1, 0.5, 1], ease: 'easeOut' }}
+          />
+        ))}
         {area.strands.map((strand) => {
           const chUnlocked = challengeUnlocked(p, strand.id)
           const chStars = p.challenge[strand.id] ?? 0
@@ -128,6 +202,7 @@ export function MapScreen({ area: areaId, open }: { area: AreaId; open?: string 
                   return (
                     <motion.li
                       key={sub.id}
+                      data-sub={sub.id}
                       ref={isNext ? nextRef : undefined}
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}

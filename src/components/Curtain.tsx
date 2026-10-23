@@ -123,6 +123,11 @@ type Run = (swap: () => void) => Promise<void>
 const CurtainContext = createContext<Run>(async (swap) => swap())
 export const useCurtain = () => useContext(CurtainContext)
 
+/** True while the cloth covers the screen. Effects that should be seen wait for it. */
+let covering = false
+export const curtainCovering = () => covering
+
+
 const COVER_MS = 1300
 const REVEAL_MS = 1400
 
@@ -214,6 +219,7 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
     async (swap) => {
       if (busy.current) return
       busy.current = true
+      covering = true
       setActive(true)
       if (mode === 'fade') {
         await new Promise((r) => setTimeout(r, 160))
@@ -233,6 +239,7 @@ export function CurtainProvider({ children }: { children: ReactNode }) {
       }
       setActive(false)
       busy.current = false
+      covering = false
     },
     [animate, draw, mode],
   )

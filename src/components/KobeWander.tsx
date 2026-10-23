@@ -1,6 +1,8 @@
 // Kobe's walk along the bottom of the home page. Now and then he ambles to a new patch and
 // nibbles the grass; sometimes a firefly appears and he chases it to the other side. Each
 // step leaves a soft glowing footprint that fades behind him. Poking Kobe pauses the walk.
+// He keeps the clock too: a flag on national days, yawns late at night, and a nap (with
+// floating z's) when nobody has touched the page for a while.
 import { motion, useMotionValue } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { Kobe } from './Kobe'
@@ -13,6 +15,24 @@ interface Print {
 // Feet in Kobe's drawing (viewBox 230 × 180), facing right: a back foot and a front foot.
 const FEET = [62, 170]
 const FOOT_Y = 160
+const NAP_AFTER = 40000
+
+/** Kenya's national days (month is 1–12). */
+const DAYS: [number, number, string][] = [
+  [1, 1, 'Happy New Year!'],
+  [6, 1, 'Happy Madaraka Day!'],
+  [10, 20, 'Happy Mashujaa Day!'],
+  [12, 12, 'Happy Jamhuri Day!'],
+]
+const holiday = () => {
+  const d = new Date()
+  return DAYS.find(([m, day]) => d.getMonth() + 1 === m && d.getDate() === day)?.[2]
+}
+const lateNight = () => {
+  const h = new Date().getHours()
+  return h >= 21 || h < 5
+}
+const WAKE = ['Oh! Hello!', 'I was resting my eyes.', 'Jambo again!']
 
 export function KobeWander() {
   const box = useRef<HTMLDivElement>(null)
@@ -25,6 +45,69 @@ export function KobeWander() {
   const [fly, setFly] = useState<{ x: number; leaving: boolean } | null>(null)
   const paused = useRef(false)
   const resume = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const [line, setLine] = useState<{ text: string; key: number }>()
+  const [asleep, setAsleep] = useState(false)
+  const [yawning, setYawning] = useState(false)
+  const [flag] = useState(() => !!holiday())
+  const sleeping = useRef(false)
+
+  const talk = (text: string) => setLine({ text, key: Date.now() })
+
+  // Others (the shooting star) can ask Kobe to speak.
+  useEffect(() => {
+    const on = (e: Event) => talk(String((e as CustomEvent).detail))
+    window.addEventListener('kobe:say', on)
+    return () => window.removeEventListener('kobe:say', on)
+  }, [])
+
+  // A greeting on national days; sleepy yawns late at night.
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = []
+    const day = holiday()
+    if (day) timers.push(setTimeout(() => talk(day), 2500))
+    if (lateNight()) {
+      const yawn = (first: boolean) => {
+        if (!sleeping.current) {
+          setYawning(true)
+          if (first) talk('Yaaawn…')
+          timers.push(setTimeout(() => setYawning(false), 1900))
+        }
+        timers.push(setTimeout(() => yawn(false), 22000 + Math.random() * 16000))
+      }
+      timers.push(setTimeout(() => yawn(true), day ? 9000 : 5000))
+    }
+    return () => timers.forEach(clearTimeout)
+  }, [])
+
+  // Nap when the page has been left alone; wake gently on any touch.
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>
+    const nap = () => {
+      sleeping.current = true
+      paused.current = true
+      setNibbling(false)
+      setYawning(false)
+      setAsleep(true)
+    }
+    const stir = () => {
+      clearTimeout(t)
+      if (sleeping.current) {
+        sleeping.current = false
+        setAsleep(false)
+        talk(WAKE[Math.floor(Math.random() * WAKE.length)])
+        clearTimeout(resume.current)
+        resume.current = setTimeout(() => (paused.current = false), 3500)
+      }
+      t = setTimeout(nap, NAP_AFTER)
+    }
+    const events = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'] as const
+    events.forEach((ev) => window.addEventListener(ev, stir, { passive: true }))
+    t = setTimeout(nap, NAP_AFTER)
+    return () => {
+      clearTimeout(t)
+      events.forEach((ev) => window.removeEventListener(ev, stir))
+    }
+  }, [])
 
   useEffect(() => {
     const onResize = () => setSize(window.innerWidth < 760 ? 104 : 130)
@@ -163,7 +246,21 @@ export function KobeWander() {
         />
       )}
       <motion.div className="kw-kobe" style={{ x }}>
-        <Kobe size={size} flip={flip} walking={walking} nibbling={nibbling} onPoke={onPoke} />
+        <Kobe size={size} flip={flip} walking={walking && !asleep} nibbling={nibbling && !asleep} onPoke={onPoke} asleep={asleep} yawning={yawning} flag={flag} line={line} />
+        {asleep &&
+          [0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              className="kw-z"
+              aria-hidden
+              style={{ left: flip ? size * 0.12 : size * 0.78, fontSize: 13 + i * 4 }}
+              initial={{ opacity: 0, y: 0, x: 0 }}
+              animate={{ opacity: [0, 0.9, 0], y: -60, x: flip ? -18 : 18 }}
+              transition={{ duration: 3.6, delay: i * 1.2, repeat: Infinity, ease: 'easeOut' }}
+            >
+              z
+            </motion.span>
+          ))}
       </motion.div>
     </div>
   )

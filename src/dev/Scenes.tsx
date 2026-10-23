@@ -1,7 +1,7 @@
 // Dev-only: every landscape side by side (?scenes).
 import { NatureScene, type SceneId } from '../components/NatureScene'
 
-const IDS: SceneId[] = ['lake-dusk', 'savanna-dawn', 'forest-mist', 'tea-hills', 'coast-sunset', 'flamingo-lake', 'golden-hills']
+const IDS: SceneId[] = ['lake-dusk', 'savanna-dawn', 'forest-mist', 'tea-hills', 'coast-sunset', 'flamingo-lake', 'golden-hills', 'rift-steam']
 
 export function Scenes() {
   return (

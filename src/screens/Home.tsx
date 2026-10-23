@@ -5,7 +5,8 @@ import { sfx } from '../audio/sfx'
 import { GlassPane } from '../components/Glass'
 import { KenyaFlag } from '../components/KenyaFlag'
 import { KobeWander } from '../components/KobeWander'
-import { NatureScene } from '../components/NatureScene'
+import { NatureScene, type SkyTime } from '../components/NatureScene'
+import { ShootingStar } from '../components/ShootingStar'
 import { ReviewCard } from '../components/ReviewCard'
 import { CountUp } from '../components/motion'
 import { Icon, SettingsButtons, TopBar } from '../components/ui'
@@ -22,13 +23,23 @@ function greeting(): string {
   return 'Habari za usiku'
 }
 
+/** The home sky follows the clock: dawn, day, golden hour, then stars. */
+function skyTime(): SkyTime {
+  const h = new Date().getHours()
+  if (h >= 5 && h < 9) return 'dawn'
+  if (h >= 9 && h < 16) return 'day'
+  if (h >= 16 && h < 19) return 'golden'
+  return 'night'
+}
+
 export function Home() {
   const go = useNav()
   const p = useProgress()
   const plan = activePlan(useSubscription())
+  const time = skyTime()
   return (
     <main className="home">
-      <NatureScene id="lake-dusk" />
+      <NatureScene id="lake-dusk" time={time} />
       <div className="home-veil" />
       <TopBar
         title={
@@ -108,6 +119,7 @@ export function Home() {
 
       </section>
 
+      <ShootingStar enabled={time !== 'day'} />
       <KobeWander />
       <div className="home-credit">Coded by M.N. Muturi</div>
     </main>

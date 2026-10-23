@@ -13,7 +13,7 @@ export const SCENE_FOR: Record<AreaKind, SceneId> = {
   kiswahili: 'coast-sunset',
   creative: 'flamingo-lake',
   cre: 'golden-hills',
-  science: 'lake-dusk',
+  science: 'rift-steam',
   agriculture: 'tea-hills',
   social: 'savanna-dawn',
   pretech: 'forest-mist',

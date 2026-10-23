@@ -67,6 +67,25 @@ export function Bloom({ color = 'var(--lagoon)' }: { color?: string }) {
   )
 }
 
+/** Rings spreading like water from a right answer. Place inside a positioned element. */
+export function Ripple({ color = 'var(--lagoon)' }: { color?: string }) {
+  const reduce = useReducedMotion()
+  if (reduce) return null
+  return (
+    <span aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 'inherit' }}>
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          initial={{ scale: 0.2, opacity: 0.55 }}
+          animate={{ scale: 3.2, opacity: 0 }}
+          transition={{ duration: 1.4, delay: i * 0.22, ease: [0.22, 1, 0.36, 1] }}
+          style={{ position: 'absolute', width: 80, height: 34, borderRadius: '50%', border: `1.5px solid ${color}` }}
+        />
+      ))}
+    </span>
+  )
+}
+
 /** A gentle tap on phones that support it. */
 export function haptic(kind: 'right' | 'wrong' | 'tap') {
   try {

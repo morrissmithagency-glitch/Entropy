@@ -115,3 +115,68 @@
     display: none;
   }
 }
+
+.res-stars > span {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.res-fly {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6d8 0 25%, rgba(255, 224, 160, 0.9) 40%, rgba(255, 224, 160, 0) 72%);
+  box-shadow: 0 0 18px 6px rgba(255, 214, 140, 0.45);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.res-burst {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  pointer-events: none;
+}
+
+.res-tree {
+  display: block;
+  margin: -34px -4px -8px -10px;
+}
+
+.sunrise {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sunrise-warm {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(255, 168, 110, 0.75) 0%, rgba(255, 198, 150, 0.35) 38%, rgba(255, 214, 170, 0) 70%);
+  mix-blend-mode: screen;
+}
+
+.sunrise-sun {
+  position: absolute;
+  left: 50%;
+  bottom: -90px;
+  width: 300px;
+  height: 300px;
+  margin-left: -150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3d6 0 22%, rgba(255, 214, 150, 0.7) 34%, rgba(255, 190, 120, 0.25) 55%, rgba(255, 190, 120, 0) 70%);
+}
+
+.sunrise-bird {
+  position: absolute;
+  left: 0;
+  top: 0;
+}

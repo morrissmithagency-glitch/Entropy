@@ -4,7 +4,8 @@ import { useNav, type QuizTarget } from '../App'
 import { canSpeak, sfx, speak, stopSpeaking } from '../audio/sfx'
 import { Art } from '../components/art/objects'
 import { Kobe, type Mood } from '../components/Kobe'
-import { Bloom, haptic } from '../components/motion'
+import { Bloom, haptic, Ripple } from '../components/motion'
+import { Vine } from '../components/Vine'
 import { NatureScene } from '../components/NatureScene'
 import { Breath, Icon, LevelGlyph, SCENE_FOR } from '../components/ui'
 import { NumberPad, OrderTiles } from '../components/widgets/Inputs'
@@ -136,7 +137,8 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
       setPhrase(pick(item.practice ? (sw ? GOT_IT_SW : GOT_IT_EN) : sw || Math.random() < 0.3 ? PRAISE_SW : PRAISE_EN))
     } else {
       sfx.almost()
-      setMood('oops')
+      // A thoughtful head tilt ("hmm, let's look"), never a telling-off.
+      setMood('think')
       setPhrase(pick(sw ? ALMOST_SW : ALMOST_EN))
     }
   }
@@ -172,11 +174,7 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
         <button type="button" className="btn icon" aria-label="Leave quiz" onClick={() => go(target.review ? { name: 'home' } : { name: 'map', area: target.area, open: target.sub })}>
           {Icon.close}
         </button>
-        <div className="progress" aria-label={`Question ${Math.max(1, numberOf)} of ${scored.length}`}>
-          {scored.map((i) => (
-            <span key={i} className={i in results ? (results[i] ? 'good' : 'miss') : i === idx ? 'now' : ''} />
-          ))}
-        </div>
+        <Vine label={`Question ${Math.max(1, numberOf)} of ${scored.length}`} states={scored.map((i) => (i in results ? (results[i] ? 'good' : 'miss') : i === idx ? 'now' : 'todo'))} />
         <div className="quiz-level">
           <LevelGlyph level={target.strand || target.kpsea ? 5 : target.review ? q.level : target.level} size={30} />
           <span>
@@ -229,7 +227,12 @@ export function QuizScreen({ target }: { target: QuizTarget }) {
                   <VisualView v={q.visual} />
                 </div>
               )}
-              {correct && q.type !== 'choice' && <Bloom />}
+              {correct && q.type !== 'choice' && (
+                <>
+                  <Ripple />
+                  <Bloom />
+                </>
+              )}
             </article>
 
             <div className="q-answer">
@@ -309,9 +312,10 @@ function Choices({ q, response, onPick }: { q: Extract<Question, { type: 'choice
             className={`choice ${state}`}
             disabled={response !== null}
             onClick={() => onPick(o.id)}
-            initial={{ opacity: 0, y: 14 }}
-            animate={state === 'wrong' ? { opacity: 1, y: 0, x: [0, -8, 8, -4, 4, 0] } : { opacity: 1, y: 0 }}
-            transition={{ delay: response === null ? 0.2 + i * 0.06 : 0, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            // Cards drift down and settle like falling leaves; a miss gets a soft wobble.
+            initial={{ opacity: 0, y: -22, x: i % 2 ? 12 : -12, rotate: i % 2 ? 6 : -6 }}
+            animate={state === 'wrong' ? { opacity: 1, y: 0, x: [0, -4, 4, -2, 0], rotate: [0, -1.5, 1.5, -0.5, 0] } : { opacity: 1, y: 0, x: 0, rotate: 0 }}
+            transition={response === null ? { delay: 0.2 + i * 0.08, duration: 0.9, ease: [0.22, 1, 0.36, 1] } : { duration: 0.6, ease: 'easeInOut' }}
             whileHover={response === null ? { y: -3 } : undefined}
             whileTap={response === null ? { scale: 0.97 } : undefined}
           >
@@ -322,7 +326,12 @@ function Choices({ q, response, onPick }: { q: Extract<Question, { type: 'choice
                 <Label text={o.label} />
               </span>
             )}
-            {state === 'right' && picked && <Bloom />}
+            {state === 'right' && picked && (
+              <>
+                <Ripple />
+                <Bloom />
+              </>
+            )}
             {state === 'right' && (
               <motion.span className="choice-tick" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 18 }}>
                 {Icon.check}
