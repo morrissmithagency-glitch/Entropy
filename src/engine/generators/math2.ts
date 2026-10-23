@@ -423,7 +423,7 @@ function measure2(kind: 'length' | 'mass' | 'capacity'): Generator {
         }
         const n = rng.int(2, 8)
         const [big, small] = kind === 'mass' ? ['bag of maize', 'packets of sugar'] : ['jerrycan', 'cups']
-        return num(level, `${An(big)} is as ${kind === 'mass' ? 'heavy' : 'full'} as ${n} ${small}. Two such ${big === 'bag of maize' ? 'bags' : 'jerrycans'} equal how many ${small}?`, 2 * n, { explain: `${n} + ${n} = ${2 * n}.` })
+        return num(level, kind === 'mass' ? `${An(big)} is as heavy as ${n} ${small}. Two such ${big === 'bag of maize' ? 'bags' : big + 's'} are as heavy as how many ${small}?` : `${An(big)} holds as much water as ${n} ${small}. Two such ${big === 'bag of maize' ? 'bags' : big + 's'} hold as much as how many ${small}?`, 2 * n, { explain: `${n} + ${n} = ${2 * n}.` })
       }
       case 3: {
         const a = rng.int(5, 40)

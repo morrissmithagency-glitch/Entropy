@@ -193,7 +193,7 @@ export const multiplication = (g: UGrade): Generator => (rng, level) => {
       const [what, per, unit] = rng.pick<[string, [number, number], string]>([
         ['crates of soda, each with 24 bottles', [24, 24], 'bottles'],
         ['bags of maize, each weighing 90 kg', [90, 90], 'kg'],
-        ['buses, each carrying 62 passengers', [62, 62], 'passengers'],
+        ['boxes of chalk, each with 48 sticks', [48, 48], 'sticks of chalk'],
         ['cartons of exercise books, each with 144 books', [144, 144], 'books'],
         ['rolls of wire, each 125 m long', [125, 125], 'm'],
       ])
@@ -334,7 +334,7 @@ export const fractions = (g: UGrade): Generator => (rng, level) => {
         const top = rng.int(d + 1, d * 4)
         if (top % d === 0) return num(level, `${top}/${d} =`, top / d)
         const ans = frac(top, d)
-        return pickQ(level, `Write ${top}/${d} as a mixed number.`, ans, [`${top % d} ${Math.floor(top / d)}/${d}`, `${Math.floor(top / d) + 1} ${top % d}/${d}`, `${Math.floor(top / d)} ${d}/${top % d}`], `${top} ÷ ${d} = ${Math.floor(top / d)} remainder ${top % d}.`)
+        return pickQ(level, `Write ${top}/${d} as a mixed number in its simplest form.`, ans, [`${top % d} ${Math.floor(top / d)}/${d}`, `${Math.floor(top / d) + 1} ${top % d}/${d}`, `${Math.floor(top / d)} ${d}/${top % d}`], `${top} ÷ ${d} = ${Math.floor(top / d)} remainder ${top % d}.`)
       }
       case 3: {
         const [d1, d2] = rng.pick([[2, 3], [3, 4], [4, 6], [2, 5], [3, 5], [4, 5]])
@@ -751,7 +751,7 @@ export const timeU = (g: UGrade): Generator => (rng, level) => {
       if (g === 4) {
         const morning = rng.next() < 0.5
         const hh = morning ? rng.int(5, 11) : rng.int(13, 21)
-        return pickQ(level, `School closes at ${hh % 12}:${pad(m)} in the ${morning ? 'morning' : hh < 17 ? 'afternoon' : 'evening'}. How do we write it?`, ampm(hh, m), [ampm((hh + 12) % 24, m), `${hh % 12}:${pad(m)}`])
+        return pickQ(level, `${morning ? 'Lessons start' : 'The bus leaves'} at ${hh % 12}:${pad(m)} in the ${morning ? 'morning' : hh < 17 ? 'afternoon' : 'evening'}. How do we write it?`, ampm(hh, m), [ampm((hh + 12) % 24, m), `${hh % 12}:${pad(m)}`])
       }
       return pickQ(level, `Write ${pad(h)}${pad(m)} hours in the 12-hour clock.`, ampm(h, m), [ampm((h + 12) % 24, m), `${h}:${pad(m)}`])
     }
@@ -791,6 +791,22 @@ export const timeU = (g: UGrade): Generator => (rng, level) => {
 
 // ── Money ───────────────────────────────────────────────────────────────────
 
+// Plural forms for "3 loaves of bread", keyed by the singular.
+const GOODS_MANY: Record<string, string> = {
+  'a loaf of bread': 'loaves of bread',
+  'a packet of milk': 'packets of milk',
+  'a kilogram of sugar': 'kilograms of sugar',
+  'a bar of soap': 'bars of soap',
+  'an exercise book': 'exercise books',
+  'a pen': 'pens',
+  'a kilogram of rice': 'kilograms of rice',
+  'a dozen eggs': 'dozen eggs',
+  'a bundle of sukuma wiki': 'bundles of sukuma wiki',
+  'a litre of cooking oil': 'litres of cooking oil',
+}
+/** "1 pen", "3 pens": a count of goods in plain words. */
+const goods = (n: number, it: string) => (n === 1 ? it : `${n} ${GOODS_MANY[it]}`)
+
 const GOODS: [string, number][] = [
   ['a loaf of bread', 65],
   ['a packet of milk', 60],
@@ -810,7 +826,7 @@ export const moneyU = (g: UGrade): Generator => (rng, level) => {
       const items = rng.sample(GOODS, 3)
       const qty = items.map(() => rng.int(1, 4))
       const total = items.reduce((s, [, p], i) => s + p * qty[i], 0)
-      return num(level, `Find the total cost of: ${items.map(([it, p], i) => `${qty[i]} × ${it} at ${p} shillings`).join('; ')}.`, total, {
+      return num(level, `Find the total cost of: ${items.map(([it, p], i) => `${goods(qty[i], it)} at ${p} shillings each`).join('; ')}.`, total, {
         visual: { kind: 'table', rows: [['Item', 'Price (sh)', 'Number'], ...items.map(([it, p], i) => [it, String(p), String(qty[i])])] },
       })
     }
@@ -818,7 +834,7 @@ export const moneyU = (g: UGrade): Generator => (rng, level) => {
       const [[it, p]] = rng.sample(GOODS, 1)
       const n = rng.int(2, 6)
       const note = [500, 1000].find((x) => x > p * n) ?? 2000
-      return num(level, `${name(rng)} bought ${n} × ${it} at ${p} shillings each and paid with ${an(fmt(note))} shilling note. How much change was given?`, note - p * n, { explain: `${n} × ${p} = ${p * n}; ${fmt(note)} − ${p * n} = ${fmt(note - p * n)}` })
+      return num(level, `${name(rng)} bought ${goods(n, it)} at ${p} shillings each and paid with ${an(fmt(note))} shilling note. How much change was given?`, note - p * n, { explain: `${n} × ${p} = ${p * n}; ${fmt(note)} − ${p * n} = ${fmt(note - p * n)}` })
     }
     case 3: {
       const buy = rng.int(20, 80) * 50
@@ -838,7 +854,7 @@ export const moneyU = (g: UGrade): Generator => (rng, level) => {
       }
       const have = rng.pick([500, 1000, 2000])
       const [[it, p]] = rng.sample(GOODS.filter(([, x]) => x < 200), 1)
-      return num(level, `How many of ${it} at ${p} shillings each can you buy with ${fmt(have)} shillings?`, Math.floor(have / p), { explain: `${fmt(have)} ÷ ${p} = ${Math.floor(have / p)} remainder ${have % p}` })
+      return num(level, `${it[0].toUpperCase()}${it.slice(1)} costs ${p} shillings. How many ${GOODS_MANY[it]} can you buy with ${fmt(have)} shillings?`, Math.floor(have / p), { explain: `${fmt(have)} ÷ ${p} = ${Math.floor(have / p)} remainder ${have % p}` })
     }
     default: {
       if (g === 6) {
@@ -868,7 +884,8 @@ function turnQ(rng: Rng, level: Level, g: UGrade): ChoiceQuestion {
   const step = rng.pick(g === 4 ? [2, 4, 6] : [1, 2, 3, 4, 5, 6])
   const clockwise = rng.next() < 0.5
   const to = COMPASS8[(from + (clockwise ? step : 8 - step)) % 8]
-  return pickQ(level, `${name(rng)} faces ${COMPASS8[from]} and turns ${clockwise ? 'clockwise' : 'anticlockwise'} through ${step * 45}°. Which direction does the learner now face?`, to, rng.sample(COMPASS8.filter((d) => d !== to), 3), `${step * 45}° is ${step} eighth${step > 1 ? 's' : ''} of a full turn.`)
+  const who = name(rng)
+  return pickQ(level, `${who} faces ${COMPASS8[from]} and turns ${clockwise ? 'clockwise' : 'anticlockwise'} through ${step * 45}°. Which direction does ${who} now face?`, to, rng.sample(COMPASS8.filter((d) => d !== to), 3), `${step * 45}° is ${step} eighth${step > 1 ? 's' : ''} of a full turn.`)
 }
 
 export const anglesU = (g: UGrade): Generator => (rng, level) => {
@@ -1037,20 +1054,25 @@ export const dataU = (g: UGrade): Generator => (rng, level) => {
   const max = Math.max(...values)
   const min = Math.min(...values)
   const iMax = values.indexOf(max)
-  const what = rng.pick(['mangoes sold', 'learners absent', 'litres of milk', 'books borrowed'])
+  const [what, noun, verb] = rng.pick<[string, string, string]>([
+    ['mangoes sold', 'mangoes', 'sold'],
+    ['learners absent', 'learners', 'absent'],
+    ['litres of milk', 'litres of milk', 'collected'],
+    ['books borrowed', 'books', 'borrowed'],
+  ])
   const visual: Visual =
     g === 4
       ? { kind: 'table', caption: `Each ● stands for ${unit} ${what}`, rows: [['Day', what], ...DAYS5.map((d, i) => [d, '●'.repeat(values[i] / unit)])] }
       : { kind: 'bars', labels: DAYS5, values, title: what, unit: what }
   switch (level) {
     case 1:
-      return choice('um', level, `On which day were the most ${what}?`, DAYS5.map((d) => ({ id: d, label: d })), DAYS5[iMax], { visual: { ...visual } })
+      return choice('um', level, `On which day were the most ${noun} ${verb}?`, DAYS5.map((d) => ({ id: d, label: d })), DAYS5[iMax], { visual: { ...visual } })
     case 2: {
       const i = rng.int(0, 4)
-      return num(level, `How many ${what} were there on ${DAYS5[i]}?`, values[i], { visual: { ...visual } })
+      return num(level, `How many ${noun} were ${verb} on ${DAYS5[i]}?`, values[i], { visual: { ...visual } })
     }
     case 3: {
-      return num(level, `How many more ${what} were there on the highest day than on the lowest day?`, max - min, { visual: { ...visual } })
+      return num(level, `How many more ${noun} were ${verb} on the highest day than on the lowest day?`, max - min, { visual: { ...visual } })
     }
     case 4:
       return num(level, `What was the total number of ${what} for the five days?`, values.reduce((a, b) => a + b, 0), { visual: { ...visual } })

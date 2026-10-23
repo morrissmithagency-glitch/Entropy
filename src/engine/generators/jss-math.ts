@@ -171,7 +171,7 @@ export const fracJ = (g: J): Generator => (rng, level) => {
     }
     case 4: {
       const [a, b] = [rng.int(2, 7), rng.pick([3, 4, 5, 8])]
-      const [c, d] = [rng.int(1, 4), rng.pick([2, 3, 6])]
+      const [c, d] = rng.pick([[1, 2], [1, 3], [2, 3], [1, 6], [5, 6], [3, 4], [2, 5]])
       return pick(level, `${a} ${1}/${b} ÷ ${c}/${d} =`, frac((a * b + 1) * d, b * c), [frac((a * b + 1) * c, b * d), frac(a * b + 1, b * c), frac((a * b + 1) * d, b)], 'Change to an improper fraction, flip the divisor and multiply.')
     }
     default: {
@@ -243,7 +243,7 @@ export const squaresJ = (g: J): Generator => (rng, level) => {
       let p0 = rng.int(1, q0 - 1)
       while (gcd(p0, q0) !== 1) p0 = (p0 % (q0 - 1)) + 1
       const [a, b] = [p0 * p0, q0 * q0]
-      return pick(level, `Find √(${a}/${b}).`, `${Math.sqrt(a)}/${Math.sqrt(b)}`, [`${a / 2}/${b / 2}`, `${Math.sqrt(a)}/${b}`, `${a}/${Math.sqrt(b)}`])
+      return pick(level, `Find √(${a}/${b}).`, `${Math.sqrt(a)}/${Math.sqrt(b)}`, [`${Math.sqrt(a)}/${2 * Math.sqrt(b)}`, `${Math.sqrt(a)}/${b}`, `${a}/${Math.sqrt(b)}`])
     }
     default: {
       if (cubes && rng.next() < 0.5) {
@@ -281,8 +281,8 @@ export const integersJ = (g: J): Generator => (rng, level) => {
     default: {
       const t = rng.int(-6, 8)
       const drop = rng.int(5, 18)
-      const town = rng.pick(['the top of Mount Kenya', 'a freezer', 'a cold store', 'the peak of Kilimanjaro'])
-      return pick(level, `The temperature at ${town} was ${sg(t)} °C. It dropped by ${drop} °C at night. What was the night temperature?`, `${sg(t - drop)} °C`, nearInts(t - drop).map((x) => `${x} °C`))
+      const town = rng.pick(['at the top of Mount Kenya', 'on a high mountain', 'in a desert', 'at the peak of Kilimanjaro'])
+      return pick(level, `The temperature ${town} was ${sg(t)} °C. It dropped by ${drop} °C at night. What was the night temperature?`, `${sg(t - drop)} °C`, nearInts(t - drop).map((x) => `${x} °C`))
     }
   }
 }
@@ -342,7 +342,7 @@ export const ratioJ = (g: J): Generator => (rng, level) => {
     case 2: {
       const [a, b] = rng.pick([[2, 3], [3, 5], [1, 4], [4, 5], [5, 7], [3, 7]])
       const total = (a + b) * rng.int(20, 150)
-      return num(level, `${fmt(total)} shillings is shared between ${name(rng)} and a friend in the ratio ${a} : ${b}. How much does the bigger share get?`, (total * Math.max(a, b)) / (a + b), { explain: `${a + b} parts; one part = ${fmt(total / (a + b))}; ${Math.max(a, b)} parts = ${fmt((total * Math.max(a, b)) / (a + b))}.` })
+      return num(level, `${fmt(total)} shillings is shared between ${name(rng)} and a friend in the ratio ${a} : ${b}. How much is the bigger share?`, (total * Math.max(a, b)) / (a + b), { explain: `${a + b} parts; one part = ${fmt(total / (a + b))}; ${Math.max(a, b)} parts = ${fmt((total * Math.max(a, b)) / (a + b))}.` })
     }
     case 3: {
       const s = rng.pick([40, 50, 60, 72, 80, 90])
@@ -421,7 +421,7 @@ export const exprJ = (g: J): Generator => (rng, level) => {
       case 1:
         return pick(level, `Expand ${br(p)}${br(q)}.`, quad(p + q, p * q), [quad(p * q, p + q), quad(p + q, p + q), expr([[1, `${v}²`], [p * q, '']])], 'Multiply each term in the first bracket by each in the second.')
       case 2:
-        return pick(level, `Factorise ${quad(p + q, p * q)}.`, `${br(p)}${br(q)}`, [`${br(-p)}${br(-q)}`, `${br(p + q)}${br(1)}`, `${br(p * q)}${br(1)}`], `Find two numbers that multiply to ${sg(p * q)} and add to ${sg(p + q)}.`)
+        return pick(level, `Factorise ${quad(p + q, p * q)}.`, `${br(p)}${br(q)}`, [`${br(-p)}${br(-q)}`, `${br(p + q)}${br(1)}`, `${br(p)}${br(-q)}`], `Find two numbers that multiply to ${sg(p * q)} and add to ${sg(p + q)}.`)
       case 3: {
         const k = rng.int(2, 12)
         return pick(level, `Factorise ${v}² − ${k * k}.`, `(${v} + ${k})(${v} − ${k})`, [`(${v} − ${k})²`, `(${v} + ${k})²`, `(${v} − ${k * k})(${v} + 1)`], 'Difference of two squares: a² − b² = (a + b)(a − b).')
@@ -432,7 +432,8 @@ export const exprJ = (g: J): Generator => (rng, level) => {
       }
       default: {
         const r1 = rng.int(1, 9)
-        const r2 = rng.int(1, 9)
+        // Two different roots, so the answer never reads "x = 6 or x = 6".
+        const r2 = ((r1 + rng.int(1, 8) - 1) % 9) + 1
         return pick(level, `Solve ${quad(-(r1 + r2), r1 * r2)} = 0.`, `${v} = ${Math.min(r1, r2)} or ${v} = ${Math.max(r1, r2)}`, [`${v} = −${Math.min(r1, r2)} or ${v} = −${Math.max(r1, r2)}`, `${v} = ${r1 + r2} or ${v} = 0`, `${v} = ${r1 * r2} or ${v} = 1`], 'Factorise, then set each bracket equal to zero.')
       }
     }
@@ -465,7 +466,7 @@ export const exprJ = (g: J): Generator => (rng, level) => {
     }
     default: {
       const [s, t] = [rng.int(20, 60), rng.int(30, 90)]
-      const items = rng.pick([['pens', 'books'], ['mangoes', 'oranges'], ['bread', 'milk']])
+      const items = rng.pick([['pens', 'books'], ['mangoes', 'oranges'], ['loaves of bread', 'packets of milk']])
       return pick(level, `A pupil buys ${v} ${items[0]} at ${s} shillings each and ${w} ${items[1]} at ${t} shillings each, and pays with a 1,000 shilling note. Which expression gives the change?`, `1000 − ${s}${v} − ${t}${w}`, [`1000 − ${s + t}${v}${w}`, `${s}${v} + ${t}${w} − 1000`, `1000 − ${s}${v} + ${t}${w}`])
     }
   }

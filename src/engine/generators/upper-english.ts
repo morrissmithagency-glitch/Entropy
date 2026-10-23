@@ -176,7 +176,7 @@ const HOMOPHONES: [G, string, string, string][] = [
   [4, 'The fishermen sailed out to ___.', 'sea', 'see'],
   [5, 'May I have a ___ of cake?', 'piece', 'peace'],
   [5, 'Our country is at ___.', 'peace', 'piece'],
-  [5, 'She has ___ her homework already.', 'passed', 'past'],
+  [5, 'She has ___ all her exams this term.', 'passed', 'past'],
   [5, 'We walked ___ the school gate.', 'past', 'passed'],
   [5, 'The farmer kept the animals in a ___.', 'barn', 'born'],
   [5, 'The baby was ___ in March.', 'born', 'barn'],
@@ -471,7 +471,6 @@ export const verbsU = (g: G): Generator => (rng, level) => {
         ['The teacher', 'was'],
         ['Both of my sisters', 'were'],
         ['Nobody', 'was'],
-        ['The team', 'was'],
         ['The visitors from Kisumu', 'were'],
         ['One of the pupils', 'was'],
       ] as const)
@@ -552,6 +551,15 @@ const COMPARE: [G, string, string, string][] = [
   [6, 'far', 'farther', 'farthest'],
   [6, 'intelligent', 'more intelligent', 'most intelligent'],
   [6, 'comfortable', 'more comfortable', 'most comfortable'],
+  [4, 'young', 'younger', 'youngest'],
+  [4, 'brave', 'braver', 'bravest'],
+  [4, 'quiet', 'quieter', 'quietest'],
+  [4, 'neat', 'neater', 'neatest'],
+  [4, 'clever', 'cleverer', 'cleverest'],
+  [4, 'friendly', 'friendlier', 'friendliest'],
+  [5, 'polite', 'more polite', 'most polite'],
+  [5, 'helpful', 'more helpful', 'most helpful'],
+  [6, 'generous', 'more generous', 'most generous'],
 ]
 const ADVERBS: [string, string, string[]][] = [
   ['neat', 'neatly', ['neat', 'neater', 'neatness']],
@@ -591,8 +599,9 @@ const ORDER: [string, string[], string[]][] = [
 
 export const adjU = (g: G): Generator => (rng, level) => {
   const rows = forGrade(COMPARE, g)
-  // many, little and far do not describe a person, so they appear only in the written items.
-  const [base, er, est] = rng.pick(rows.filter(([b]) => !['many', 'little', 'far'].includes(b)))
+  // Levels 1 and 2 describe a person, so only kind, fair words about people are used there.
+  const PERSON = ['fast', 'old', 'strong', 'busy', 'kind', 'famous', 'honest', 'tall', 'happy', 'careful', 'intelligent', 'clean', 'young', 'brave', 'quiet', 'neat', 'clever', 'friendly', 'polite', 'helpful', 'generous']
+  const [base, er, est] = rng.pick(rows.filter(([b]) => PERSON.includes(b)))
   switch (level) {
     case 1:
       return q(level, `Kamau is ___ than his brother. (${base})`, er, [base, est, er.startsWith('more ') ? `${base}er` : `more ${er}`].filter((x) => x !== er), 'Comparing two: the comparative form.')
@@ -631,7 +640,7 @@ export const adjU = (g: G): Generator => (rng, level) => {
       const [s, ans, wrong] = rng.pick<[string, string, string[]]>([
         ['This is ___ book I have ever read.', 'the best', ['the better', 'the goodest', 'the most good']],
         ['Mount Kenya is ___ than Mount Elgon.', 'higher', ['highest', 'more high', 'most high']],
-        ['Of the two sisters, Akinyi is ___.', 'the taller', ['the tallest', 'taller', 'the most tall']],
+        ['Of the two sisters, Akinyi is ___.', 'the taller', ['the tallest', 'the most tall', 'the most tallest']],
         ['He ran so ___ that he won the race.', 'fast', ['fastly', 'faster', 'fastest']],
         ['The baby slept ___ after the meal.', 'soundly', ['sound', 'sounder', 'soundness']],
         ['There is ___ water in the tank than yesterday.', 'less', ['fewer', 'little', 'least']],
@@ -682,7 +691,7 @@ const PREPS: [G, string, string, string[]][] = [
   [4, 'The bell rings ___ eight o\'clock.', 'at', ['on', 'in', 'by']],
   [4, 'The frog jumped ___ the water.', 'into', ['at', 'among', 'between']],
   [4, 'Share the sweets ___ the three children.', 'among', ['between', 'with', 'by']],
-  [4, 'The ball rolled ___ the table.', 'under', ['on', 'at', 'among']],
+  [4, 'The ball rolled ___ the table and stopped in the shade below it.', 'under', ['on', 'at', 'among']],
   [5, 'Divide the mango ___ the two of you.', 'between', ['among', 'with', 'to']],
   [5, 'She has lived here ___ 2019.', 'since', ['for', 'from', 'by']],
   [5, 'We waited ___ two hours.', 'for', ['since', 'from', 'at']],
@@ -699,7 +708,7 @@ const CONJ: [G, string, string, string[]][] = [
   [4, 'She was tired, ___ she kept working.', 'but', ['so', 'or', 'because']],
   [4, 'It was raining, ___ we carried umbrellas.', 'so', ['but', 'or', 'because']],
   [4, 'He did not come ___ he was sick.', 'because', ['so', 'and', 'or']],
-  [4, 'You can have rice ___ chapati.', 'or', ['and', 'but', 'so']],
+  [4, 'You may choose only one: rice ___ chapati.', 'or', ['and', 'but', 'so']],
   [4, 'Wash your hands ___ you eat.', 'before', ['after', 'because', 'so']],
   [4, 'We went home ___ school ended.', 'after', ['before', 'because', 'or']],
   [4, 'Wait here ___ I come back.', 'until', ['because', 'or', 'but']],

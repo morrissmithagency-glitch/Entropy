@@ -476,24 +476,24 @@ export const respond3 = factGenerator({
 // ── Prepositions ────────────────────────────────────────────────────────────
 
 const PREP_ART: ArtId[] = ['ball', 'cat', 'book', 'cup', 'shoe', 'hen', 'mango', 'dog', 'bag', 'orange']
-const PREP_SENTENCES: [string, string][] = [
-  ['Juma sits ___ Ali and Wanjiru.', 'between'],
-  ['The goat is hiding ___ the house.', 'behind'],
-  ['I drank a cup ___ tea.', 'of'],
-  ['The birds flew ___ the trees.', 'over'],
-  ['We walked ___ the bridge to the other side.', 'across'],
-  ['The children ran ___ the classroom when the bell rang.', 'into'],
-  ['Put the books ___ the table.', 'on'],
-  ['The fish swim ___ the water.', 'in'],
-  ['The cat sleeps ___ the bed.', 'under'],
-  ['Our school is ___ the hospital, just next to it.', 'beside'],
-  ['She took the letter ___ the envelope.', 'out of'],
-  ['We go to church ___ Sunday.', 'on'],
-  ['Lessons start ___ eight o\'clock.', 'at'],
-  ['The colour ___ the sky is blue.', 'of'],
-  ['He climbed ___ the tree to pick a mango.', 'up'],
+// Each sentence carries its own wrong words, so no wrong option can also fit.
+const PREP_SENTENCES: [string, string, string[]][] = [
+  ['Juma sits ___ Ali and Wanjiru.', 'between', ['of', 'into', 'at']],
+  ['The goat is hiding ___ the house, where we cannot see it.', 'behind', ['of', 'up', 'at']],
+  ['I drank a cup ___ tea.', 'of', ['on', 'under', 'between']],
+  ['The birds flew high ___ the trees.', 'over', ['of', 'into', 'between']],
+  ['We walked ___ the bridge to the other side.', 'across', ['of', 'under', 'between']],
+  ['The children ran ___ the classroom when the bell rang for lessons.', 'into', ['of', 'up', 'between']],
+  ['Put the books ___ the table.', 'on', ['of', 'up', 'between']],
+  ['The fish swim ___ the water.', 'in', ['of', 'up', 'between']],
+  ['The cat hides ___ the bed, in the dark space below it.', 'under', ['of', 'on', 'up']],
+  ['Our school is ___ the hospital, just next to it.', 'beside', ['of', 'into', 'under']],
+  ['She took the letter ___ the envelope.', 'out of', ['into', 'on', 'between']],
+  ['We go to church ___ Sunday.', 'on', ['at', 'in', 'of']],
+  ['Lessons start ___ eight o\'clock.', 'at', ['on', 'of', 'between']],
+  ['The colour ___ the sky is blue.', 'of', ['on', 'into', 'between']],
+  ['He climbed ___ the tree to pick a mango.', 'up', ['of', 'between', 'at']],
 ]
-const PREPS = ['in', 'on', 'under', 'beside', 'behind', 'between', 'of', 'over', 'across', 'into', 'at', 'up', 'out of']
 
 export const prep3: Generator = (rng, level) => {
   if (level <= 2) {
@@ -505,8 +505,8 @@ export const prep3: Generator = (rng, level) => {
       visual: { kind: 'position', art, where },
     }
   }
-  const [sentence, ans] = rng.pick(PREP_SENTENCES)
-  return choiceQ(level, `Choose the right word: ${sentence}`, ans, rng.sample(PREPS.filter((x) => x !== ans), 3))
+  const [sentence, ans, wrong] = rng.pick(PREP_SENTENCES)
+  return choiceQ(level, `Choose the right word: ${sentence}`, ans, wrong)
 }
 
 export const ENGLISH3_GRAMMAR: Record<string, Generator> = {

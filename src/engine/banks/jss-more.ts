@@ -365,8 +365,8 @@ const AGRICULTURE: Record<string, Topic> = {
             ['foot and mouth disease', 'a virus spread by contact'],
             ['worms', 'contaminated pasture and water'],
           ],
-          ask: (a) => `What causes or spreads ${a}?`,
-          askBack: (b) => `Which disease or problem is linked to ${b}?`,
+          ask: (a) => `How is ${a} spread? Through ___.`,
+          askBack: (b) => `Which of these spreads through ${b}?`,
         },
         {
           pairs: [
@@ -393,15 +393,15 @@ const AGRICULTURE: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['carbohydrates', 'provide energy'],
-            ['proteins', 'build and repair tissues'],
-            ['fats and oils', 'provide concentrated energy and warmth'],
-            ['vitamins', 'regulate body processes and protect against disease'],
-            ['minerals', 'build bones and blood, such as calcium and iron'],
-            ['fibre (roughage)', 'helps food move through the gut'],
+            ['carbohydrates', 'giving the body its main, quick energy'],
+            ['proteins', 'building and repairing tissues'],
+            ['fats and oils', 'storing energy and keeping the body warm'],
+            ['vitamins', 'regulating body processes and protecting against disease'],
+            ['minerals', 'building bones and blood, as calcium and iron do'],
+            ['fibre (roughage)', 'helping food move through the gut'],
           ],
           ask: (a) => `What is the main job of ${a}?`,
-          askBack: (b) => `Which nutrient ${b}?`,
+          askBack: (b) => `Which nutrient has the main job of ${b}?`,
         },
         {
           pairs: [
@@ -671,8 +671,8 @@ const CREATIVE: Record<string, Topic> = {
         {
           pairs: [
             ['football', 'offside'],
-            ['netball', 'footwork (no running with the ball)'],
-            ['basketball', 'travelling'],
+            ['netball', 'obstruction'],
+            ['basketball', 'double dribbling'],
             ['volleyball', 'touching the net'],
             ['handball', 'stepping into the goal area'],
           ],
@@ -699,7 +699,7 @@ const CREATIVE: Record<string, Topic> = {
       categories: [
         { one: 'a gymnastics skill', many: 'gymnastics skills', items: ['forward roll', 'backward roll', 'cartwheel', 'handstand', 'headstand', 'round-off'], set: 'g' },
         { one: 'a swimming stroke', many: 'swimming strokes', items: ['front crawl', 'breaststroke', 'backstroke', 'butterfly'], set: 'g' },
-        { one: 'a water safety rule', many: 'water safety rules', items: ['never swim alone', 'swim where a lifeguard can see you', 'do not dive into shallow water', 'learn to float'], set: 'w' },
+        { one: 'a safe water practice', many: 'safe water practices', items: ['swimming only with a buddy', 'swimming where a lifeguard can see you', 'checking the depth before diving', 'learning to float'], set: 'w' },
         { one: 'an unsafe water practice', many: 'unsafe water practices', items: ['swimming alone', 'diving into shallow water', 'swimming straight after a big meal', 'pushing friends into the pool'], set: 'w' },
       ],
       pairs: [
@@ -740,7 +740,7 @@ const CREATIVE: Record<string, Topic> = {
         },
       ],
       categories: [
-        { one: 'a Kenyan cultural heritage site', many: 'heritage sites', items: ['Lamu Old Town', 'Fort Jesus', 'Thimlich Ohinga', 'the Bomas of Kenya'], set: 'h' },
+        { one: 'a Kenyan cultural heritage site', many: 'heritage sites', items: ['Lamu Old Town', 'Fort Jesus', 'Thimlich Ohinga', 'the Gedi Ruins'], set: 'h' },
         { one: 'a Kenyan national sports venue', many: 'sports venues', items: ['Kasarani Stadium', 'Nyayo Stadium', 'Kipchoge Keino Stadium', 'Bukhungu Stadium'], set: 'h' },
       ],
     },
@@ -773,7 +773,7 @@ const CRE: Record<string, Topic> = {
             ['Proverbs', 'wise sayings for daily life'],
             ['Revelation', 'visions of the end times'],
           ],
-          ask: (a) => `What are ${a} mainly about?`,
+          ask: (a) => `What is the main subject of ${a}?`,
           askBack: (b) => `Which part of the Bible is mainly about ${b}?`,
         },
       ],
@@ -885,7 +885,7 @@ const CRE: Record<string, Topic> = {
             ['Easter Sunday', 'Jesus rose from the dead'],
             ['the Ascension', 'Jesus was taken up into heaven'],
           ],
-          ask: (a) => `What happened at or on ${a}?`,
+          ask: (a) => `In the Easter story, what is ${a} remembered for?`,
           askBack: (b) => `Which event or place is linked to this: ${b}?`,
         },
       ],
@@ -916,7 +916,7 @@ const CRE: Record<string, Topic> = {
             ['Stephen', 'being the first Christian martyr, strong in faith'],
           ],
           ask: (a) => `What is ${a} known for?`,
-          askBack: (b) => `Who or what is known for ${b}?`,
+          askBack: (b) => `Which person or event is known for ${b}?`,
         },
       ],
     },
@@ -1040,13 +1040,13 @@ const SOCIAL7: Record<string, STopic> = {
       pairs: [
         {
           pairs: [
-            ['a barometer', 'atmospheric pressure'],
-            ['a hygrometer', 'humidity'],
-            ['an anemometer', 'wind speed'],
-            ['a Stevenson screen', 'houses thermometers in the shade'],
-            ['a Campbell–Stokes recorder', 'hours of sunshine'],
+            ['a barometer', 'measuring atmospheric pressure'],
+            ['a hygrometer', 'measuring humidity'],
+            ['an anemometer', 'measuring wind speed'],
+            ['a Stevenson screen', 'keeping thermometers in the shade'],
+            ['a Campbell–Stokes recorder', 'recording hours of sunshine'],
           ],
-          ask: (a) => `What does ${a} measure or do?`,
+          ask: (a) => `What is ${a} used for?`,
           askBack: (b) => `Which weather instrument is used for ${b}?`,
         },
       ],
@@ -1131,7 +1131,7 @@ const SOCIAL7: Record<string, STopic> = {
             ['balance of trade', 'the difference between exports and imports'],
             ['barter trade', 'exchanging goods for goods'],
           ],
-          ask: (a) => `What are or is ${a}?`,
+          ask: (a) => `In trade, what does "${a}" mean?`,
           askBack: (b) => `What is the term for ${b}?`,
         },
       ],

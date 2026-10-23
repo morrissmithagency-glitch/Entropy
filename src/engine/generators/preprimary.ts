@@ -533,7 +533,7 @@ export const foodP = factGenerator({
     {
       pairs: [
         ['wash our hands', 'before we eat'],
-        ['drink clean water', 'when we are thirsty'],
+        ['eat lunch', 'at midday'],
         ['eat breakfast', 'in the morning'],
         ['eat supper', 'in the evening'],
       ],
@@ -561,7 +561,7 @@ export const careP = factGenerator({
   pairs: [
     {
       pairs: [
-        ['litter', 'the dustbin'],
+        ['sweet wrappers', 'the dustbin'],
         ['dirty water', 'the drain'],
         ['fruit peels', 'the compost pit'],
       ],

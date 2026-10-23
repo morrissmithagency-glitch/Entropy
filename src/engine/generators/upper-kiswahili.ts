@@ -834,11 +834,11 @@ export const UFAHAMU_K: BankQuestion[] = [
     ['Kukata miti kiholela husababisha nini?', 'ukame na mito kukauka', ['mvua nyingi', 'wanyama zaidi', 'mito kujaa']],
     ['Ni kichwa kipi kinachofaa kifungu hiki?', 'Umuhimu wa Kuhifadhi Misitu', ['Wanyama wa Mau', 'Jinsi ya Kuchoma Makaa', 'Kilimo cha Mahindi']],
   ]),
-  ...ufahamu(5, 'Juhudi za Kioko', 'Kioko alikuwa mwanafunzi wa darasa la sita katika shule ya msingi ya Kalama. Wazazi wake walikuwa maskini, na mara nyingi alikosa karo. Hata hivyo, hakukata tamaa. Baada ya masomo, alimsaidia mama yake kuuza mboga sokoni, na usiku alisoma kwa taa ya mafuta taa. Walimu wake walivutiwa na bidii yake. Katika mtihani wa mwisho wa mwaka, Kioko alikuwa wa kwanza katika kaunti nzima. Mfadhili mmoja alijitolea kumlipia karo hadi chuo kikuu.', [
+  ...ufahamu(5, 'Juhudi za Kioko', 'Kioko alikuwa mwanafunzi wa darasa la sita katika shule ya msingi ya Kalama. Wazazi wake walikuwa maskini, na mara nyingi alikosa karo. Hata hivyo, hakukata tamaa. Baada ya masomo, alimsaidia mama yake kuuza mboga sokoni, na usiku alisoma kwa taa ya mafuta ya taa. Walimu wake walivutiwa na bidii yake. Katika mtihani wa mwisho wa mwaka, Kioko alikuwa wa kwanza katika kaunti nzima. Mfadhili mmoja alijitolea kumlipia karo hadi chuo kikuu.', [
     ['Kioko alikuwa katika darasa gani?', 'la sita', ['la nne', 'la tano', 'la saba']],
     ['Kioko alikosa nini mara nyingi?', 'karo', ['chakula', 'marafiki', 'viatu']],
     ['Maneno "hakukata tamaa" yana maana gani?', 'aliendelea kujitahidi', ['alikasirika', 'aliacha shule', 'alilala sana']],
-    ['Kioko alisoma vipi usiku?', 'kwa taa ya mafuta taa', ['kwa umeme', 'kwa mwezi', 'kwa simu']],
+    ['Kioko alisoma vipi usiku?', 'kwa taa ya mafuta ya taa', ['kwa umeme', 'kwa mwezi', 'kwa simu']],
     ['Ni methali ipi inayofaa hadithi hii?', 'Penye nia pana njia', ['Haraka haraka haina baraka', 'Mgeni njoo mwenyeji apone', 'Mwenye macho haambiwi tazama']],
   ]),
   ...ufahamu(1, 'Paka wa Neema', 'Neema ana paka mweupe anayeitwa Pamba. Pamba hupenda kulala juani. Kila asubuhi Neema humpa maziwa. Siku moja Pamba alipotea. Neema alilia sana. Jioni, Pamba alirudi akiwa na vitoto vitatu.', [
@@ -866,9 +866,9 @@ export const UFAHAMU_K: BankQuestion[] = [
     ['Watoto walifurahia kuona nini?', 'mafundi wakitengeneza majahazi', ['magari mengi yakipita barabarani', 'ndege kubwa ikitua uwanjani', 'wavuvi wakiuza samaki sokoni']],
     ['Vikapu walivyonunua vilisukwa kwa nini?', 'ukindu', ['plastiki', 'chuma', 'karatasi']],
   ]),
-  ...ufahamu(5, 'Nishati ya Jua', 'Miaka miwili iliyopita, kijiji chetu hakikuwa na umeme. Familia nyingi zilitumia taa za mafuta taa ambazo zilitoa moshi na zilikuwa ghali. Kisha kikundi cha wanakijiji kiliweka paneli za sola kwenye paa za shule na zahanati. Sasa wanafunzi husoma jioni kwa mwangaza mzuri, na zahanati huhifadhi chanjo katika jokofu linalotumia nguvu za jua. Wazee husema kwamba nishati safi imeleta mwangaza na matumaini. Hata hivyo, paneli hizo lazima zisafishwe mara kwa mara ili ziendelee kufanya kazi vizuri.', [
-    ['Familia zilitumia nini kabla ya sola?', 'taa za mafuta taa', ['balbu za umeme', 'mishumaa pekee', 'jiko la gesi']],
-    ['Taa za mafuta taa zilikuwa na tatizo gani?', 'zilitoa moshi na zilikuwa ghali', ['zilikuwa angavu sana', 'zilikuwa bure', 'zilihitaji jua']],
+  ...ufahamu(5, 'Nishati ya Jua', 'Miaka miwili iliyopita, kijiji chetu hakikuwa na umeme. Familia nyingi zilitumia taa za mafuta ya taa ambazo zilitoa moshi na zilikuwa ghali. Kisha kikundi cha wanakijiji kiliweka paneli za sola kwenye paa za shule na zahanati. Sasa wanafunzi husoma jioni kwa mwangaza mzuri, na zahanati huhifadhi chanjo katika jokofu linalotumia nguvu za jua. Wazee husema kwamba nishati safi imeleta mwangaza na matumaini. Hata hivyo, paneli hizo lazima zisafishwe mara kwa mara ili ziendelee kufanya kazi vizuri.', [
+    ['Familia zilitumia nini kabla ya sola?', 'taa za mafuta ya taa', ['balbu za umeme', 'mishumaa pekee', 'jiko la gesi']],
+    ['Taa za mafuta ya taa zilikuwa na tatizo gani?', 'zilitoa moshi na zilikuwa ghali', ['zilikuwa angavu sana', 'zilikuwa bure', 'zilihitaji jua']],
     ['Zahanati imefaidika vipi?', 'huhifadhi chanjo katika jokofu la sola', ['huuza simu na vifaa vya sola', 'imepata madaktari wengi wapya', 'hufunguliwa usiku pekee sasa']],
     ['Neno "ghali" lina maana gani?', 'bei ya juu', ['rahisi', 'safi', 'nzito']],
     ['Ni nini kifanyike ili paneli ziendelee kufanya kazi?', 'zisafishwe mara kwa mara', ['zifunikwe kwa udongo', 'zizimwe', 'ziwekwe ndani ya nyumba']],

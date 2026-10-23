@@ -427,7 +427,8 @@ function measure(unit: 'm' | 'kg' | 'litres', what: { add: string[]; sub: string
             small * k,
             { explain: `${k} × ${small} = ${small * k} ${unitWord}` },
           )
-        return num(level, `How many ${small}${u} ${what.fill[1]} can fill ${an(small * k)}${u} ${what.fill[0]}?`, k, { explain: `${small * k} ÷ ${small} = ${k}` })
+        const one = unit === 'm' ? 'metre' : unit === 'kg' ? 'kilogram' : 'litre'
+        return num(level, `How many ${small}-${one} ${what.fill[1]} ${unit === 'm' ? 'cover' : 'fill'} ${an(small * k)}-${one} ${what.fill[0]}?`, k, { explain: `${small * k} ÷ ${small} = ${k}` })
       }
       default: {
         const a = rng.int(60, 99)

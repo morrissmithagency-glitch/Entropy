@@ -177,7 +177,7 @@ export const ENVIRONMENTAL3_BANKS: Record<string, BankQuestion[]> = {
     t(1, 'We should drink ___ water.', 'clean', ['dirty', 'stagnant']),
     t(1, 'Rain water comes from the ___.', 'clouds', ['ground', 'trees']),
     t(2, 'Pupils should avoid walking through ___ water.', 'stagnant', ['clean', 'tap']),
-    t(2, 'We can re-use water from washing clothes to ___.', 'wash chairs', ['drink', 'cook']),
+    t(2, 'We can re-use water from washing clothes to ___.', 'mop the floor', ['drink', 'cook']),
     t(2, 'How can we make water safe for drinking?', 'boil it', ['add soil', 'keep it open']),
     t(3, 'Used water can be recycled and ___ for safe use again.', 'treated', ['thrown', 'hidden']),
     t(3, 'Mosquitoes breed in ___ water.', 'stagnant', ['boiling', 'running']),

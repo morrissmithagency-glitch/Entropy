@@ -285,7 +285,7 @@ const G7: Record<string, Topic> = {
             ['power', 'watt (W)'],
           ],
           ask: (a) => `What is the SI unit of ${a}?`,
-          askBack: (b) => `Which quantity is measured in ${b}s?`,
+          askBack: (b) => `Which quantity has the SI unit ${b}?`,
         },
       ],
     },
@@ -309,7 +309,7 @@ const G8: Record<string, Topic> = {
           pairs: [
             ['the independent variable', 'the factor you change on purpose'],
             ['the dependent variable', 'the factor you measure'],
-            ['controlled variables', 'the factors you keep the same'],
+            ['a controlled variable', 'a factor you keep the same'],
             ['a hypothesis', 'a testable prediction'],
             ['a conclusion', 'what the results show about the question'],
           ],
@@ -444,15 +444,15 @@ const G8: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['the heart', 'pumps blood around the body'],
-            ['the lungs', 'take in oxygen and remove carbon dioxide'],
-            ['the kidneys', 'filter waste from the blood to make urine'],
-            ['the skin', 'removes waste as sweat and controls temperature'],
-            ['the liver', 'breaks down harmful substances and makes bile'],
-            ['the small intestine', 'absorbs digested food into the blood'],
+            ['the heart', 'pumping blood around the body'],
+            ['the lungs', 'taking in oxygen and removing carbon dioxide'],
+            ['the kidneys', 'filtering waste from the blood to make urine'],
+            ['the skin', 'removing waste as sweat and controlling temperature'],
+            ['the liver', 'breaking down harmful substances and making bile'],
+            ['the small intestine', 'absorbing digested food into the blood'],
           ],
-          ask: (a) => `What does ${a} do?`,
-          askBack: (b) => `Which organ does this job: it ${b}?`,
+          ask: (a) => `What is the main job of ${a}?`,
+          askBack: (b) => `Which organ has the job of ${b}?`,
         },
       ],
       categories: [
@@ -555,13 +555,13 @@ const G8: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['a sharp knife cutting bread', 'a small area increases pressure for cutting'],
-            ['wide tractor tyres on soft soil', 'a large area reduces pressure on soft ground'],
-            ['a camel\'s wide feet', 'a large area keeps the camel from sinking into sand'],
-            ['sucking juice up a straw', 'air pressure pushes the drink up'],
-            ['a dam wall thick at the base', 'water pressure increases with depth'],
+            ['a sharp knife cuts bread easily', 'a small area increases pressure for cutting'],
+            ['wide tractor tyres do not sink into soft soil', 'a large area reduces pressure on soft ground'],
+            ['a camel\'s wide feet do not sink into sand', 'a large area spreads the weight over the sand'],
+            ['juice rises up a straw when we suck', 'air pressure pushes the drink up'],
+            ['a dam wall is built thicker at the base', 'water pressure increases with depth'],
           ],
-          ask: (a) => `Which idea about pressure explains ${a}?`,
+          ask: (a) => `Which idea about pressure explains why ${a}?`,
           askBack: (b) => `Which example shows that ${b}?`,
         },
       ],
@@ -586,7 +586,7 @@ const G9: Record<string, Topic> = {
             ['neutrons', 'no charge, in the nucleus'],
             ['electrons', 'negative charge, moving around the nucleus'],
           ],
-          ask: (a) => `What are ${a}?`,
+          ask: (a) => `Which describes ${a}?`,
           askBack: (b) => `Which particles have ${b}?`,
         },
         {
@@ -692,10 +692,10 @@ const G9: Record<string, Topic> = {
         },
         {
           pairs: [
-            ['wind', 'light seeds with wings or hairs, like dandelion'],
-            ['animals', 'juicy fruits or hooked seeds, like mango and blackjack'],
-            ['water', 'fruits that float, like coconut'],
-            ['explosion', 'pods that burst open, like beans'],
+            ['wind', 'light seeds with wings or hairs (such as the dandelion)'],
+            ['animals', 'juicy fruits or hooked seeds (such as mango and blackjack)'],
+            ['water', 'fruits that float (such as the coconut)'],
+            ['explosion', 'pods that burst open (such as beans)'],
           ],
           ask: (a) => `Which seeds are dispersed by ${a}?`,
           askBack: (b) => `How are ${b} dispersed?`,
@@ -906,8 +906,10 @@ const CHAINS: string[][] = [
   ['grass', 'gazelle', 'cheetah'],
   ['seeds', 'mouse', 'snake', 'eagle'],
   ['water plants', 'tadpole', 'fish', 'heron'],
-  ['grass', 'cow', 'human'],
 ]
+// Plural names for "if all the frogs were removed"; plants and fish stay as they are.
+const MANY: Record<string, string> = { mouse: 'mice', tilapia: 'tilapia', fish: 'fish' }
+const many = (x: string, j: number) => (j === 0 ? x : MANY[x] ?? `${x}s`)
 const ecologyCalc = (rng: Rng, level: Level): ChoiceQuestion => {
   const chain = rng.pick(CHAINS)
   const roles = ['producer', 'primary consumer', 'secondary consumer', 'tertiary consumer']
@@ -921,10 +923,11 @@ const ecologyCalc = (rng: Rng, level: Level): ChoiceQuestion => {
     return { id: uid('js'), type: 'choice', level, prompt: `In the food chain ${shown}, which organism is the ${roles[k]}?`, options: opts2.map((l) => ({ id: l, label: l })), answer: chain[k], explain: `Count from the producer: ${chain.map((x, j) => `${x} (${roles[j]})`).join(', ')}.` }
   }
   const gone = rng.int(1, chain.length - 1)
-  const below = chain[gone - 1]
+  const below = many(chain[gone - 1], gone - 1)
+  const removed = many(chain[gone], gone)
   const ans = `The ${below} would increase at first.`
   const opts2 = [ans, `The ${below} would decrease at first.`, `The ${chain[0]} would disappear at once.`, 'Nothing in the chain would change.']
-  return { id: uid('js'), type: 'choice', level, prompt: `In the food chain ${shown}, what would most likely happen if all the ${chain[gone]} were removed?`, options: opts2.map((l) => ({ id: l, label: l })), answer: ans, explain: `Fewer ${chain[gone]} would eat the ${below}, so the ${below} would increase at first.` }
+  return { id: uid('js'), type: 'choice', level, prompt: `In the food chain ${shown}, what would most likely happen if all the ${removed} were removed?`, options: opts2.map((l) => ({ id: l, label: l })), answer: ans, explain: `Fewer ${removed} would eat the ${below}, so the ${below} would increase at first.` }
 }
 
 const CALC: Record<string, Generator> = {

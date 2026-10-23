@@ -218,7 +218,7 @@ const CREATIVE: Record<string, Topic> = {
             ['pitch', 'how high or low a sound is'],
           ],
           ask: (a) => `In music, what is ${a}?`,
-          askBack: (b) => `What musical element is ${b}?`,
+          askBack: (b) => `Which element of music is ${b}?`,
         },
       ],
     },
@@ -253,7 +253,7 @@ const CREATIVE: Record<string, Topic> = {
         },
         {
           pairs: [
-            ['the crouch start', 'sprint races'],
+            ['the crouch start', 'short races such as the 100 metres'],
             ['the standing start', 'long-distance races'],
             ['a baton', 'relay races'],
             ['a sandpit', 'long jump and triple jump'],
@@ -330,7 +330,7 @@ const CREATIVE: Record<string, Topic> = {
             ['front crawl', 'is the fastest stroke, with alternating arms'],
             ['butterfly', 'moves both arms together with a dolphin kick'],
           ],
-          ask: (a) => `Which describes ${a}?`,
+          ask: (a) => `Which is true of ${a}? It ___.`,
           askBack: (b) => `Which swimming stroke ${b}?`,
         },
       ],
@@ -439,7 +439,7 @@ const CRE: Record<string, Topic> = {
         },
         {
           pairs: [
-            ['Abraham', 'faith in God'],
+            ['Abraham', 'obeying God even when it is hard'],
             ['Joseph', 'forgiveness'],
             ['Samuel', 'listening to God'],
             ['Solomon', 'wisdom'],
@@ -468,11 +468,11 @@ const CRE: Record<string, Topic> = {
           pairs: [
             ['Bethlehem', 'the town where Jesus was born'],
             ['Nazareth', 'the town where Jesus grew up'],
-            ['River Jordan', 'where Jesus was baptised'],
-            ['the wilderness', 'where Jesus fasted for forty days'],
-            ['Jerusalem', 'where Jesus was found in the temple at age twelve'],
+            ['River Jordan', 'the river where Jesus was baptised'],
+            ['the wilderness', 'the place where Jesus fasted for forty days'],
+            ['Jerusalem', 'the city where Jesus was found in the temple at age twelve'],
           ],
-          ask: (a) => `What happened at ${a}?`,
+          ask: (a) => `In the life of Jesus, what is ${a}?`,
           askBack: (b) => `Which place is ${b}?`,
         },
         {

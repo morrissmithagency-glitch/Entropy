@@ -88,7 +88,7 @@ const FACTS: Record<string, FactSet> = {
   'c-games': {
     categories: [
       { one: 'a good way to play a singing game', many: 'good ways to play a singing game', items: ['take turns', 'hold hands gently', 'sing together', 'listen to the song', 'follow the leader', 'let everyone join', 'smile and have fun', 'clap along'] },
-      { one: 'a bad way to play a game', many: 'bad ways to play a game', items: ['pushing others', 'shouting', 'refusing to share', 'leaving others out', 'grabbing roughly', 'cheating', 'laughing at mistakes'] },
+      { one: 'a bad way to play a game', many: 'bad ways to play a game', items: ['push others', 'shout over others', 'refuse to share', 'leave others out', 'grab roughly', 'cheat', 'laugh at mistakes'] },
     ],
   },
   'c-catch': {
@@ -116,7 +116,7 @@ const FACTS: Record<string, FactSet> = {
   'c-water': {
     categories: [
       { one: 'a safe thing to do near water', many: 'safe things to do near water', items: ['stay with an adult', 'walk slowly', 'keep away from deep water', 'listen to grown-ups', 'wear a float', 'play only in shallow water', 'tell a grown-up where you are'], set: 'b' },
-      { one: 'a dangerous thing to do near water', many: 'dangerous things to do near water', items: ['playing alone near a river', 'pushing friends in', 'running on wet floors', 'going into deep water', 'playing near an open well', 'swimming in a flooded river', 'leaning over a water tank'], set: 'b' },
+      { one: 'a dangerous thing to do near water', many: 'dangerous things to do near water', items: ['play alone near a river', 'push friends in', 'run on wet floors', 'go into deep water', 'play near an open well', 'swim in a flooded river', 'lean over a water tank'], set: 'b' },
     ],
   },
   'c-instruments': {
@@ -161,9 +161,9 @@ const FACTS: Record<string, FactSet> = {
       {
         pairs: [
           ['fish', 'in water'],
-          ['birds', 'in the sky and trees'],
+          ['birds', 'in nests'],
           ['cows', 'on land'],
-          ['frogs', 'in water and on land'],
+          ['monkeys', 'in trees'],
         ],
         ask: (x) => `God made ${x} to live ___.`,
       },
@@ -190,7 +190,7 @@ const FACTS: Record<string, FactSet> = {
   },
   'r-jesus': {
     categories: [
-      { one: 'a person in the story of baby Jesus', many: 'people in the story of baby Jesus', items: ['Mary', 'Joseph', 'the shepherds', 'the angels', 'the wise men'] },
+      { one: 'a person in the story of baby Jesus', many: 'people in the story of baby Jesus', items: ['Mary', 'Joseph the carpenter', 'the shepherds', 'the angels', 'the wise men'] },
       { one: 'a person from another Bible story', many: 'people from other Bible stories', items: ['Noah', 'Jonah', 'David', 'Adam', 'Moses'] },
     ],
     pairs: [
@@ -201,7 +201,7 @@ const FACTS: Record<string, FactSet> = {
           ['a manger', 'the bed of baby Jesus'],
           ['Christmas', 'the day we remember the birth of Jesus'],
         ],
-        ask: (x) => `What or who is ${x}?`,
+        ask: (x) => `${x[0].toUpperCase()}${x.slice(1)} is ___.`,
       },
     ],
   },

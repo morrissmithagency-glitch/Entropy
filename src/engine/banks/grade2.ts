@@ -134,8 +134,8 @@ const FACTS: Record<string, FactSet> = {
     categories: [
       { one: 'a kind of soil', many: 'kinds of soil', items: ['sand', 'clay', 'loam'], set: 'a' },
       { one: 'a thing that is not soil', many: 'things that are not soil', items: ['water', 'air', 'glass', 'plastic'], set: 'a' },
-      { one: 'a thing made from clay', many: 'things made from clay', items: ['a pot', 'a bowl', 'a cup', 'a toy animal', 'a brick'] },
-      { one: 'a thing made from wood', many: 'things made from wood', items: ['a chair', 'a door', 'a table', 'a cooking stick', 'a stool'] },
+      { one: 'a thing made from clay', many: 'things made from clay', items: ['a cooking pot', 'a water pot', 'a brick', 'a clay cup'], set: 'm' },
+      { one: 'a thing made from wood', many: 'things made from wood', items: ['a chair', 'a door', 'a table', 'a cooking stick', 'a stool'], set: 'm' },
       { one: 'a way of caring for soil', many: 'ways of caring for soil', items: ['planting trees', 'adding manure', 'not throwing plastics', 'planting grass'], set: 'b' },
       { one: 'a way of harming soil', many: 'ways of harming soil', items: ['burning grass', 'throwing plastic bags', 'cutting all the trees', 'pouring oil on the ground'], set: 'b' },
     ],
@@ -309,7 +309,7 @@ const FACTS: Record<string, FactSet> = {
   'sc-water': {
     categories: [
       { one: 'a safe thing to do near water', many: 'safe things to do near water', items: ['stay with an adult', 'walk, do not run', 'keep away from deep water', 'listen to the teacher', 'wear a float when learning', 'swim only in a pool', 'stay where your feet touch the floor', 'shower before swimming'] },
-      { one: 'a dangerous thing to do near water', many: 'dangerous things to do near water', items: ['swimming alone', 'playing near a deep river', 'pushing friends in', 'running on wet floors', 'swimming in a flooded river', 'diving into shallow water', 'playing near an open well', 'swimming after a big meal'] },
+      { one: 'a dangerous thing to do near water', many: 'dangerous things to do near water', items: ['swim alone', 'play near a deep river', 'push friends in', 'run on wet floors', 'swim in a flooded river', 'dive into shallow water', 'play near an open well', 'swim after a big meal'] },
     ],
   },
   'sc-songs': {
@@ -395,7 +395,6 @@ const FACTS: Record<string, FactSet> = {
     categories: [
       { one: 'a way of caring for the Bible', many: 'ways of caring for the Bible', items: ['keeping it clean', 'not tearing it', 'covering it', 'keeping it in a safe place'], set: 'b' },
       { one: 'a way of mistreating the Bible', many: 'ways of mistreating the Bible', items: ['tearing pages', 'drawing in it', 'leaving it in the rain', 'throwing it on the floor'], set: 'b' },
-      { one: 'a thing in a Bible story', many: 'things in Bible stories', items: ['the ark', 'a big fish', 'a sling and a stone', 'a burning bush'] },
       { one: 'a person in a Bible story', many: 'people in Bible stories', items: ['Noah', 'Abraham', 'Moses', 'David', 'Samuel', 'Jonah'] },
     ],
     pairs: [
@@ -424,10 +423,8 @@ const FACTS: Record<string, FactSet> = {
           ['Nazareth', 'the town where Jesus grew up'],
           ['Mary', 'the mother of Jesus'],
           ['Joseph', 'the carpenter who cared for Jesus'],
-          ['a manger', "the animals' feeding box where baby Jesus was laid"],
-          ['shepherds', 'the people who first heard about baby Jesus from angels'],
         ],
-        ask: (a) => `Who or what is ${a}?`,
+        ask: (a) => `${a} is ___.`,
         askBack: (b) => `What is the name of ${b}?`,
       },
     ],
@@ -442,7 +439,7 @@ const FACTS: Record<string, FactSet> = {
         pairs: [
           ['before meals', 'thank God for the food'],
           ['before sleeping', 'thank God for the day'],
-          ['when someone is sick', 'pray for them'],
+          ['when someone is sick', 'ask God to help them get well'],
           ['when we wake up', 'thank God for a new day'],
         ],
         ask: (a) => `We pray ${a} to ___.`,

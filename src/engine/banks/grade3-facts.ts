@@ -42,7 +42,7 @@ const ENV: Record<string, FactSet> = {
           ['someone pushes you on purpose', 'angry'],
           ['you hear a loud noise in the dark', 'afraid'],
           ['visitors arrive without telling you', 'surprised'],
-          ['you win a race', 'proud'],
+          ['you have not slept enough', 'tired'],
         ],
         ask: (a) => `How might you feel when ${a}?`,
         explain: (a, b) => `Most people feel ${b} when ${a}.`,
@@ -69,7 +69,7 @@ const ENV: Record<string, FactSet> = {
   },
   'tv-community': {
     categories: [
-      { one: 'a safe place for children', many: 'safe places for children', items: ['home', 'school', 'church', 'mosque', 'the playground', 'the library'] },
+      { one: 'a safe place for children', many: 'safe places for children', items: ['home', 'the school', 'a church', 'a mosque', 'the playground', 'the library'] },
       { one: 'a dangerous place to play', many: 'dangerous places to play', items: ['a busy road', 'a deep river', 'a quarry', 'a railway line', 'a dumpsite', 'an open pit'] },
     ],
     pairs: [
@@ -166,7 +166,7 @@ const ENV: Record<string, FactSet> = {
       { one: 'a source of heat', many: 'sources of heat', items: ['the sun', 'burning firewood', 'burning charcoal', 'an electric cooker', 'a gas cooker', 'a burning candle'] },
       { one: 'a use of heat', many: 'uses of heat', items: ['cooking food', 'boiling water', 'drying clothes', 'keeping warm', 'ironing clothes', 'baking bread'] },
       { one: 'a heat safety rule', many: 'heat safety rules', items: ['keep away from a burning jiko', 'hold hot pots with a cloth', 'keep candles away from curtains', 'never play with matches'], set: 'b' },
-      { one: 'an unsafe thing to do near heat', many: 'unsafe things to do near heat', items: ['playing with matches', 'touching a hot sufuria', 'leaving a candle near curtains', 'running near a jiko'], set: 'b' },
+      { one: 'an unsafe thing to do near heat', many: 'unsafe things to do near heat', items: ['play with matches', 'touch a hot sufuria', 'leave a candle near curtains', 'run near a jiko'], set: 'b' },
     ],
   },
   'tv-water': {
@@ -440,7 +440,7 @@ const CREATIVE: Record<string, FactSet> = {
   'tc-water': {
     categories: [
       { one: 'a water safety rule', many: 'water safety rules', items: ['swim only when an adult is watching', 'walk, do not run, near the pool', 'shower before swimming', 'never push others into water'] },
-      { one: 'a dangerous thing to do near water', many: 'dangerous things to do near water', items: ['swimming in a flooded river', 'diving into shallow water', 'swimming alone', 'running on a wet floor'] },
+      { one: 'a dangerous thing to do near water', many: 'dangerous things to do near water', items: ['swim in a flooded river', 'dive into shallow water', 'swim alone', 'run on a wet floor'] },
     ],
     pairs: [
       {
@@ -448,7 +448,7 @@ const CREATIVE: Record<string, FactSet> = {
           ['a float', 'helps us stay up in water'],
           ['goggles', 'protect our eyes in water'],
           ['a swimming costume', 'is worn for swimming'],
-          ['a rope', 'can be thrown to someone in trouble'],
+          ['a towel', 'dries us after swimming'],
         ],
         ask: (a) => `What is ${a} for? It ___.`,
         askBack: (b) => `Which item ${b}?`,

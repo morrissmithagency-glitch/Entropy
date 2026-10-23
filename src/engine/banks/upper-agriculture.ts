@@ -601,13 +601,13 @@ const G6: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['zai pits', 'small pits that hold water and manure near crops'],
+            ['zai pits', 'digging small pits that hold water and manure near crops'],
             ['rock catchment', 'collecting rain that runs off large rocks'],
             ['roof catchment', 'collecting rain from roofs with gutters'],
-            ['water pans', 'shallow ponds that collect run-off'],
+            ['water pans', 'digging shallow ponds that collect run-off'],
           ],
-          ask: (a) => `What are ${a}?`,
-          askBack: (b) => `What is ${b} called?`,
+          ask: (a) => `In water harvesting, what does "${a}" involve?`,
+          askBack: (b) => `Which water harvesting method involves ${b}?`,
         },
       ],
     },

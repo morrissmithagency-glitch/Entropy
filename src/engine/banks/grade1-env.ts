@@ -29,7 +29,7 @@ const FACTS: Record<string, FactSet> = {
   'v-home': {
     categories: [
       { one: 'a room in a house', many: 'rooms in a house', items: ['kitchen', 'bedroom', 'bathroom', 'sitting room', 'store'], set: 'r' },
-      { one: 'a thing that is not a room', many: 'things that are not rooms', items: ['chair', 'cup', 'bed', 'spoon', 'table'], set: 'r' },
+      { one: 'a thing we use at home', many: 'things we use at home', items: ['chair', 'cup', 'bed', 'spoon', 'table'], set: 'r' },
       { one: 'a person at home', many: 'people at home', items: ['father', 'mother', 'brother', 'sister', 'grandmother', 'baby'] },
       { one: 'a person at school', many: 'people at school', items: ['teacher', 'head teacher', 'cook', 'watchman', 'classmate'] },
     ],
@@ -95,8 +95,8 @@ const FACTS: Record<string, FactSet> = {
   },
   'v-weather': {
     categories: [
-      { one: 'a thing we see in the sky in the day', many: 'things we see in the sky in the day', items: ['the sun', 'clouds', 'birds', 'a rainbow', 'an aeroplane'] },
-      { one: 'a thing we see in the sky at night', many: 'things we see in the sky at night', items: ['the moon', 'stars', 'darkness', 'fireflies'] },
+      { one: 'a thing we see in the sky in the day', many: 'things we see in the sky in the day', items: ['the sun', 'a rainbow', 'white clouds', 'a blue sky'], set: 'sky' },
+      { one: 'a thing we see in the sky at night', many: 'things we see in the sky at night', items: ['the moon', 'stars', 'a dark sky', 'a crescent moon'], set: 'sky' },
       { one: 'a thing we use when it rains', many: 'things we use when it rains', items: ['umbrella', 'raincoat', 'gumboots'], set: 'r' },
       { one: 'a thing we use when it is hot', many: 'things we use when it is hot', items: ['sunhat', 'sunglasses', 'light clothes', 'cold water'], set: 'r' },
     ],
@@ -116,8 +116,8 @@ const FACTS: Record<string, FactSet> = {
     categories: [
       { one: 'a kind of soil', many: 'kinds of soil', items: ['sand', 'clay', 'loam'], set: 's' },
       { one: 'a thing that is not soil', many: 'things that are not soil', items: ['water', 'glass', 'plastic', 'air'], set: 's' },
-      { one: 'a thing we make with clay', many: 'things we make with clay', items: ['a pot', 'a bowl', 'a toy cow', 'a cup', 'a brick'] },
-      { one: 'a thing made from wood', many: 'things made from wood', items: ['a chair', 'a door', 'a table', 'a stool', 'a cooking stick'] },
+      { one: 'a thing we make with clay', many: 'things we make with clay', items: ['a cooking pot', 'a water pot', 'a clay cup', 'a brick'], set: 'm' },
+      { one: 'a thing made from wood', many: 'things made from wood', items: ['a chair', 'a door', 'a table', 'a stool', 'a cooking stick'], set: 'm' },
     ],
   },
   'v-sound': {
@@ -167,10 +167,10 @@ const FACTS: Record<string, FactSet> = {
     pairs: [
       {
         pairs: [
-          ['shade', 'trees'],
-          ['fruits', 'mango trees'],
-          ['flowers', 'rose plants'],
-          ['food', 'maize plants'],
+          ['mangoes', 'mango trees'],
+          ['oranges', 'orange trees'],
+          ['maize', 'maize plants'],
+          ['beans', 'bean plants'],
         ],
         ask: (a) => `We get ${a} from ___.`,
       },

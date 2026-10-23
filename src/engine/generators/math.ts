@@ -468,12 +468,12 @@ export const mass: Generator = (rng, level) => {
   }
   if (level === 4) {
     const n = rng.int(3, 9)
-    const [thing, unit] = rng.pick<[string, string]>([
-      ['pumpkin', 'oranges'],
-      ['bag of beans', 'stones'],
-      ['pot', 'cups'],
+    const [thing, things, unit] = rng.pick<[string, string, string]>([
+      ['pumpkin', 'pumpkins', 'oranges'],
+      ['bag of beans', 'bags of beans', 'stones'],
+      ['pot', 'pots', 'cups'],
     ])
-    return num('mass', level, `${An(thing)} balances ${n} ${unit}. Two ${thing}s will balance how many ${unit}?`, n * 2, { explain: `${n} + ${n} = ${n * 2}.` })
+    return num('mass', level, `${An(thing)} balances ${n} ${unit}. Two ${things} will balance how many ${unit}?`, n * 2, { explain: `${n} + ${n} = ${n * 2}.` })
   }
   const a = rng.int(8, 16)
   const b = rng.int(3, a - 2)

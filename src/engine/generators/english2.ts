@@ -265,7 +265,7 @@ export const pron2: Generator = (rng, level) => {
   if (level <= 3) {
     const [who, p] = rng.pick(level === 1 ? PRON.filter(([, x]) => x === 'He' || x === 'She') : PRON)
     const wrong = rng.sample(['He', 'She', 'It', 'They', 'We'].filter((x) => x !== p), level === 1 ? 2 : 3)
-    return q(level, `${who} is here. ___ ${AFTER[p]}`, p, wrong, `We use "${p}" for ${who.toLowerCase()}.`)
+    return q(level, `${who} ${p === 'They' || p === 'We' ? 'are' : 'is'} here. ___ ${AFTER[p]}`, p, wrong, `We use "${p}" for ${who.toLowerCase()}.`)
   }
   const [word, n, ans, wrongs] = rng.pick<[string, number, string, string[]]>([
     ['book', 1, 'This', ['These', 'Those']],
@@ -371,29 +371,31 @@ export const prep2: Generator = (rng, level) => {
     const where = rng.pick(set)
     return { ...q(level, `Where is the ${art}? It is ___ the box.`, where, set.filter((x) => x !== where).slice(0, 3) as string[]), visual: { kind: 'position', art, where } }
   }
-  const [s, ans] = rng.pick<[string, string]>([
-    ['The fish lives ___ the water.', 'in'],
-    ['The cup is ___ the table.', 'on'],
-    ['The cat is hiding ___ the bed.', 'under'],
-    ['The bird is ___ the tree.', 'in'],
-    ['I put my books ___ my bag.', 'in'],
-    ['The clock is ___ the wall.', 'on'],
-    ['My shoes are ___ the chair.', 'under'],
-    ['Juma sits ___ me in class.', 'beside'],
-    ['The goat is ___ the house.', 'behind'],
-    ['The hat is ___ his head.', 'on'],
-    ['The milk is ___ the cup.', 'in'],
-    ['The baby is sleeping ___ the bed.', 'on'],
-    ['The ball rolled ___ the table.', 'under'],
-    ['Mama put the food ___ the pot.', 'in'],
-    ['The picture is ___ the wall.', 'on'],
-    ['The dog sleeps ___ the door.', 'behind'],
-    ['I sit ___ my best friend.', 'beside'],
-    ['The keys are ___ the box.', 'in'],
-    ['The mat is ___ the chair.', 'under'],
-    ['The cow is standing ___ the tree.', 'beside'],
+  // Each sentence lists only wrong words that cannot also fit.
+  const [s, ans, wrong] = rng.pick<[string, string, string[]]>([
+    ['The fish lives ___ the water.', 'in', ['on', 'beside', 'behind']],
+    ['Put the plate ___ the table so we can eat.', 'on', ['in', 'under', 'behind']],
+    ['The cat hides ___ the bed, in the dark space below it.', 'under', ['in', 'on', 'beside']],
+    ['The bird built its nest ___ the tree.', 'in', ['under', 'beside', 'behind']],
+    ['I put my books ___ my bag and closed it.', 'in', ['on', 'under', 'behind']],
+    ['The clock hangs ___ the wall.', 'on', ['in', 'under', 'beside']],
+    ['Juma sits next to me. He sits ___ me.', 'beside', ['in', 'on', 'under']],
+    ['The hat is ___ his head.', 'on', ['in', 'under', 'beside']],
+    ['The milk is ___ the cup. Drink it!', 'in', ['on', 'under', 'behind']],
+    ['Mama put the food ___ the pot and covered it.', 'in', ['on', 'under', 'behind']],
+    ['The dog sleeps ___ the table, in the shade below it.', 'under', ['in', 'on', 'beside']],
+    ['The goat hides at the back of the house. It is ___ the house.', 'behind', ['in', 'on', 'under']],
+    ['I sit next to my best friend. I sit ___ her.', 'beside', ['in', 'on', 'under']],
+    ['The picture hangs ___ the wall.', 'on', ['in', 'under', 'beside']],
+    ['Mama pours the tea ___ the cup.', 'in', ['on', 'under', 'behind']],
+    ['The shoes are ___ the bed, on the floor below it.', 'under', ['in', 'on', 'beside']],
+    ['The cow stands next to the tree. It is ___ the tree.', 'beside', ['in', 'on', 'under']],
+    ['The sun hides at the back of a cloud. It is ___ the cloud.', 'behind', ['in', 'on', 'under']],
+    ['The baby sleeps ___ the bed, on top of the blanket.', 'on', ['in', 'under', 'behind']],
+    ['The keys are ___ the box, so close the lid.', 'in', ['on', 'under', 'behind']],
+    ['The boy hides at the back of the door. He is ___ the door.', 'behind', ['in', 'on', 'under']],
   ])
-  return q(level, `Choose the right word: ${s}`, ans, rng.sample(['in', 'on', 'under', 'beside', 'behind'].filter((x) => x !== ans), level === 4 ? 2 : 3))
+  return q(level, `Choose the right word: ${s}`, ans, rng.sample(wrong, level === 4 ? 2 : 3))
 }
 
 // ── Describing words ────────────────────────────────────────────────────────
@@ -421,9 +423,9 @@ export const adj2 = factGenerator({
       pairs: [
         ['a pillow', 'soft'],
         ['a stone', 'hard'],
-        ['ice', 'cold'],
-        ['hot tea', 'hot'],
-        ['a feather', 'light'],
+        ['water from the fridge', 'cold'],
+        ['the midday sun', 'hot'],
+        ['an ant', 'tiny'],
         ['a bag of maize', 'heavy'],
       ],
       ask: (a) => `Which word describes ${a}?`,
