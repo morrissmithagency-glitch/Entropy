@@ -47,3 +47,16 @@ describe('Pre-primary depth', () => {
     }
   })
 })
+
+// Junior school: the same bar as Grades 4–6, with passages a little lower.
+const JSS_PASSAGES = /^j[789](e-(comp|cloze)|k-(ufahamu|cloze))$/
+describe('Grade 7 to 9 depth', () => {
+  const subs = [findGrade('g7'), findGrade('g8'), findGrade('g9')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+  it.each(subs.map((s) => [s.id]))('%s has enough different questions at every level', (id) => {
+    for (const level of [1, 2, 3, 4, 5] as Level[]) {
+      const seen = new Set<string>()
+      for (let seed = 1; seed <= 120; seed++) for (const q of buildQuiz(id, level, seed * 7919)) if (q.level === level) seen.add(signature(q))
+      expect(seen.size, `${id} level ${level}`).toBeGreaterThanOrEqual(JSS_PASSAGES.test(id) ? 8 : 10)
+    }
+  })
+})

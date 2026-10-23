@@ -24,8 +24,8 @@ describe('Grade 1 to 3 lessons', () => {
   })
 })
 
-describe('Pre-primary and Grade 4 to 6 lessons', () => {
-  const subs = [findGrade('pp1'), findGrade('pp2'), findGrade('g4'), findGrade('g5'), findGrade('g6')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
+describe('Pre-primary and Grade 4 to 9 lessons', () => {
+  const subs = [findGrade('pp1'), findGrade('pp2'), findGrade('g4'), findGrade('g5'), findGrade('g6'), findGrade('g7'), findGrade('g8'), findGrade('g9')].flatMap((g) => g.areas).flatMap((a) => a.strands.flatMap((s) => s.subStrands))
 
   it.each(subs.map((s) => [s.id]))('%s has a full lesson', (id) => {
     const lesson = lessonFor(id)

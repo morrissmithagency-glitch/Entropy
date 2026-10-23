@@ -428,9 +428,36 @@ const COMP_J: BankQuestion[] = [
     ['What does Kelvin\'s story mainly show?', 'Persistence and learning from failure lead to success.', ['Inventions always work the first time.', 'Libraries are only for reading novels.', 'Garages sell lamps.']],
     ['Which word best describes Kelvin?', 'persistent', ['impatient', 'careless', 'proud']],
   ]),
+  ...passage(5, 'The Library on Wheels', 'In the dry plains of northern Kenya, where schools are far apart and books are scarce, a library arrives every Thursday on the backs of three camels. The idea began when a librarian in Garissa noticed that children in remote settlements had finished reading the few books their schools owned. Trucks could not cross the sandy tracks, but camels could. Each camel carries two wooden boxes holding about two hundred books. When the caravan appears on the horizon, children run to meet it, carrying the books they borrowed the week before. Critics once argued that the project was old-fashioned and that tablets would be cheaper. However, solar charging points are rare in the area, and the camels, unlike machines, rarely break down. The librarian smiles at the comparison: "A camel never needs a password," she says.', [
+    ['Why were camels chosen instead of trucks?', 'Trucks could not cross the sandy tracks.', ['Camels are faster than trucks.', 'Trucks were too expensive to paint.', 'The children preferred camels.']],
+    ['How often does the library visit?', 'once a week, on Thursdays', ['every day', 'once a month', 'only during holidays']],
+    ['Which argument did critics make against the project?', 'Tablets would be cheaper and more modern.', ['Camels eat the books.', 'Children do not like reading.', 'Libraries should only be in towns.']],
+    ['What does the librarian\'s remark "A camel never needs a password" suggest?', 'Camels are simpler and more reliable than technology in that area.', ['Camels can use computers.', 'Passwords are dangerous.', 'Children forget their passwords.']],
+    ['Which word best describes the librarian?', 'innovative', ['careless', 'impatient', 'boastful']],
+  ]),
+  ...passage(4, 'The Debate', 'Our school held a debate on the motion "Mobile phones should be allowed in junior schools." Achieng\', speaking for the motion, argued that phones help learners research and keep in touch with parents. Wekesa, opposing, replied that phones distract learners and expose them to cyberbullying. The audience laughed when he held up a phone and announced that it had received forty notifications during the morning lesson alone. In the end, the judges ruled that the opposers had won, but the teacher on duty praised both sides for presenting facts calmly and listening to each other.', [
+    ['What was the motion of the debate?', 'Mobile phones should be allowed in junior schools.', ['Junior schools should be closed.', 'Teachers should use phones.', 'Debates should be banned.']],
+    ['What was Achieng\'s main argument?', 'Phones help learners research and contact parents.', ['Phones cause cyberbullying.', 'Phones are too expensive.', 'Phones should be used by teachers only.']],
+    ['Why did the audience laugh?', 'Wekesa showed that a phone had received forty notifications in one lesson.', ['Achieng\' dropped her phone.', 'The judges fell asleep.', 'The teacher sang a song.']],
+    ['What did the teacher praise?', 'Both sides presented facts calmly and listened.', ['Only the winners\' jokes.', 'The loudest speaker.', 'The length of the debate.']],
+  ]),
 ]
 
 const CLOZE_J: BankQuestion[] = [
+  ...clozeP(4, 'The Marathon Champion', 'Many people believe that great athletes are simply born talented. (1), the story of most champions tells a different tale. A young runner from Iten wakes up at five o\'clock every morning, (2) the weather. She runs on muddy roads, eats simple meals and goes to bed early. When she (3) her first international race, journalists asked her secret. "There is no secret," she replied. "I have been training (4) I was twelve." Her success shows that talent without discipline is (5) a seed without water.', false, [
+    ['However', ['Therefore', 'Because', 'Moreover']],
+    ['whatever', ['whenever', 'however', 'wherever']],
+    ['won', ['wins', 'has won', 'winning']],
+    ['since', ['for', 'from', 'during']],
+    ['like', ['as', 'such', 'than']],
+  ]),
+  ...clozeP(5, 'Saving the Mangroves', 'Along the coast of Kenya, mangrove forests protect the shoreline (1) strong waves and provide breeding grounds for fish. For years, these forests were cut down for firewood and building poles, (2) led to falling fish catches. A women\'s group in Gazi decided to reverse the damage. (3) planting thousands of seedlings, they started an eco-tourism boardwalk (4) visitors pay to walk through the forest. The income is used to support local schools. Had the women not acted, the forest (5) have disappeared completely.', false, [
+    ['from', ['against', 'off', 'by']],
+    ['which', ['what', 'who', 'that is']],
+    ['Besides', ['Despite', 'Unless', 'Although']],
+    ['where', ['which', 'when', 'whose']],
+    ['might', ['will', 'may', 'can']],
+  ]),
   ...clozeP(3, 'Climate Action', 'Climate change is one of the greatest challenges (1) our generation. Rising temperatures have led (2) longer droughts in some parts of Kenya and floods in others. (3) everyone can help. Planting trees, saving electricity and reducing waste are simple steps (4) make a difference. If each learner planted one tree a year, our country (5) be much greener.', false, [
     ['facing', ['face', 'faced', 'faces']],
     ['to', ['for', 'at', 'with']],
@@ -616,10 +643,53 @@ const UFAHAMU_J: BankQuestion[] = [
     ['Kwa nini mwandishi analinganisha alama hizi na nyayo mchangani?', 'kuonyesha kwamba alama za mtandaoni hazifutiki kwa urahisi', ['kuonyesha kwamba mtandao ni ufukwe', 'kueleza jinsi ya kutembea', 'kuelezea likizo']],
     ['Alama ya kidijitali inawezaje kuwa fursa?', 'Kushiriki kazi nzuri hujenga sifa njema.', ['Inafutika kwa urahisi.', 'Inaficha anwani.', 'Inafanya kuweka picha kuwe haraka.']],
     ['Wataalamu wanashauri nini?', 'Fikiri kabla ya kuweka chochote mtandaoni.', ['Weka anwani yako ya nyumbani.', 'Usitumie mtandao kamwe.', 'Weka kila picha unayopiga.']],
+    ['Kichwa kingine kinachofaa kifungu hiki ni kipi?', 'Tumia Mtandao kwa Hekima', ['Nyayo za Ufukweni', 'Kompyuta Mpya', 'Safari ya Shule']],
+    ['Neno "fursa" lina maana gani?', 'nafasi nzuri', ['hatari', 'adhabu', 'hasara']],
+  ]),
+  ...passage(4, 'Maktaba ya Ngamia', 'Katika maeneo kame ya kaskazini mwa Kenya, ambako shule ziko mbali na vitabu ni haba, maktaba hufika kila Alhamisi juu ya migongo ya ngamia watatu. Wazo hili lilianza mkutubi mmoja wa Garissa alipogundua kwamba watoto wa vijiji vya mbali walikuwa wamemaliza kusoma vitabu vichache vya shule zao. Magari hayakuweza kupita kwenye njia za mchanga, lakini ngamia waliweza. Kila ngamia hubeba masanduku mawili yenye vitabu karibu mia mbili. Msafara unapoonekana kwa mbali, watoto hukimbia kuulaki wakiwa wamebeba vitabu walivyoazima wiki iliyopita.', [
+    ['Kwa nini ngamia walitumiwa badala ya magari?', 'Magari hayakuweza kupita kwenye njia za mchanga.', ['Ngamia ni wepesi kuliko magari.', 'Watoto waliwapenda ngamia.', 'Magari yalikuwa ghali kupaka rangi.']],
+    ['Maktaba hufika mara ngapi?', 'mara moja kwa wiki, kila Alhamisi', ['kila siku', 'mara moja kwa mwezi', 'wakati wa likizo tu']],
+    ['Neno "haba" lina maana gani?', 'kidogo', ['vingi', 'vizuri', 'vipya']],
+    ['Watoto hufanya nini wanapoona msafara?', 'Hukimbia kuulaki wakiwa na vitabu walivyoazima.', ['Hujificha.', 'Huenda shambani.', 'Hulala.']],
+    ['Mkutubi anaweza kuelezwa kuwa mtu wa aina gani?', 'mbunifu', ['mvivu', 'mwenye kiburi', 'mzembe']],
+  ]),
+  ...passage(4, 'Mjadala Shuleni', 'Shule yetu iliandaa mjadala kuhusu hoja: "Simu za mkononi zinafaa kuruhusiwa katika shule za sekondari msingi." Achieng\', aliyeunga mkono hoja, alisema kwamba simu huwasaidia wanafunzi kufanya utafiti na kuwasiliana na wazazi. Wekesa, aliyepinga, alijibu kwamba simu huwasumbua wanafunzi na kuwaweka katika hatari ya uonevu mtandaoni. Hadhira ilicheka alipoinua simu na kutangaza kwamba ilikuwa imepokea arifa arobaini wakati wa kipindi kimoja cha asubuhi. Mwishowe, waamuzi walitangaza kwamba wapinzani walishinda, lakini mwalimu wa zamu aliwapongeza wote kwa kuwasilisha hoja kwa utulivu na kusikilizana.', [
+    ['Hoja ya mjadala ilikuwa ipi?', 'Simu za mkononi zinafaa kuruhusiwa shuleni.', ['Shule zifungwe.', 'Walimu watumie simu.', 'Mijadala ipigwe marufuku.']],
+    ['Hoja kuu ya Achieng\' ilikuwa ipi?', 'Simu husaidia utafiti na mawasiliano na wazazi.', ['Simu husababisha uonevu.', 'Simu ni ghali.', 'Simu zitumiwe na walimu tu.']],
+    ['Kwa nini hadhira ilicheka?', 'Wekesa alionyesha simu iliyopokea arifa arobaini katika kipindi kimoja.', ['Achieng\' aliangusha simu.', 'Waamuzi walilala.', 'Mwalimu aliimba.']],
+    ['Mwalimu wa zamu aliwapongeza kwa nini?', 'Kuwasilisha hoja kwa utulivu na kusikilizana.', ['Kupiga kelele.', 'Kuchelewa.', 'Kumaliza mapema.']],
+  ]),
+  ...passage(5, 'Mikoko ya Gazi', 'Katika pwani ya Kenya, misitu ya mikoko hulinda ufuo dhidi ya mawimbi makali na huwa mazalia ya samaki. Kwa miaka mingi, misitu hii ilikatwa ili kupata kuni na nguzo za ujenzi, jambo lililosababisha kupungua kwa samaki. Kikundi cha wanawake wa Gazi kiliamua kurekebisha hali hii. Mbali na kupanda maelfu ya miche, walijenga njia ya mbao ambapo watalii hulipa ili kutembea ndani ya msitu. Mapato hutumiwa kusaidia shule za eneo hilo. Kama wanawake hao wasingechukua hatua, msitu huo ungeweza kutoweka kabisa.', [
+    ['Mikoko husaidia vipi pwani?', 'Hulinda ufuo dhidi ya mawimbi na kuwa mazalia ya samaki.', ['Huleta mvua kubwa.', 'Huzuia watalii.', 'Hukausha bahari.']],
+    ['Ni nini kilisababisha kupungua kwa samaki?', 'Ukataji wa mikoko.', ['Mvua nyingi.', 'Watalii wengi.', 'Upandaji wa miche.']],
+    ['Mapato ya njia ya mbao hutumiwa kufanya nini?', 'kusaidia shule za eneo hilo', ['kununua magari', 'kukata miti zaidi', 'kujenga hoteli']],
+    ['Methali ipi inafaa juhudi za wanawake hawa?', 'Umoja ni nguvu, utengano ni udhaifu', ['Mgema akisifiwa tembo hulitia maji', 'Ukiona vyaelea vimeundwa', 'Asiyesikia la mkuu huvunjika guu']],
+    ['Kiunganishi "mbali na" kimetumiwa kuonyesha nini?', 'nyongeza', ['tofauti', 'sababu', 'masharti']],
   ]),
 ]
 
 const CLOZE_KJ: BankQuestion[] = [
+  ...clozeP(5, 'Maktaba ya Kijiji', 'Miaka mitano iliyopita, kijiji chetu hakikuwa na maktaba. Wanafunzi (1) kusoma walilazimika kusafiri hadi mjini. Mzee Kariuki, mwalimu mstaafu, aliamua kugeuza chumba kimoja cha nyumba yake kuwa maktaba. (2) alianza na vitabu hamsini tu, sasa maktaba hiyo ina vitabu zaidi ya elfu mbili. Wazazi, wanafunzi wa zamani na mashirika (3) wamechangia vitabu. Kila jioni, chumba hicho hujaa vijana (4) husoma kwa bidii. Kama si moyo wa kujitolea wa mzee huyu, ndoto za wengi (5) zimefifia.', true, [
+    ['waliotaka', ['aliyetaka', 'kilichotaka', 'yaliyotaka']],
+    ['Ingawa', ['Kwa sababu', 'Ili', 'Tena']],
+    ['mbalimbali', ['moja', 'pekee', 'kamwe']],
+    ['ambao', ['ambayo', 'ambacho', 'ambaye']],
+    ['zingekuwa', ['zitakuwa', 'zilikuwa', 'zimekuwa']],
+  ]),
+  ...clozeP(4, 'Bingwa wa Mbio', 'Watu wengi huamini kwamba wanariadha hodari huzaliwa na kipaji tu. (1), hadithi za mabingwa wengi zinaonyesha jambo tofauti. Mwanariadha mmoja wa Iten huamka saa kumi na moja kila asubuhi (2) hali ya hewa iweje. Hukimbia katika barabara zenye matope, hula chakula cha kawaida na hulala mapema. Baada ya (3) mbio zake za kwanza za kimataifa, waandishi wa habari walimwuliza siri yake. "Hakuna siri," alijibu. "Nimekuwa nikifanya mazoezi (4) nilipokuwa na umri wa miaka kumi na miwili." Mafanikio yake yanaonyesha kwamba kipaji bila nidhamu ni (5) mbegu isiyo na maji.', true, [
+    ['Hata hivyo', ['Kwa hiyo', 'Kwa sababu', 'Ili']],
+    ['vyovyote', ['popote', 'yeyote', 'lolote']],
+    ['kushinda', ['alishinda', 'atashinda', 'ameshinda']],
+    ['tangu', ['hadi', 'kwa', 'mpaka']],
+    ['kama', ['kuliko', 'ila', 'bali']],
+  ]),
+  ...clozeP(4, 'Siku ya Mazingira', 'Siku ya Mazingira Duniani huadhimishwa tarehe tano Juni kila mwaka. Mwaka huu, wanafunzi wa shule yetu (1) miche mia tatu kando ya mto. Mwalimu mkuu alisema kwamba miti (2) leo itawasaidia watoto wa kesho. Wanafunzi pia (3) taka za plastiki zilizokuwa zimetupwa mtoni. (4) kazi ilikuwa ngumu, kila mmoja alifurahi kuona mto ukiwa safi. Tunatumaini kwamba jamii nzima (5) kutunza mazingira.', true, [
+    ['walipanda', ['wanapanda', 'watapanda', 'wamepanda']],
+    ['inayopandwa', ['yanayopandwa', 'kinachopandwa', 'zinazopandwa']],
+    ['waliokota', ['waliokotwa', 'wameokotwa', 'wataokotwa']],
+    ['Ingawa', ['Kwa sababu', 'Ili', 'Kama']],
+    ['itaendelea', ['ataendelea', 'wataendelea', 'kitaendelea']],
+  ]),
   ...clozeP(3, 'Mabadiliko ya Tabianchi', 'Mabadiliko ya tabianchi ni changamoto kubwa (1) kizazi chetu. Ongezeko la joto (2) ukame wa muda mrefu katika sehemu nyingi za nchi. (3), kila mmoja wetu anaweza kusaidia. Kupanda miti na kuokoa umeme ni hatua rahisi (4) zinaleta tofauti. Kama kila mwanafunzi angepanda mti mmoja kila mwaka, nchi yetu (5) kijani zaidi.', true, [
     ['inayokikabili', ['inayowakabili', 'kinachokikabili', 'yanayokikabili']],
     ['limesababisha', ['zimesababisha', 'kimesababisha', 'umesababisha']],

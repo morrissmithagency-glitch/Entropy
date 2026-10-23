@@ -23,6 +23,8 @@ const gcd = (a: number, b: number): number => (b === 0 ? Math.abs(a) : gcd(b, a 
 const lcm = (a: number, b: number) => (a / gcd(a, b)) * b
 /** A signed number written the way papers write it: −5, not -5. */
 const sg = (n: number) => (n < 0 ? `−${Math.abs(n)}` : String(n))
+/** A power written as papers print it: 10⁷, a⁻³. */
+const sup = (n: number) => String(n).replace(/[-0-9]/g, (c) => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)])
 /** Wrong integer answers near a value, for choice questions with negatives. */
 const nearInts = (n: number) => [n + 1, n - 1, -n, n + 2, n - 2].filter((x) => x !== n).map(sg)
 /** A term like 3x, −x, x, with a sign written before it when not first. */
@@ -91,7 +93,7 @@ export const factorsJ = (): Generator => (rng, level) => {
       return num(level, `Find the HCF (GCD) of ${a} and ${b}.`, gcd(a, b), { explain: `The biggest number that divides both is ${gcd(a, b)}.` })
     }
     case 3: {
-      const [a, b, c] = rng.pick([[4, 6, 10], [6, 8, 12], [3, 5, 9], [8, 12, 18], [5, 6, 15], [9, 12, 15], [10, 12, 15], [4, 9, 12]])
+      const [a, b, c] = rng.pick([[4, 6, 10], [6, 8, 12], [3, 5, 9], [8, 12, 18], [5, 6, 15], [9, 12, 15], [10, 12, 15], [4, 9, 12], [2, 7, 9], [6, 10, 15], [4, 10, 14], [3, 8, 12], [12, 16, 20], [5, 8, 10], [6, 14, 21], [7, 10, 14]])
       return num(level, `Find the LCM of ${a}, ${b} and ${c}.`, lcm(lcm(a, b), c), { explain: `The smallest number all three divide into is ${lcm(lcm(a, b), c)}.` })
     }
     case 4: {
@@ -130,6 +132,11 @@ export const fracJ = (g: J): Generator => (rng, level) => {
       ['0.0909…', '1/11', ['9/100', '1/9', '9/10']],
       ['0.4545…', '5/11', ['45/100', '4/9', '9/20']],
       ['0.777…', '7/9', ['7/10', '77/100', '3/4']],
+      ['0.222…', '2/9', ['2/10', '22/100', '1/5']],
+      ['0.555…', '5/9', ['5/10', '55/100', '1/2']],
+      ['0.888…', '8/9', ['8/10', '88/100', '7/8']],
+      ['0.2727…', '3/11', ['27/100', '3/10', '2/7']],
+      ['0.444…', '4/9', ['4/10', '44/100', '2/5']],
     ])
     return pick(level, `Write the recurring decimal ${dec} as a fraction.`, f, wrong)
   }
@@ -193,7 +200,7 @@ export const decJ = (): Generator => (rng, level) => {
       const m = rng.int(11, 99) / 10
       const e = rng.int(4, 9)
       const n = Math.round(m * 10 ** e)
-      return pick(level, `Write ${fmt(n)} in standard form.`, `${m} × 10^${e}`, [`${m} × 10^${e - 1}`, `${m * 10} × 10^${e - 1}`, `${m} × 10^${e + 1}`], 'A number from 1 to 10, times a power of 10.')
+      return pick(level, `Write ${fmt(n)} in standard form.`, `${m} × 10${sup(e)}`, [`${m} × 10${sup(e - 1)}`, `${m * 10} × 10${sup(e - 1)}`, `${m} × 10${sup(e + 1)}`], 'A number from 1 to 10, times a power of 10.')
     }
     default: {
       const l = rng.int(25, 95) / 10
@@ -220,7 +227,7 @@ export const squaresJ = (g: J): Generator => (rng, level) => {
         const n = rng.int(2, 12)
         return rng.next() < 0.5 ? num(level, `Find ${n}³.`, n ** 3, { explain: `${n} × ${n} × ${n} = ${n ** 3}` }) : num(level, `Find the cube root of ${fmt(n ** 3)}.`, n, { explain: `${n} × ${n} × ${n} = ${n ** 3}` })
       }
-      const n = rng.int(11, 19)
+      const n = rng.pick([11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29])
       return pick(level, `Find (${n / 10})².`, String((n * n) / 100), [String((n * n) / 10), String((n * 2) / 10), String((n * n) / 1000)], `${n} × ${n} = ${n * n}, with two decimal places.`)
     }
     case 4: {
@@ -258,7 +265,7 @@ export const integersJ = (g: J): Generator => (rng, level) => {
       const q = rng.int(-8, -2)
       const r = rng.int(-20, 20)
       const v = p * q - r
-      return pick(level, `Work out: ${p} × (${sg(q)}) − (${sg(r)})`, sg(v), nearInts(v), `Multiply first: ${p} × ${sg(q)} = ${sg(p * q)}; then subtract ${sg(r)}.`)
+      return pick(level, `Work out: ${p} × (${sg(q)}) − ${r < 0 ? `(${sg(r)})` : r}`, sg(v), nearInts(v), `Multiply first: ${p} × ${sg(q)} = ${sg(p * q)}; then subtract ${sg(r)}.`)
     }
     default: {
       const t = rng.int(-6, 8)
@@ -298,7 +305,7 @@ export const ratioJ = (g: J): Generator => (rng, level) => {
         return num(level, `${w} people working ${h} hours a day finish a job in ${d} days. How many days would ${w2} people working ${h2} hours a day take?`, d2, { explain: `Total work = ${w} × ${h} × ${d} = ${w * h * d} person-hours; ÷ (${w2} × ${h2}) = ${d2}.` })
       }
       case 4: {
-        const [a, b] = rng.pick([[3, 6], [4, 12], [6, 12], [6, 3], [10, 15], [12, 4]])
+        const [a, b] = rng.pick([[3, 6], [4, 12], [6, 12], [6, 3], [10, 15], [12, 4], [2, 3], [2, 6], [3, 4], [4, 6], [5, 20], [8, 24], [9, 18], [12, 24], [20, 30]])
         const t = (a * b) / (a + b)
         return Number.isInteger(t)
           ? num(level, `One tap fills a tank in ${a} hours; another fills it in ${b} hours. How long do both take together? (hours)`, t, { explain: `Rates 1/${a} + 1/${b} = ${frac(a + b, a * b)} per hour; time = ${t} h.` })
@@ -351,22 +358,22 @@ export const indicesJ = (): Generator => (rng, level) => {
   const n = rng.int(2, 5)
   switch (level) {
     case 1:
-      return pick(level, `Simplify ${b}^${m} × ${b}^${n}.`, `${b}^${m + n}`, [`${b}^${m * n}`, `${b}^${m - n}`, `${typeof b === 'number' ? b * 2 : `2${b}`}^${m + n}`], 'Same base: add the powers.')
+      return pick(level, `Simplify ${b}${sup(m)} × ${b}${sup(n)}.`, `${b}${sup(m + n)}`, [`${b}${sup(m * n)}`, `${b}${sup(m - n)}`, `${typeof b === 'number' ? b * 2 : `2${b}`}${sup(m + n)}`], 'Same base: add the powers.')
     case 2:
-      return pick(level, `Simplify ${b}^${m + n} ÷ ${b}^${n}.`, `${b}^${m}`, [`${b}^${m + 2 * n}`, `${b}^${n}`, `1^${m}`], 'Same base: subtract the powers.')
+      return pick(level, `Simplify ${b}${sup(m + n)} ÷ ${b}${sup(n)}.`, `${b}${sup(m)}`, [`${b}${sup(m + 2 * n)}`, `${b}${sup(n)}`, `1${sup(m)}`], 'Same base: subtract the powers.')
     case 3:
-      return pick(level, `Simplify (${b}^${m})^${n}.`, `${b}^${m * n}`, [`${b}^${m + n}`, `${b}^${m * n + 1}`, `${b}^${m}`], 'Power of a power: multiply the powers.')
+      return pick(level, `Simplify (${b}${sup(m)})${sup(n)}.`, `${b}${sup(m * n)}`, [`${b}${sup(m + n)}`, `${b}${sup(m * n + 1)}`, `${b}${sup(m)}`], 'Power of a power: multiply the powers.')
     case 4: {
       const [q, ans, wrong] = rng.pick<[string, string, string[]]>([
         ['2⁻³', '1/8', ['−8', '−6', '8']],
         ['5⁰', '1', ['0', '5', '1/5']],
         ['10⁻²', '1/100', ['−100', '−20', '0.1']],
         ['3⁻²', '1/9', ['−9', '−6', '9']],
-        ['16^(1/2)', '4', ['8', '2', '256']],
-        ['27^(1/3)', '3', ['9', '81', '1/3']],
-        ['4^(3/2)', '8', ['6', '12', '64']],
-        ['1000^(1/3)', '10', ['100', '333', '3']],
-        ['8^(2/3)', '4', ['16', '2', '6']],
+        ['16 to the power ½', '4', ['8', '2', '256']],
+        ['27 to the power ⅓', '3', ['9', '81', '1/3']],
+        ['4 to the power 3/2', '8', ['6', '12', '64']],
+        ['1000 to the power ⅓', '10', ['100', '333', '3']],
+        ['8 to the power ⅔', '4', ['16', '2', '6']],
         ['(1/2)⁻²', '4', ['1/4', '−4', '2']],
       ])
       return pick(level, `Evaluate ${q}.`, ans, wrong)
@@ -376,8 +383,8 @@ export const indicesJ = (): Generator => (rng, level) => {
       const mant = rng.int(11, 99) / 10
       const e = rng.int(3, 8)
       return big
-        ? pick(level, `The distance from the Sun to Mercury is about ${fmt(Math.round(mant * 10 ** e))} km. Write it in standard form.`, `${mant} × 10^${e}`, [`${mant} × 10^${e - 1}`, `${mant * 10} × 10^${e}`, `${mant} × 10^-${e}`])
-        : pick(level, `A bacterium is ${(mant / 10 ** e).toFixed(e + 1).replace(/0+$/, '')} mm long. Write this in standard form.`, `${mant} × 10^-${e}`, [`${mant} × 10^${e}`, `${mant} × 10^-${e + 1}`, `${mant * 10} × 10^-${e}`])
+        ? pick(level, `The distance from the Sun to Mercury is about ${fmt(Math.round(mant * 10 ** e))} km. Write it in standard form.`, `${mant} × 10${sup(e)}`, [`${mant} × 10${sup(e - 1)}`, `${mant * 10} × 10${sup(e)}`, `${mant} × 10${sup(-e)}`])
+        : pick(level, `A bacterium is ${(mant / 10 ** e).toFixed(e + 1).replace(/0+$/, '')} mm long. Write this in standard form.`, `${mant} × 10${sup(-e)}`, [`${mant} × 10${sup(e)}`, `${mant} × 10${sup(-(e + 1))}`, `${mant * 10} × 10${sup(-e)}`])
     }
   }
 }
@@ -464,7 +471,7 @@ export const equationsJ = (g: J): Generator => (rng, level) => {
         const [p1, p2] = [rng.pick([20, 30, 40, 50]), rng.pick([60, 80, 100, 120])]
         const [a, b] = [rng.int(2, 6), rng.int(1, 5)]
         const [c, d] = [rng.int(1, 5), rng.int(2, 6)]
-        return num(level, `${a} pens and ${b} rulers cost ${a * p1 + b * p2} shillings. ${c} pens and ${d} rulers cost ${c * p1 + d * p2} shillings. How much is one ruler?`, p2, { explain: `Form two equations and solve: pen ${p1}, ruler ${p2}.` })
+        return num(level, `${a} pen${a > 1 ? 's' : ''} and ${b} ruler${b > 1 ? 's' : ''} cost ${a * p1 + b * p2} shillings. ${c} pen${c > 1 ? 's' : ''} and ${d} ruler${d > 1 ? 's' : ''} cost ${c * p1 + d * p2} shillings. How much is one ruler?`, p2, { explain: `Form two equations and solve: pen ${p1}, ruler ${p2}.` })
       }
       default: {
         const [adult, child] = [rng.pick([200, 250, 300]), rng.pick([100, 120, 150])]
@@ -598,7 +605,7 @@ export const measureJ = (g: J): Generator => (rng, level) => {
         return num(level, `Find the area of a trapezium with parallel sides ${a} cm and ${b2} cm, and height ${2 * ht} cm. (cm²)`, (a + b2) * ht, { explain: `½ × (${a} + ${b2}) × ${2 * ht} = ${(a + b2) * ht} cm²` })
       }
       case 4:
-        return pick(level, `Convert ${l * w * 100} cm² to m².`, String((l * w * 100) / 10000), [String(l * w), String((l * w * 100) / 100), String((l * w * 100) / 1000)], '1 m² = 10,000 cm².')
+        return pick(level, `Convert ${fmt(l * w * 100)} cm² to m².`, String((l * w * 100) / 10000), [String(l * w), String((l * w * 100) / 100), String((l * w * 100) / 1000)], '1 m² = 10,000 cm².')
       default: {
         const tank = [rng.pick([100, 120, 150, 200]), rng.pick([50, 80, 100]), rng.pick([60, 80, 100])]
         const v = (tank[0] * tank[1] * tank[2]) / 1000
@@ -634,11 +641,13 @@ export const measureJ = (g: J): Generator => (rng, level) => {
 }
 
 export const circlesJ = (): Generator => (rng, level) => {
-  const r = 7 * rng.int(1, 6)
+  const r = 7 * rng.int(1, 10)
   switch (level) {
     case 1:
+      if (rng.next() < 0.4) return num(level, `Find the circumference of a circle of diameter ${r} cm. (π = 22/7)`, (22 * r) / 7, { explain: `C = πd = 22/7 × ${r} = ${(22 * r) / 7} cm` })
       return num(level, `Find the circumference of a circle of radius ${r} cm. (π = 22/7)`, (44 * r) / 7, { explain: `C = 2πr = 2 × 22/7 × ${r} = ${(44 * r) / 7} cm` })
     case 2:
+      if (rng.next() < 0.4) return num(level, `Find the area of a circle of diameter ${2 * r} cm. (π = 22/7) (cm²)`, (22 * r * r) / 7, { explain: `r = ${r} cm; A = πr² = ${(22 * r * r) / 7} cm²` })
       return num(level, `Find the area of a circle of radius ${r} cm. (π = 22/7) (cm²)`, (22 * r * r) / 7, { explain: `A = πr² = 22/7 × ${r}² = ${(22 * r * r) / 7} cm²` })
     case 3: {
       const C = (44 * r) / 7
@@ -652,7 +661,7 @@ export const circlesJ = (): Generator => (rng, level) => {
         : num(level, `Find the area of a semicircle of radius ${r} cm. (π = 22/7) (cm²)`, (11 * r * r) / 7, { explain: `½πr² = ${(11 * r * r) / 7} cm²` })
     }
     default: {
-      const R = r + 7
+      const R = r + 7 * rng.int(1, 2)
       return num(level, `A circular pond of radius ${r} m has a path around it, making a bigger circle of radius ${R} m. Find the area of the path. (π = 22/7) (m²)`, (22 * (R * R - r * r)) / 7, { explain: `π(R² − r²) = 22/7 × (${R * R} − ${r * r}) = ${(22 * (R * R - r * r)) / 7} m²` })
     }
   }
@@ -709,8 +718,12 @@ export const densityJ = (): Generator => (rng, level) => {
       return num(level, `A metal has density ${d} g/cm³. Find the mass of ${v} cm³ of it. (g)`, d * v, { explain: `Mass = density × volume = ${d} × ${v}` })
     case 3:
       return num(level, `A stone of mass ${d * v} g has density ${d} g/cm³. Find its volume. (cm³)`, v, { explain: `Volume = mass ÷ density = ${d * v} ÷ ${d}` })
-    case 4:
-      return num(level, `Convert ${d} g/cm³ to kg/m³.`, d * 1000, { explain: `1 g/cm³ = 1,000 kg/m³` })
+    case 4: {
+      const dd = rng.int(1, 21)
+      return rng.next() < 0.5
+        ? num(level, `Convert ${dd} g/cm³ to kg/m³.`, dd * 1000, { explain: `1 g/cm³ = 1,000 kg/m³` })
+        : num(level, `Convert ${fmt(dd * 1000)} kg/m³ to g/cm³.`, dd, { explain: `Divide by 1,000.` })
+    }
     default: {
       const [l, w, h] = [rng.int(2, 10), rng.int(2, 8), rng.int(2, 6)]
       return num(level, `A metal block ${l} cm by ${w} cm by ${h} cm has density ${d} g/cm³. What is its mass? (g)`, l * w * h * d, { explain: `Volume ${l * w * h} cm³ × ${d} g/cm³ = ${l * w * h * d} g` })
@@ -721,12 +734,12 @@ export const densityJ = (): Generator => (rng, level) => {
 export const speedJ = (): Generator => (rng, level) => {
   switch (level) {
     case 1: {
-      const s = rng.pick([36, 54, 72, 90, 108, 18])
+      const s = 18 * rng.int(1, 12)
       return num(level, `Convert ${s} km/h to m/s.`, (s * 5) / 18, { explain: `× 1,000 ÷ 3,600 = × 5/18: ${s} × 5/18 = ${(s * 5) / 18} m/s` })
     }
     case 2: {
-      const s = rng.pick([10, 15, 20, 25, 30])
-      return num(level, `Convert ${s} m/s to km/h.`, (s * 18) / 5)
+      const s = 5 * rng.int(1, 12)
+      return num(level, `Convert ${s} m/s to km/h.`, (s * 18) / 5, { explain: `× 3,600 ÷ 1,000 = × 18/5` })
     }
     case 3: {
       const sp = rng.pick([40, 60, 80, 90, 120])
@@ -768,17 +781,18 @@ export const moneyJ = (g: J): Generator => (rng, level) => {
         return num(level, `If 1 US dollar = ${rate} Kenya shillings, how many dollars do you get for ${fmt(usd * rate)} shillings?`, usd)
       }
       case 3: {
-        const price = rng.pick([1000, 2500, 5000, 12500, 20000])
+        const price = rng.pick([1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000, 12500, 20000, 25000])
+        if (rng.next() < 0.5) return num(level, `An item costs ${fmt((price * 116) / 100)} shillings including 16% VAT. What was the price before VAT?`, price, { explain: `${fmt((price * 116) / 100)} ÷ 1.16 = ${fmt(price)}` })
         return num(level, `An item costs ${fmt(price)} shillings before VAT. VAT is 16%. What is the price including VAT?`, (price * 116) / 100, { explain: `16% of ${fmt(price)} = ${fmt((price * 16) / 100)}` })
       }
       case 4: {
-        const p = rng.pick([10000, 20000, 50000])
+        const p = rng.pick([10000, 20000, 30000, 40000, 50000, 80000, 100000])
         const r = rng.pick([5, 10, 20])
         const a = (p * (100 + r) * (100 + r)) / 10000
         return num(level, `${fmt(p)} shillings is saved at ${r}% compound interest per year. How much is in the account after 2 years?`, a, { explain: `${fmt(p)} × ${(100 + r) / 100} × ${(100 + r) / 100} = ${fmt(a)}` })
       }
       default: {
-        const p = rng.pick([40000, 80000, 120000])
+        const p = rng.pick([40000, 50000, 60000, 80000, 100000, 120000, 150000, 200000])
         const r = rng.pick([10, 20])
         const v = (p * (100 - r) * (100 - r)) / 10000
         return num(level, `A motorbike bought for ${fmt(p)} shillings loses ${r}% of its value every year. What is it worth after 2 years?`, v, { explain: `${fmt(p)} × ${(100 - r) / 100} × ${(100 - r) / 100} = ${fmt(v)}` })
@@ -867,6 +881,12 @@ export const anglesJ = (g: J): Generator => (rng, level) => {
         return num(level, `Two parallel lines are cut by a transversal. One angle is ${a}°. What is the ${kind[0]} angle to it?`, kind[1], { explain: kind[0] === 'co-interior' ? 'Co-interior angles add up to 180°.' : `${kind[0][0].toUpperCase()}${kind[0].slice(1)} angles are equal.` })
       }
       case 2: {
+        if (rng.next() < 0.5) {
+          const x = rng.int(10, 80)
+          const [from, to, b] = rng.pick<[string, string, number]>([['N', 'E', x], ['S', 'E', 180 - x], ['S', 'W', 180 + x], ['N', 'W', 360 - x]])
+          const three = (n: number) => `${String(((n % 360) + 360) % 360).padStart(3, '0')}°`
+          return pick(level, `Write the compass bearing ${from} ${x}° ${to} as a three-figure bearing.`, three(b), [three(x), three(b + 90), three(360 - b)], 'Three-figure bearings are measured clockwise from north.')
+        }
         const [dir, b] = rng.pick<[string, number]>([['N', 0], ['NE', 45], ['E', 90], ['SE', 135], ['S', 180], ['SW', 225], ['W', 270], ['NW', 315]])
         return pick(level, `What is the compass direction ${dir} as a three-figure bearing?`, `${String(b).padStart(3, '0')}°`, [`${String((b + 90) % 360).padStart(3, '0')}°`, `${String((b + 180) % 360).padStart(3, '0')}°`, `${String((b + 45) % 360).padStart(3, '0')}°`])
       }
@@ -897,7 +917,8 @@ export const anglesJ = (g: J): Generator => (rng, level) => {
       return num(level, `A triangle has angles ${a}° and ${b}°. Find the third angle.`, 180 - a - b)
     }
     case 3: {
-      const [n, k] = rng.pick(POLY)
+      const k = rng.int(5, 20)
+      const n = POLY.find(([, x]) => x === k)?.[0] ?? `polygon with ${k} sides`
       return num(level, `Find the sum of the interior angles of a ${n}.`, (k - 2) * 180, { explain: `(${k} − 2) × 180° = ${(k - 2) * 180}°` })
     }
     case 4: {
@@ -905,7 +926,7 @@ export const anglesJ = (g: J): Generator => (rng, level) => {
       return rng.next() < 0.5 ? num(level, `Find each exterior angle of a regular ${n}.`, 360 / k) : num(level, `Find each interior angle of a regular ${n}.`, 180 - 360 / k)
     }
     default: {
-      const ext = rng.pick([20, 24, 30, 36, 40, 45, 60, 72])
+      const ext = rng.pick([10, 12, 15, 18, 20, 24, 30, 36, 40, 45, 60, 72, 90, 120])
       return num(level, `Each exterior angle of a regular polygon is ${ext}°. How many sides does it have?`, 360 / ext, { explain: `360 ÷ ${ext} = ${360 / ext}` })
     }
   }
@@ -968,7 +989,10 @@ export const coordsJ = (g: J): Generator => (rng, level) => {
     }
     case 4: {
       const m = rng.int(-3, 4) || 2
-      return pick(level, `Which line is parallel to y = ${sg(m)}x + 1?`, `y = ${sg(m)}x − 5`, [`y = ${sg(-m)}x + 1`, `y = ${sg(m + 1)}x + 1`, `y = x + ${m}`], 'Parallel lines have the same gradient.')
+      const c1 = rng.int(1, 9)
+      const c2 = rng.pick([-7, -5, -3, -2, 4, 6, 8].filter((c) => c !== c1))
+      const line = (mm: number, cc: number) => `y = ${expr([[mm, 'x'], [cc, '']])}`
+      return pick(level, `Which line is parallel to ${line(m, c1)}?`, line(m, c2), [line(-m, c1), line(m + 1, c1), line(m === 2 ? 3 : 2, c2)], 'Parallel lines have the same gradient.')
     }
     default: {
       const [x1, y1, x2] = [rng.int(-4, 2), rng.int(-4, 4), rng.int(3, 7)]
@@ -1009,8 +1033,14 @@ export const trigJ = (): Generator => (rng, level) => {
   const [a, b, c] = rng.pick(TRIPLES.slice(0, 5))
   switch (level) {
     case 1: {
+      const form = rng.int(1, 3)
+      if (form === 3) {
+        const [p, q, h] = rng.pick(TRIPLES)
+        return pick(level, `A right-angled triangle has sides ${p} cm, ${q} cm and ${h} cm. Which side is the hypotenuse?`, `${h} cm`, [`${p} cm`, `${q} cm`, `${p + q} cm`], 'The hypotenuse is the longest side, opposite the right angle.')
+      }
       const ratio = rng.pick(['sin', 'cos', 'tan'] as const)
       const right = ratio === 'sin' ? 'opposite ÷ hypotenuse' : ratio === 'cos' ? 'adjacent ÷ hypotenuse' : 'opposite ÷ adjacent'
+      if (form === 2) return pick(level, `Which trigonometric ratio equals ${right}?`, `${ratio} θ`, ['sin θ', 'cos θ', 'tan θ'].filter((x) => x !== `${ratio} θ`))
       return pick(level, `In a right-angled triangle, ${ratio} θ = ___`, right, ['opposite ÷ hypotenuse', 'adjacent ÷ hypotenuse', 'opposite ÷ adjacent', 'hypotenuse ÷ opposite'].filter((x) => x !== right))
     }
     case 2: {
@@ -1019,8 +1049,8 @@ export const trigJ = (): Generator => (rng, level) => {
       return pick(level, `A right-angled triangle has sides ${a} (opposite θ), ${b} (adjacent to θ) and ${c} (hypotenuse). Find ${ratio} θ.`, ans, [`${a}/${c}`, `${b}/${c}`, `${a}/${b}`, `${b}/${a}`, `${c}/${a}`].filter((x) => x !== ans))
     }
     case 3: {
-      const [q, ans] = rng.pick<[string, string]>([['sin 30°', '0.5'], ['cos 60°', '0.5'], ['tan 45°', '1'], ['sin 90°', '1'], ['cos 0°', '1'], ['sin 0°', '0']])
-      return pick(level, `What is the value of ${q}?`, ans, ['0', '0.5', '1', '2'].filter((x) => x !== ans))
+      const [q, ans] = rng.pick<[string, string]>([['sin 30°', '0.5'], ['cos 60°', '0.5'], ['tan 45°', '1'], ['sin 90°', '1'], ['cos 0°', '1'], ['sin 0°', '0'], ['cos 90°', '0'], ['2 sin 30°', '1'], ['sin 30° + cos 60°', '1'], ['tan 45° + sin 30°', '1.5'], ['4 cos 60°', '2'], ['sin 90° − cos 60°', '0.5'], ['2 tan 45°', '2']])
+      return pick(level, `What is the value of ${q}?`, ans, ['0', '0.5', '1', '1.5', '2'].filter((x) => x !== ans))
     }
     case 4: {
       const L = 2 * rng.int(2, 15)
@@ -1100,10 +1130,19 @@ export const probJ = (g: J): Generator => (rng, level) => {
       return pick(level, `A bag has ${red} red, ${blue} blue and ${green} green balls. One is picked at random. What is the probability it is blue?`, frac(blue, t, false), [frac(blue, t + 1, false), frac(red, t, false), frac(blue, red + green, false)])
     case 3:
       return pick(level, `A bag has ${red} red, ${blue} blue and ${green} green balls. What is the probability that a ball picked is NOT red?`, frac(blue + green, t, false), [frac(red, t, false), frac(blue + green, red, false), frac(green, t, false)], 'P(not A) = 1 − P(A).')
-    case 4:
-      return g === 9
-        ? pick(level, 'Two fair coins are tossed. What is the probability of getting two heads?', '1/4', ['1/2', '1/3', '3/4'], 'Outcomes: HH, HT, TH, TT; one is HH.')
-        : pick(level, 'A coin is tossed and a die is rolled. How many possible outcomes are there?', '12', ['8', '6', '36'], '2 × 6 = 12.')
+    case 4: {
+      if (g === 9) {
+        const sum = rng.int(2, 12)
+        const ways = 6 - Math.abs(sum - 7)
+        return pick(level, `Two fair dice are rolled and their scores added. What is the probability of a total of ${sum}?`, frac(ways, 36, false), [frac(ways + 1, 36, false), frac(1, sum, false), frac(ways, 12, false), frac(sum, 36, false)], `There are 36 equally likely outcomes; ${ways} of them give ${sum}.`)
+      }
+      if (rng.next() < 0.5) {
+        const n = rng.int(3, 10)
+        return num(level, `A coin is tossed and a spinner with ${n} equal sections is spun. How many possible outcomes are there?`, 2 * n, { explain: `2 × ${n} = ${2 * n}` })
+      }
+      const k = rng.int(1, 5)
+      return pick(level, `A coin is tossed and a die is rolled. What is the probability of a head and a number less than or equal to ${k}?`, frac(k, 12, false), [frac(k, 6, false), frac(1, 2, false), frac(k + 1, 12, false), frac(k, 8, false)], `12 outcomes; ${k} of them are a head with 1–${k}.`)
+    }
     default: {
       const p = rng.pick([[1, 5], [1, 4], [2, 5], [3, 10], [1, 10]] as const)
       const n = rng.pick([100, 200, 300, 400, 500].filter((x) => (x * p[0]) % p[1] === 0))

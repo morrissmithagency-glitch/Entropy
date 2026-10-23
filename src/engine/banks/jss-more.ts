@@ -179,7 +179,7 @@ const PRETECH: Record<string, Topic> = {
             ['clay', 'can be moulded and fired, used for bricks and pots'],
             ['mild steel', 'strong and cheap, used for gates and frames'],
           ],
-          ask: (a) => `Why is ${a} chosen for its uses?`,
+          ask: (a) => `Which properties and use match ${a}?`,
           askBack: (b) => `Which material is ${b}?`,
         },
       ],
@@ -238,7 +238,7 @@ const PRETECH: Record<string, Topic> = {
           pairs: [
             ['an entrepreneur', 'a person who starts and runs a business'],
             ['a budget', 'a plan of expected income and spending'],
-            ['profit', 'income minus costs, when income is greater'],
+            ['profit', 'the money left when income is greater than costs'],
             ['capital', 'money or assets used to start a business'],
             ['an invoice', 'a document asking a customer to pay'],
             ['a receipt', 'a document showing that payment was made'],
@@ -399,7 +399,7 @@ const AGRICULTURE: Record<string, Topic> = {
             ['minerals', 'build bones and blood, such as calcium and iron'],
             ['fibre (roughage)', 'helps food move through the gut'],
           ],
-          ask: (a) => `What do ${a} do?`,
+          ask: (a) => `What is the main job of ${a}?`,
           askBack: (b) => `Which nutrient ${b}?`,
         },
         {
@@ -466,14 +466,14 @@ const AGRICULTURE: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['an inventory record', 'lists everything owned on the farm'],
-            ['a production record', 'shows yields such as milk or eggs'],
-            ['a sales record', 'shows what was sold, to whom and for how much'],
-            ['a health record', 'shows treatments and vaccinations of animals'],
-            ['a labour record', 'shows workers and hours worked'],
+            ['an inventory record', 'everything owned on the farm'],
+            ['a production record', 'yields such as milk or eggs'],
+            ['a sales record', 'what was sold, to whom and for how much'],
+            ['a health record', 'treatments and vaccinations of animals'],
+            ['a labour record', 'workers and hours worked'],
           ],
           ask: (a) => `What does ${a} show?`,
-          askBack: (b) => `Which farm record ${b}?`,
+          askBack: (b) => `Which farm record shows ${b}?`,
         },
       ],
       categories: [
@@ -617,7 +617,7 @@ const CREATIVE: Record<string, Topic> = {
             ['a costume', 'clothing worn by an actor to show a character'],
             ['choreography', 'the planned steps and movements of a dance'],
           ],
-          ask: (a) => `In performance, what is ${a}?`,
+          ask: (a) => `In performance, what does "${a}" mean?`,
           askBack: (b) => `In performance, what is ${b} called?`,
         },
       ],
@@ -831,7 +831,7 @@ const CRE: Record<string, Topic> = {
             ['Jeremiah', 'spoke of a new covenant written on people\'s hearts'],
             ['Nehemiah', 'led the rebuilding of Jerusalem\'s walls'],
           ],
-          ask: (a) => `What is ${a} remembered for?`,
+          ask: (a) => `What did ${a} do?`,
           askBack: (b) => `Which Old Testament figure ${b}?`,
         },
       ],
@@ -889,7 +889,7 @@ const CRE: Record<string, Topic> = {
             ['the Ascension', 'Jesus was taken up into heaven'],
           ],
           ask: (a) => `What happened at or on ${a}?`,
-          askBack: (b) => `When or where did it happen that ${b}?`,
+          askBack: (b) => `Which event or place is linked to this: ${b}?`,
         },
       ],
     },
@@ -909,13 +909,13 @@ const CRE: Record<string, Topic> = {
       pairs: [
         {
           pairs: [
-            ['Pentecost', 'the Holy Spirit came upon the disciples'],
-            ['Peter', 'preached boldly and led the early church in Jerusalem'],
-            ['Paul', 'travelled on missionary journeys and wrote letters'],
-            ['Stephen', 'was the first Christian martyr, known for his faith'],
+            ['Pentecost', 'the coming of the Holy Spirit upon the disciples'],
+            ['Peter', 'bold preaching and leading the early church in Jerusalem'],
+            ['Paul', 'missionary journeys and letters to the churches'],
+            ['Stephen', 'being the first Christian martyr, strong in faith'],
           ],
           ask: (a) => `What is ${a} known for?`,
-          askBack: (b) => `Who or what is linked to the fact that ${b}?`,
+          askBack: (b) => `Who or what is known for ${b}?`,
         },
       ],
     },
@@ -1051,7 +1051,7 @@ const SOCIAL7: Record<string, STopic> = {
       ],
       categories: [
         { one: 'a factor that influences climate', many: 'factors influencing climate', items: ['latitude', 'altitude', 'distance from the sea', 'ocean currents', 'prevailing winds'], set: 'r' },
-        { one: 'a climatic region of Africa', many: 'climatic regions of Africa', items: ['equatorial', 'tropical savannah', 'desert', 'Mediterranean', 'mountain'], set: 'r' },
+        { one: 'a climatic region of Africa', many: 'climatic regions of Africa', items: ['equatorial', 'tropical savannah', 'desert', 'Mediterranean', 'mountain climate'], set: 'r' },
       ],
     },
     bank: [
@@ -1156,7 +1156,7 @@ const SOCIAL7: Record<string, STopic> = {
         },
       ],
       categories: [
-        { one: 'a national value in Article 10', many: 'national values', items: ['patriotism', 'national unity', 'rule of law', 'democracy', 'human dignity', 'integrity'], set: 'v' },
+        { one: 'a national value in Article 10', many: 'national values', items: ['patriotism', 'national unity', 'rule of law', 'democracy', 'social justice', 'integrity'], set: 'v' },
         { one: 'a human right', many: 'human rights', items: ['right to life', 'right to education', 'freedom of expression', 'right to a fair trial', 'freedom of worship'], set: 'v' },
       ],
     },
@@ -1413,12 +1413,12 @@ const SOCIAL9: Record<string, STopic> = {
         },
         {
           pairs: [
-            ['a ground photograph', 'taken from the ground level'],
-            ['an oblique aerial photograph', 'taken from the air at an angle'],
-            ['a vertical aerial photograph', 'taken from directly above'],
+            ['a ground photograph', 'from ground level'],
+            ['an oblique aerial photograph', 'from the air at an angle'],
+            ['a vertical aerial photograph', 'from directly above'],
           ],
           ask: (a) => `How is ${a} taken?`,
-          askBack: (b) => `Which kind of photograph is ${b}?`,
+          askBack: (b) => `Which kind of photograph is taken ${b}?`,
         },
       ],
     },
@@ -1585,10 +1585,10 @@ const SOCIAL9: Record<string, STopic> = {
         {
           pairs: [
             ['the Universal Declaration of Human Rights', 'was adopted by the UN in 1948'],
-            ['the Kenya National Commission on Human Rights', 'promotes and protects human rights in Kenya'],
-            ['the Ethics and Anti-Corruption Commission', 'fights corruption in Kenya'],
+            ['the Kenya National Commission on Human Rights', 'works to promote and protect human rights in Kenya'],
+            ['the Ethics and Anti-Corruption Commission', 'works to fight corruption in Kenya'],
           ],
-          ask: (a) => `What is true of ${a}?`,
+          ask: (a) => `Which statement about ${a} is true? It ___.`,
           askBack: (b) => `Which body or document ${b}?`,
         },
       ],
