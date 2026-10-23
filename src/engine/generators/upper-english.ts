@@ -499,7 +499,7 @@ export const verbsU = (g: G): Generator => (rng, level) => {
       return q(level, time[0], time[1], [...time[2]])
     }
     default: {
-      if (g === 6) {
+      if (g === 6 && rng.next() < 0.5) {
         const pas = rng.pick([
           ['The cat chased the rat.', 'The rat was chased by the cat.', ['The rat chased the cat.', 'The rat is chased by the cat.', 'The cat was chased by the rat.']],
           ['Wanjiku wrote the letter.', 'The letter was written by Wanjiku.', ['The letter wrote Wanjiku.', 'The letter is written by Wanjiku.', 'Wanjiku was written by the letter.']],
@@ -654,6 +654,16 @@ export const adjU = (g: G): Generator => (rng, level) => {
 // ── Prepositions and conjunctions ───────────────────────────────────────────
 
 const PREPS: [G, string, string, string[]][] = [
+  [4, 'The cat is hiding ___ the bed.', 'under', ['on', 'at', 'into']],
+  [4, 'We walked ___ the bridge to the other side.', 'across', ['on', 'at', 'of']],
+  [4, 'The pupils sat ___ the teacher and listened.', 'around', ['at', 'of', 'into']],
+  [4, 'She poured the water ___ the jug.', 'into', ['on', 'at', 'off']],
+  [4, 'My birthday is ___ the fifth of May.', 'on', ['in', 'at', 'by']],
+  [4, 'The bus leaves ___ seven o\'clock.', 'at', ['on', 'in', 'by']],
+  [5, 'She was praised ___ helping others.', 'for', ['of', 'with', 'by']],
+  [5, 'She is good ___ mathematics.', 'at', ['in', 'on', 'with']],
+  [6, 'The house was built ___ my grandfather.', 'by', ['from', 'of', 'with']],
+  [6, 'We are proud ___ our school.', 'of', ['for', 'with', 'about']],
   [4, 'The book is ___ the table.', 'on', ['in', 'among', 'by']],
   [4, 'He jumped ___ the river.', 'across', ['among', 'into', 'at']],
   [4, 'The dog ran ___ the house.', 'around', ['among', 'between', 'at']],
@@ -709,6 +719,17 @@ const CONJ: [G, string, string, string[]][] = [
   [6, '___ the boys ___ the girls passed. (all of them passed)', 'Both … and', ['Neither … nor', 'Either … or', 'Whether … or']],
   [6, 'You can ___ walk ___ take a matatu.', 'either … or', ['neither … nor', 'both … and', 'whether … nor']],
   [6, 'She is ___ clever ___ hard-working.', 'not only … but also', ['neither … or', 'either … nor', 'both … or']],
+  [4, 'Close the window ___ the rain comes in.', 'before', ['after', 'because', 'and']],
+  [4, 'The baby slept ___ we were cooking.', 'while', ['or', 'but', 'so']],
+  [4, 'Put on a sweater ___ you feel cold.', 'if', ['but', 'so', 'or']],
+  [4, 'He is small ___ very strong.', 'but', ['and', 'so', 'or']],
+  [4, 'We clapped ___ she finished her song.', 'when', ['but', 'or', 'unless']],
+  [4, 'Do you want to read ___ draw?', 'or', ['and', 'but', 'so']],
+  [5, 'Keep the milk cool ___ it goes sour.', 'or', ['and', 'because', 'although']],
+  [5, '___ he was the youngest, he won the race.', 'Although', ['Because', 'Unless', 'So']],
+  [5, 'We will not start ___ everyone is here.', 'until', ['because', 'although', 'so']],
+  [6, 'The tea was ___ hot ___ drink.', 'too … to', ['so … that', 'such … that', 'either … or']],
+  [6, 'It was ___ a long journey ___ we slept on the bus.', 'such … that', ['so … that', 'too … to', 'both … and']],
 ]
 
 export const prepU = (g: G): Generator => (rng, level) => {
@@ -744,6 +765,17 @@ const PUNCT: [G, string, string[]][] = [
   [6, 'Mother asked, "Have you finished your homework?"', ['Mother asked, "Have you finished your homework."', 'Mother asked "have you finished your homework?"', 'Mother asked, Have you finished your homework?']],
   [6, "The girls' dormitory is clean.", ["The girls dormitory is clean.", "The girl's' dormitory is clean.", "The girls's dormitory is clean."]],
   [6, 'Yes, I will come to the party.', ['Yes I will come to the party.', 'Yes, I will come to the party', 'yes, i will come to the party.']],
+  [4, 'Our school closes in November.', ['our school closes in November.', 'Our school closes in november.', 'Our school closes in November']],
+  [4, 'Have you seen my ruler?', ['Have you seen my ruler.', 'have you seen my ruler?', 'Have you seen my ruler!']],
+  [4, 'Halima lives in Garissa.', ['Halima lives in garissa.', 'halima lives in Garissa.', 'Halima lives in Garissa?']],
+  [4, 'We need sugar, salt and tea leaves.', ['We need sugar salt and tea leaves.', 'We need, sugar, salt, and, tea leaves.', 'we need sugar, salt and tea leaves.']],
+  [4, 'How tall you have grown!', ['How tall you have grown?', 'how tall you have grown!', 'How tall you have grown,']],
+  [4, 'Dr Achieng works at Kenyatta Hospital.', ['dr Achieng works at Kenyatta Hospital.', 'Dr Achieng works at kenyatta hospital.', 'Dr achieng works at Kenyatta Hospital.']],
+  [5, "Don't run in the corridor.", ["Dont run in the corridor.", "Don't run in the corridor", "Do'nt run in the corridor."]],
+  [5, "The teacher's chair is broken.", ["The teachers chair is broken.", "The teachers' chair is broken.", "The teacher's chair is broken"]],
+  [5, 'On Friday, we will visit Fort Jesus.', ['On friday, we will visit Fort Jesus.', 'On Friday, we will visit fort jesus.', 'on Friday, we will visit Fort Jesus.']],
+  [6, 'Grandfather said, "Plant trees for tomorrow."', ['Grandfather said, "plant trees for tomorrow."', 'Grandfather said "Plant trees for tomorrow".', 'Grandfather said, Plant trees for tomorrow.']],
+  [6, 'The pupils\' bags were left in the hall.', ['The pupils bags were left in the hall.', "The pupil's' bags were left in the hall.", "The pupils's bags were left in the hall."]],
 ]
 
 export const punctU = (g: G): Generator => (rng, level) => {
@@ -830,6 +862,25 @@ const REPORTED: [string, string, string[]][] = [
   ['"I like mangoes," said Halima.', 'Halima said that she liked mangoes.', ['Halima said that I like mangoes.', 'Halima said she likes mango.', 'Halima says that she liked mangoes.']],
 ]
 
+/** Reported speech built from patterns: the tense moves back and "I" becomes he or she. */
+const SPEAKERS: [string, 'he' | 'she'][] = [['Otieno', 'he'], ['Akinyi', 'she'], ['Kamau', 'he'], ['Wanjiru', 'she'], ['Baraka', 'he'], ['Zawadi', 'she'], ['Kiprono', 'he'], ['Nekesa', 'she']]
+const SAYINGS: [(p: string) => [string, string, string], string[]][] = [
+  [(p) => ['I am', `${p} was`, `${p} is`], ['hungry', 'tired', 'ready', 'happy', 'late']],
+  [(p) => ['I can', `${p} could`, `${p} can`], ['swim', 'sing well', 'ride a bicycle', 'cook ugali', 'draw a map']],
+  [(p) => ['I will', `${p} would`, `${p} will`], ['visit Grandmother', 'call Mother', 'bring the book', 'clean the room', 'water the trees']],
+  [(p) => ['I like', `${p} liked`, `${p} likes`], ['mangoes', 'chapati', 'football', 'music', 'reading stories']],
+  [(p) => ['I am reading', `${p} was reading`, `${p} is reading`], ['a story', 'a letter', 'the newspaper', 'a poem']],
+]
+function reportedMade(rng: Rng): [string, string, string[]] {
+  const [name, p] = rng.pick(SPEAKERS)
+  const [make, ends] = rng.pick(SAYINGS)
+  const end = rng.pick(ends)
+  const [first, back, same] = make(p)
+  const direct = `"${first} ${end}," said ${name}.`
+  const right = `${name} said that ${back} ${end}.`
+  return [direct, right, [`${name} said that ${first} ${end}.`, `${name} said that ${same} ${end}.`, `${name} says that ${back} ${end}.`]]
+}
+
 export const sentencesU = (g: G): Generator => (rng, level) => {
   if (level <= 2 || (g === 4 && level !== 5)) {
     const pool = forGrade(ORDERED, g).filter(([s]) => new Set(s.split(' ')).size === s.split(' ').length)
@@ -850,6 +901,16 @@ export const sentencesU = (g: G): Generator => (rng, level) => {
       ['You may play. Finish your work first.', 'You may play after you finish your work.', ['You may play before you finish your work.', 'You may play because you finish your work.', 'You may play or you finish your work.']],
       ['The road was muddy. The car got stuck.', 'The car got stuck because the road was muddy.', ['The road was muddy because the car got stuck.', 'The car got stuck but the road was muddy.', 'The car got stuck or the road was muddy.']],
       ['He ran fast. He missed the bus.', 'Although he ran fast, he missed the bus.', ['Because he ran fast, he missed the bus.', 'He ran fast so he missed the bus.', 'Unless he ran fast, he missed the bus.']],
+      ['The milk was sour. Mother threw it away.', 'Mother threw the milk away because it was sour.', ['The milk was sour because Mother threw it away.', 'Mother threw the milk away but it was sour.', 'Mother threw the milk away unless it was sour.']],
+      ['I have a friend. My friend lives in Kisumu.', 'I have a friend who lives in Kisumu.', ['I have a friend which lives in Kisumu.', 'I have a friend whose lives in Kisumu.', 'I have a friend where lives in Kisumu.']],
+      ['The shop was closed. We went home.', 'The shop was closed, so we went home.', ['The shop was closed, but we went home.', 'The shop was closed because we went home.', 'The shop was closed although we went home.']],
+      ['She studied hard. She passed the test.', 'She passed the test because she studied hard.', ['She studied hard because she passed the test.', 'She passed the test but she studied hard.', 'She passed the test unless she studied hard.']],
+      ['This is the house. My grandfather built it.', 'This is the house which my grandfather built.', ['This is the house who my grandfather built.', 'This is the house whose my grandfather built.', 'This is the house where my grandfather built.']],
+      ['It was late. The children were still playing.', 'Although it was late, the children were still playing.', ['Because it was late, the children were still playing.', 'It was late, so the children were still playing.', 'Unless it was late, the children were still playing.']],
+      ['Wash your hands. Then eat your food.', 'Wash your hands before you eat your food.', ['Wash your hands after you eat your food.', 'Wash your hands because you eat your food.', 'Wash your hands unless you eat your food.']],
+      ['The boy is my cousin. His bicycle is red.', 'The boy whose bicycle is red is my cousin.', ['The boy who bicycle is red is my cousin.', 'The boy which bicycle is red is my cousin.', 'The boy whom bicycle is red is my cousin.']],
+      ['The river was flooded. We could not cross it.', 'The river was so flooded that we could not cross it.', ['The river was too flooded that we could not cross it.', 'The river was so flooded but we could not cross it.', 'The river was very flooded that we could not cross it.']],
+      ['Kamau is tall. Juma is tall.', 'Kamau is as tall as Juma.', ['Kamau is so tall as Juma.', 'Kamau is as taller as Juma.', 'Kamau is tall than Juma.']],
     ])
     return q(level, `Join the sentences correctly:\n${a}`, joined, wrong)
   }
@@ -857,7 +918,7 @@ export const sentencesU = (g: G): Generator => (rng, level) => {
     const [first, tag] = rng.pick(TAGS)
     return q(level, `Choose the correct question tag: ${first} ___`, tag, TAGS.map(([, t]) => t).filter((t) => t !== tag).slice(0, 3), 'A positive sentence takes a negative tag, and a negative sentence takes a positive tag.')
   }
-  const [direct, reported, wrong] = rng.pick(REPORTED)
+  const [direct, reported, wrong] = rng.next() < 0.6 ? reportedMade(rng) : rng.pick(REPORTED)
   return q(level, `Change into reported speech: ${direct}`, reported, wrong, 'Change the pronoun and move the tense back: am → was, will → would, like → liked.')
 }
 

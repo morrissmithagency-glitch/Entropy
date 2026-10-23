@@ -2,7 +2,8 @@
 // observations and applying ideas. All content is original.
 import { factGenerator, type FactSet } from '../facts'
 import { labelOptions as opts } from '../generators/english'
-import type { BankQuestion, Generator, Level } from '../types'
+import { uid } from '../helpers'
+import type { BankQuestion, ChoiceQuestion, Generator, Level, Rng } from '../types'
 
 const t = (level: Level, prompt: string, answer: string, wrong: string[]): BankQuestion => ({ type: 'choice', level, prompt, options: opts([answer, ...wrong]), answer })
 
@@ -830,5 +831,117 @@ const G9: Record<string, Topic> = {
 const ALL: Record<string, Topic> = {}
 for (const [g, set] of [[7, G7], [8, G8], [9, G9]] as const) for (const [k, v] of Object.entries(set)) ALL[`j${g}s-${k}`] = v
 
-export const JSS_SCIENCE_GENERATORS: Record<string, Generator> = Object.fromEntries(Object.entries(ALL).map(([k, v]) => [k, factGenerator(v.facts)]))
+// ── Calculations and chains ─────────────────────────────────────────────────
+// Physics topics are mostly about using formulas, so they get number questions with
+// whole-number answers; ecology gets food chains from Kenyan habitats.
+
+const fmtN = (n: number) => n.toLocaleString('en-US')
+function calcQ(level: Level, prompt: string, value: number, unit: string, wrong: number[], explain: string): ChoiceQuestion {
+  const label = (n: number) => (unit === '' ? fmtN(n) : unit === '°' ? `${fmtN(n)}°` : `${fmtN(n)} ${unit}`)
+  const opts2 = [...new Set([value, ...wrong.filter((w) => w > 0 && w !== value)])].slice(0, 4).map(label)
+  return { id: uid('js'), type: 'choice', level, prompt, options: opts2.map((l) => ({ id: l, label: l })), answer: label(value), explain }
+}
+
+const pressureCalc = (rng: Rng, level: Level): ChoiceQuestion => {
+  const A = rng.pick([2, 4, 5, 8, 10, 20, 25])
+  const P = rng.pick([10, 20, 25, 40, 50, 60, 75, 100, 120, 150])
+  const F = P * A
+  if (level <= 3) return calcQ(level, `A force of ${fmtN(F)} N acts on an area of ${A} m². What is the pressure?`, P, 'Pa', [F * A, F + A, F - A], `Pressure = force ÷ area = ${fmtN(F)} ÷ ${A} = ${P} Pa`)
+  return calcQ(level, `A box exerts a pressure of ${P} Pa on the floor over an area of ${A} m². What is its weight (force)?`, F, 'N', [P + A, Math.round(P / A) || 1, F * 2], `Force = pressure × area = ${P} × ${A} = ${fmtN(F)} N`)
+}
+
+const workCalc = (rng: Rng, level: Level): ChoiceQuestion => {
+  const F = rng.pick([20, 25, 40, 50, 60, 80, 100, 150, 200])
+  const d = rng.int(2, 12)
+  const W = F * d
+  if (level <= 2) return calcQ(level, `A force of ${F} N moves a load ${d} m in its direction. How much work is done?`, W, 'J', [F + d, F * (d + 1), W * 10], `Work = force × distance = ${F} × ${d} = ${fmtN(W)} J`)
+  const t = rng.pick([2, 4, 5, 10, 20].filter((x) => W % x === 0)) ?? 1
+  if (level <= 4) return calcQ(level, `A pump does ${fmtN(W)} J of work in ${t} s. What is its power?`, W / t, 'W', [W * t, W - t, W + t], `Power = work ÷ time = ${fmtN(W)} ÷ ${t} = ${fmtN(W / t)} W`)
+  const effort = rng.pick([50, 100, 150, 200])
+  const ma = rng.int(2, 6)
+  return calcQ(level, `A lever lifts a load of ${effort * ma} N with an effort of ${effort} N. What is its mechanical advantage?`, ma, '', [effort * ma - effort, ma + 1, effort], `MA = load ÷ effort = ${effort * ma} ÷ ${effort} = ${ma}`)
+}
+
+const motionCalc = (rng: Rng, level: Level): ChoiceQuestion => {
+  if (level <= 2) {
+    const v = rng.pick([2, 4, 5, 8, 10, 12, 15, 20, 25])
+    const t = rng.int(2, 12)
+    return calcQ(level, `A cyclist travels ${v * t} m in ${t} s. What is the average speed?`, v, 'm/s', [v * t * t, v + t, v * 2], `Speed = distance ÷ time = ${v * t} ÷ ${t} = ${v} m/s`)
+  }
+  const a = rng.int(1, 6)
+  const t = rng.int(2, 10)
+  const u = rng.pick([0, 2, 4, 5, 10])
+  const v = u + a * t
+  if (level <= 4) return calcQ(level, `A matatu speeds up from ${u} m/s to ${v} m/s in ${t} s. What is its acceleration?`, a, 'm/s²', [v - u, v / t === a ? a + 1 : Math.round(v / t), a + 2], `Acceleration = change in velocity ÷ time = (${v} − ${u}) ÷ ${t} = ${a} m/s²`)
+  return calcQ(level, `A car starts at ${u} m/s and accelerates at ${a} m/s² for ${t} s. What is its final velocity?`, v, 'm/s', [a * t, u + a, v + a], `v = u + at = ${u} + ${a} × ${t} = ${v} m/s`)
+}
+
+const electricCalc = (rng: Rng, level: Level): ChoiceQuestion => {
+  if (level <= 3) {
+    const I = rng.int(1, 6)
+    const R = rng.pick([2, 3, 4, 5, 6, 10, 12, 20])
+    return rng.next() < 0.5
+      ? calcQ(level, `A current of ${I} A flows through a ${R} Ω resistor. What is the voltage across it?`, I * R, 'V', [I + R, R, I * R * 2], `V = I × R = ${I} × ${R} = ${I * R} V`)
+      : calcQ(level, `A ${I * R} V battery drives a current through a ${R} Ω resistor. What is the current?`, I, 'A', [I * R * R, I + 1, R], `I = V ÷ R = ${I * R} ÷ ${R} = ${I} A`)
+  }
+  const kw = rng.pick([1, 2, 3])
+  const h = rng.int(2, 8)
+  const rate = rng.pick([20, 25, 30])
+  return calcQ(level, `A ${fmtN(kw * 1000)} W iron is used for ${h} hours. If one kWh costs ${rate} shillings, what is the cost?`, kw * h * rate, 'shillings', [kw * 1000 * h * rate, kw * h, (kw + h) * rate], `${kw} kW × ${h} h = ${kw * h} kWh; × ${rate} = ${kw * h * rate} shillings`)
+}
+
+const lightCalc = (rng: Rng, level: Level): ChoiceQuestion => {
+  const i = rng.int(10, 80)
+  if (level <= 3) return calcQ(level, `A ray strikes a plane mirror with an angle of incidence of ${i}°. What is the angle of reflection?`, i, '°', [90 - i, 180 - i, i * 2], 'The angle of reflection equals the angle of incidence.')
+  return calcQ(level, `A ray makes an angle of ${90 - i}° with the surface of a plane mirror. What is the angle of reflection?`, i, '°', [90 - i, 180 - i, 2 * (90 - i)], `Angles are measured from the normal: 90° − ${90 - i}° = ${i}°, and reflection equals incidence.`)
+}
+
+const CHAINS: string[][] = [
+  ['grass', 'zebra', 'lion'],
+  ['grass', 'grasshopper', 'frog', 'snake'],
+  ['maize', 'rat', 'owl'],
+  ['algae', 'tilapia', 'kingfisher'],
+  ['acacia leaves', 'giraffe', 'lion'],
+  ['kale', 'caterpillar', 'chicken', 'hawk'],
+  ['grass', 'gazelle', 'cheetah'],
+  ['seeds', 'mouse', 'snake', 'eagle'],
+  ['water plants', 'tadpole', 'fish', 'heron'],
+  ['grass', 'cow', 'human'],
+]
+const ecologyCalc = (rng: Rng, level: Level): ChoiceQuestion => {
+  const chain = rng.pick(CHAINS)
+  const roles = ['producer', 'primary consumer', 'secondary consumer', 'tertiary consumer']
+  const k = rng.int(0, chain.length - 1)
+  const others = CHAINS.flat().filter((x) => !chain.includes(x))
+  const shown = chain.join(' → ')
+  if (level <= 3) {
+    const wrong = [...chain.filter((_, j) => j !== k), ...rng.sample(others, 2)].slice(0, 3)
+    const label = (x: string) => x
+    const opts2 = [chain[k], ...wrong].map(label)
+    return { id: uid('js'), type: 'choice', level, prompt: `In the food chain ${shown}, which organism is the ${roles[k]}?`, options: opts2.map((l) => ({ id: l, label: l })), answer: chain[k], explain: `Count from the producer: ${chain.map((x, j) => `${x} (${roles[j]})`).join(', ')}.` }
+  }
+  const gone = rng.int(1, chain.length - 1)
+  const below = chain[gone - 1]
+  const ans = `The ${below} would increase at first.`
+  const opts2 = [ans, `The ${below} would decrease at first.`, `The ${chain[0]} would disappear at once.`, 'Nothing in the chain would change.']
+  return { id: uid('js'), type: 'choice', level, prompt: `In the food chain ${shown}, what would most likely happen if all the ${chain[gone]} were removed?`, options: opts2.map((l) => ({ id: l, label: l })), answer: ans, explain: `Fewer ${chain[gone]} would eat the ${below}, so the ${below} would increase at first.` }
+}
+
+const CALC: Record<string, Generator> = {
+  'j8s-pressure': pressureCalc,
+  'j9s-work': workCalc,
+  'j9s-motion': motionCalc,
+  'j9s-electricity': electricCalc,
+  'j8s-light': lightCalc,
+  'j8s-ecology': ecologyCalc,
+  'j9s-ecosystems': ecologyCalc,
+}
+
+export const JSS_SCIENCE_GENERATORS: Record<string, Generator> = Object.fromEntries(
+  Object.entries(ALL).map(([k, v]) => {
+    const facts = factGenerator(v.facts)
+    const calc = CALC[k]
+    return [k, calc ? (rng: Rng, level: Level) => (rng.next() < 0.5 ? calc(rng, level) : facts(rng, level)) : facts]
+  }),
+)
 export const JSS_SCIENCE_BANKS: Record<string, BankQuestion[]> = Object.fromEntries(Object.entries(ALL).map(([k, v]) => [k, v.bank]))

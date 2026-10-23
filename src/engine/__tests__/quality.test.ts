@@ -28,7 +28,7 @@ function problems(q: Question, english: boolean): string[] {
   for (const t of texts(q)) {
     if (BROKEN.test(t)) out.push(`broken text: ${t}`)
     if (english) {
-      for (const m of t.matchAll(/(^|[^A-Za-z])([Aa]) ([a-z][\w-]*)/g)) {
+      for (const m of t.matchAll(/(^|[^A-Za-z])([Aa]) ([a-z][\w-]+)/g)) {
         const mid = m[2] === 'A' && m.index! > 0 && !/[.!?"]\s*$/.test(t.slice(0, m.index! + m[1].length))
         if (/^[aeiou]/.test(m[3]) && !A_OK.test(m[3]) && !mid && !/^(are|and)$/.test(m[3])) out.push(`"a" before a vowel: ${m[0].trim()}`)
       }

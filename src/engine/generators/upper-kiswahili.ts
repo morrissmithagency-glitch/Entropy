@@ -319,7 +319,7 @@ export const nyakatiU = (g: G): Generator => (rng, level) => {
       return q(level, `Kanusha: "${who} ${yes} ${obj}."`, `${who} ${no} ${obj}.`, [`${neg}me${stem}`, `${neg}ku${stem}`, `${neg}ta${stem}`].map((w) => `${who} ${w} ${obj}.`), 'Hali timilifu: -me- huwa -ja- katika ukanushaji.')
     }
     default: {
-      if (g === 4) {
+      if (g === 4 || rng.next() < 0.4) {
         const t = rng.pick(['sasa', 'uliopita', 'ujao'] as const)
         const [yes, no] = kanusha(stem, person, t)
         return q(level, `Tegua ukanushaji: "${who} ${no} ${obj}."`, `${who} ${yes} ${obj}.`, (['sasa', 'uliopita', 'ujao'] as const).filter((x) => x !== t).map((x) => `${who} ${kanusha(stem, person, x)[0]} ${obj}.`).concat(`${who} ${pos}me${stem} ${obj}.`))
@@ -373,11 +373,23 @@ const VIUNGANISHI: [G, string, string, string[]][] = [
   [6, 'Hatutaondoka ___ mwalimu afike.', 'mpaka', ['ili', 'licha', 'wala']],
   [6, '___ alikuwa amechoka, aliendelea kufanya kazi.', 'Ijapokuwa', ['Kwa kuwa', 'Ili', 'Kisha']],
   [6, 'Alifaulu ___ alisoma kwa bidii.', 'kwa kuwa', ['ingawa', 'licha', 'wala']],
+  [4, 'Funga dirisha ___ mvua isiingie.', 'ili', ['lakini', 'wala', 'au']],
+  [4, 'Baba alilima shamba ___ akapanda mahindi.', 'kisha', ['wala', 'ingawa', 'au']],
+  [4, 'Mtoto analia ___ ana njaa.', 'kwa sababu', ['lakini', 'ili', 'au']],
+  [4, 'Ningependa kwenda ___ sina nauli.', 'lakini', ['ili', 'na', 'kwa sababu']],
+  [4, 'Utasoma kitabu ___ utaandika insha?', 'au', ['na', 'ili', 'wala']],
+  [4, 'Wanafunzi waliimba ___ kucheza ngoma.', 'na', ['wala', 'ili', 'lakini']],
+  [5, '___ ulikuwa umechoka, ungepumzika kwanza.', 'Kama', ['Ili', 'Wala', 'Kisha']],
+  [5, 'Hatukwenda sokoni ___ mvua ilinyesha sana.', 'kwa kuwa', ['ingawa', 'ili', 'wala']],
+  [5, 'Alikimbia haraka ___ alichelewa.', 'hata hivyo', ['kwa hivyo', 'ili', 'kwa sababu']],
+  [6, 'Fanya kazi kwa bidii ___ ufaulu maishani.', 'ili', ['licha', 'ingawa', 'wala']],
+  [6, '___ ya kuwa mgonjwa, alishinda mbio.', 'Licha', ['Ingawa', 'Kwa sababu', 'Ili']],
+  [6, 'Hatutaanza mkutano ___ wageni wote wafike.', 'hadi', ['ili', 'licha', 'wala']],
 ]
 
 export const viunganishiU = (g: G): Generator => (rng, level) => {
   const rows = forGrade(VIUNGANISHI, g)
-  const pool = level <= 2 ? rows.slice(0, 14) : level >= 4 ? rows.slice(-14) : rows
+  const pool = level <= 2 ? forGrade(VIUNGANISHI, 4) : rows
   const [s, right, wrong] = rng.pick(pool)
   return q(level, `Chagua kiunganishi kifaacho:\n${s}`, right, wrong)
 }
@@ -410,6 +422,12 @@ const SAHIHI: [G, string, string[]][] = [
   [5, 'Alinunua vitu vifuatavyo: sukari, chumvi na unga.', ['Alinunua vitu vifuatavyo, sukari, chumvi na unga.', 'Alinunua vitu vifuatavyo sukari chumvi na unga.', 'Alinunua vitu: vifuatavyo sukari, chumvi na unga.']],
   [6, 'Mwalimu alisema, "Fungueni vitabu vyenu."', ['Mwalimu alisema "fungueni vitabu vyenu."', 'Mwalimu alisema, Fungueni vitabu vyenu.', 'Mwalimu alisema, "Fungueni vitabu vyenu".']],
   [6, 'Mama aliuliza, "Umemaliza kazi yako?"', ['Mama aliuliza, "Umemaliza kazi yako."', 'Mama aliuliza "umemaliza kazi yako?"', 'Mama aliuliza, Umemaliza kazi yako?']],
+  [4, 'Shule yetu itafungwa mwezi Novemba.', ['shule yetu itafungwa mwezi Novemba.', 'Shule yetu itafungwa mwezi novemba.', 'Shule yetu itafungwa mwezi Novemba']],
+  [4, 'Je, umeona kalamu yangu?', ['Je, umeona kalamu yangu.', 'je, umeona kalamu yangu?', 'Je umeona kalamu yangu!']],
+  [4, 'Halima anaishi Garissa.', ['Halima anaishi garissa.', 'halima anaishi Garissa.', 'Halima anaishi Garissa?']],
+  [4, 'Tunahitaji sukari, chumvi na majani ya chai.', ['Tunahitaji sukari chumvi na majani ya chai.', 'tunahitaji sukari, chumvi na majani ya chai.', 'Tunahitaji, sukari, chumvi, na, majani ya chai.']],
+  [4, 'Ajabu! Umekua mrefu sana!', ['Ajabu? Umekua mrefu sana?', 'ajabu! umekua mrefu sana!', 'Ajabu. Umekua mrefu sana.']],
+  [5, 'Daktari Achieng hufanya kazi katika hospitali ya Kenyatta.', ['daktari Achieng hufanya kazi katika hospitali ya Kenyatta.', 'Daktari achieng hufanya kazi katika hospitali ya Kenyatta.', 'Daktari Achieng hufanya kazi katika hospitali ya kenyatta.']],
 ]
 
 const MATUMIZI: [G, string, string][] = [
@@ -521,6 +539,12 @@ const VISAWE: [G, string, string][] = [
   [4, 'maskini', 'fukara'],
   [4, 'ugonjwa', 'maradhi'],
   [4, 'jibu', 'jawabu'],
+  [4, 'pesa', 'fedha'],
+  [4, 'chakula', 'mlo'],
+  [4, 'kazi', 'shughuli'],
+  [4, 'mtoto', 'mwana'],
+  [4, 'nchi', 'taifa'],
+  [5, 'hodari', 'shujaa'],
   [5, 'bahili', 'mchoyo'],
   [5, 'tajiri', 'mkwasi'],
   [5, 'kiburi', 'majivuno'],
@@ -567,6 +591,9 @@ const WATOTO: [string, string][] = [
   ['chura', 'kiluwiluwi'],
   ['paka', 'kinyau'],
   ['kipepeo', 'kiwavi'],
+  ['mbuzi', 'mwanambuzi'],
+  ['kondoo', 'mwanakondoo'],
+  ['nzi', 'funza'],
 ]
 // [min grade, things, group word, connector]
 const MAKUNDI: [G, string, string, string][] = [
@@ -590,6 +617,7 @@ const MAKAZI: [string, string][] = [
   ['kuku', 'kizimba'],
   ['mchwa', 'kichuguu'],
   ['buibui', 'utando'],
+  ['panya', 'shimo'],
 ]
 const MILIO: [string, string][] = [
   ['simba', 'hunguruma'],

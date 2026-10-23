@@ -3,7 +3,8 @@
 // question suits; Social Studies has its own topics each year. All content is original.
 import { factGenerator, type FactSet } from '../facts'
 import { labelOptions as opts } from '../generators/english'
-import type { BankQuestion, Generator, Level } from '../types'
+import { uid } from '../helpers'
+import type { BankQuestion, ChoiceQuestion, Generator, Level, Rng } from '../types'
 
 type J = 7 | 8 | 9
 type Row = [J, BankQuestion]
@@ -888,6 +889,10 @@ const CRE: Record<string, Topic> = {
           askBack: (b) => `Which event or place is linked to this: ${b}?`,
         },
       ],
+      categories: [
+        { one: 'an event of Holy Week', many: 'events of Holy Week', items: ['the entry into Jerusalem', 'the cleansing of the temple', 'the Last Supper', 'the prayer in Gethsemane', 'the trial before Pilate'], set: 'h' },
+        { one: 'an event after the resurrection', many: 'events after the resurrection', items: ['Jesus appeared to Mary Magdalene', 'the walk to Emmaus', 'Thomas saw Jesus\' hands', 'breakfast by the Sea of Galilee', 'the Ascension'], set: 'h' },
+      ],
     },
     bank: [
       t(7, 2, 'Christians celebrate the resurrection of Jesus at ___.', 'Easter', ['Christmas', 'Pentecost', 'Palm Sunday']),
@@ -1509,6 +1514,22 @@ const SOCIAL9: Record<string, STopic> = {
       categories: [
         { one: 'a tourist attraction in Kenya', many: 'tourist attractions', items: ['Maasai Mara', 'Diani beach', 'Mount Kenya', 'Lamu Old Town', 'Hell\'s Gate'], set: 'm' },
         { one: 'a method of fishing', many: 'fishing methods', items: ['trawling', 'gill netting', 'long lining', 'purse seining', 'fish farming'], set: 'm' },
+        { one: 'a way of conserving forests', many: 'ways of conserving forests', items: ['replanting cleared areas', 'using energy-saving jikos', 'licensing timber harvesting', 'agroforestry on farms', 'community forest scouts'], set: 'f' },
+        { one: 'a threat to forests', many: 'threats to forests', items: ['charcoal burning', 'illegal logging', 'clearing land for farms', 'uncontrolled fires', 'overgrazing in forests'], set: 'f' },
+      ],
+      pairs: [
+        {
+          pairs: [
+            ['Lake Nakuru National Park', 'flamingos and rhinos'],
+            ['Tsavo National Park', 'large herds of red elephants'],
+            ['Kakamega Forest', 'rainforest birds and monkeys'],
+            ['Watamu Marine Park', 'coral reefs and sea turtles'],
+            ['Hell\'s Gate National Park', 'gorges and geothermal steam'],
+            ['Amboseli National Park', 'elephants below Kilimanjaro'],
+          ],
+          ask: (a) => `What is ${a} best known for?`,
+          askBack: (b) => `Which place is best known for ${b}?`,
+        },
       ],
     },
     bank: [
@@ -1614,5 +1635,86 @@ for (const [g, set] of [[7, SOCIAL7], [8, SOCIAL8], [9, SOCIAL9]] as const)
     BANKS[`j${g}o-${k}`] = v.bank
   }
 
-export const JSS_MORE_GENERATORS: Record<string, Generator> = Object.fromEntries(Object.entries(FACTS).map(([k, v]) => [k, factGenerator(v)]))
+// ── Map, graph and data skills ──────────────────────────────────────────────
+// Social Studies map work and weather records are calculations; these makers mix with
+// the facts so every paper has some.
+
+const n0 = (n: number) => n.toLocaleString('en-US')
+function choiceOf(level: Level, prompt: string, answer: string, wrong: string[], explain: string): ChoiceQuestion {
+  const labels = [answer, ...[...new Set(wrong)].filter((w) => w !== answer)].slice(0, 4)
+  return { id: uid('jo'), type: 'choice', level, prompt, options: labels.map((l) => ({ id: l, label: l })), answer, explain }
+}
+
+const scaleMaker = (rng: Rng, level: Level): ChoiceQuestion => {
+  const scale = rng.pick([25000, 50000, 100000, 250000, 500000])
+  const cm = rng.int(2, 14)
+  const km = (cm * scale) / 100000
+  if (level <= 3) return choiceOf(level, `On a map of scale 1 : ${n0(scale)}, two schools are ${cm} cm apart. What is the real distance?`, `${n0(km)} km`, [`${n0(km * 10)} km`, `${n0(cm * scale)} km`, `${n0(km / 10)} km`, `${n0(km + cm)} km`], `${cm} × ${n0(scale)} cm = ${n0(cm * scale)} cm = ${n0(km)} km`)
+  return choiceOf(level, `Two towns ${n0(km)} km apart are ${cm} cm apart on a map. What is the scale of the map?`, `1 : ${n0(scale)}`, [`1 : ${n0(scale * 10)}`, `1 : ${n0(scale / 10)}`, `1 : ${n0(km)}`], `${n0(km)} km = ${n0(km * 100000)} cm; ÷ ${cm} = ${n0(scale)}`)
+}
+
+const contourMaker = (rng: Rng, level: Level): ChoiceQuestion => {
+  const ci = rng.pick([10, 20, 25, 50])
+  if (level <= 3) {
+    const base = rng.pick([1000, 1200, 1500, 1800, 2000])
+    const k = rng.int(2, 6)
+    return choiceOf(level, `On a topographical map the contour interval is ${ci} m. A hilltop is ${k} contours above the ${n0(base)} m contour. About how high is it?`, `${n0(base + k * ci)} m`, [`${n0(base + ci)} m`, `${n0(base + k)} m`, `${n0(base + k * ci * 10)} m`], `${n0(base)} + ${k} × ${ci} = ${n0(base + k * ci)} m`)
+  }
+  const rise = rng.pick([20, 40, 50, 100, 200])
+  const ratio = rng.pick([5, 10, 20, 25, 50])
+  const dist = rise * ratio
+  return choiceOf(level, `Two points differ in height by ${rise} m and are ${n0(dist)} m apart on the ground. What is the gradient?`, `1 in ${ratio}`, [`1 in ${ratio * 10}`, `${ratio} in 1`, `1 in ${rise}`], `Gradient = vertical interval ÷ horizontal distance = ${rise} ÷ ${n0(dist)} = 1 in ${ratio}`)
+}
+
+const pieMaker = (rng: Rng, level: Level): ChoiceQuestion => {
+  const pct = rng.pick([5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 75])
+  const what = rng.pick(['farming', 'trade', 'tourism', 'fishing', 'manufacturing', 'transport'])
+  if (level <= 3) return choiceOf(level, `In a pie chart of a county's income, ${what} makes up ${pct}%. What angle is its sector?`, `${(pct * 360) / 100}°`, [`${pct}°`, `${pct * 3}°`, `${(pct * 360) / 100 + 10}°`], `${pct}% of 360° = ${(pct * 360) / 100}°`)
+  const total = rng.pick([200, 400, 600, 1000, 1200])
+  return choiceOf(level, `A pie chart shows how ${n0(total)} learners travel to school. The sector for walking is ${(pct * 360) / 100}°. How many learners walk?`, n0((pct * total) / 100), [n0(pct), n0((pct * 360) / 100), n0(total - (pct * total) / 100)], `${(pct * 360) / 100} ÷ 360 × ${n0(total)} = ${n0((pct * total) / 100)}`)
+}
+
+const tradeMaker = (rng: Rng, level: Level): ChoiceQuestion => {
+  const ex = rng.int(20, 90) * 10
+  const im = ex + rng.pick([-150, -100, -60, -40, 40, 80, 120, 200])
+  const diff = Math.abs(ex - im)
+  const kind = ex > im ? 'surplus' : 'deficit'
+  return choiceOf(level, `A country exported goods worth ${n0(ex)} billion shillings and imported goods worth ${n0(im)} billion shillings. What was its balance of trade?`, `a ${kind} of ${n0(diff)} billion shillings`, [`a ${kind === 'surplus' ? 'deficit' : 'surplus'} of ${n0(diff)} billion shillings`, `a ${kind} of ${n0(ex + im)} billion shillings`, `a ${kind === 'surplus' ? 'deficit' : 'surplus'} of ${n0(ex + im)} billion shillings`], `Exports − imports = ${n0(ex)} − ${n0(im)}: ${ex > im ? 'more exports, a surplus' : 'more imports, a deficit'}.`)
+}
+
+const weatherMaker = (rng: Rng, level: Level): ChoiceQuestion => {
+  if (level <= 3) {
+    const base = rng.int(18, 30)
+    const up = rng.pick([1000, 1500, 2000, 2500, 3000])
+    const drop = (up / 1000) * 6
+    return choiceOf(level, `It is ${base}°C at the foot of a mountain. Temperature falls by about 6°C for every 1,000 m. What is the temperature ${n0(up)} m higher up?`, `${base - drop}°C`, [`${base + drop}°C`, `${base - 6}°C`, `${base - up / 100}°C`], `${n0(up)} m = ${up / 1000} × 6°C = ${drop}°C cooler: ${base} − ${drop} = ${base - drop}°C`)
+  }
+  const months = rng.int(3, 5)
+  const vals = Array.from({ length: months }, () => rng.int(2, 25) * 10)
+  const sum = vals.reduce((a, b) => a + b, 0)
+  const fix = sum % months
+  vals[0] -= fix
+  const mean = (sum - fix) / months
+  return choiceOf(level, `A rain gauge recorded ${vals.join(' mm, ')} mm in ${months} months. What was the mean monthly rainfall?`, `${mean} mm`, [`${sum - fix} mm`, `${Math.max(...vals) - Math.min(...vals)} mm`, `${mean + 10} mm`], `Total ${sum - fix} mm ÷ ${months} = ${mean} mm`)
+}
+
+const SOC_CALC: Record<string, Generator> = {
+  'j7o-maps': scaleMaker,
+  'j8o-maps': contourMaker,
+  'j9o-maps': pieMaker,
+  'j7o-economy': tradeMaker,
+  'j8o-economy': tradeMaker,
+  'j9o-economy': tradeMaker,
+  'j7o-weather': weatherMaker,
+  'j8o-weather': weatherMaker,
+  'j9o-weather': weatherMaker,
+}
+
+export const JSS_MORE_GENERATORS: Record<string, Generator> = Object.fromEntries(
+  Object.entries(FACTS).map(([k, v]) => {
+    const facts = factGenerator(v)
+    const calc = SOC_CALC[k]
+    return [k, calc ? (rng: Rng, level: Level) => (rng.next() < 0.45 ? calc(rng, level) : facts(rng, level)) : facts]
+  }),
+)
 export const JSS_MORE_BANKS: Record<string, BankQuestion[]> = BANKS

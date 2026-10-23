@@ -93,6 +93,12 @@ const PROVERBS: [J, string, string][] = [
   [9, 'Birds of a feather flock together.', 'People with similar interests stay together.'],
   [9, 'Rome was not built in a day.', 'Great things take time.'],
   [9, 'Do not count your chickens before they hatch.', 'Do not depend on something before it happens.'],
+  [7, 'Unity is strength.', 'People achieve more when they work together.'],
+  [7, 'Little by little fills the measure.', 'Small efforts add up to big results.'],
+  [7, 'A friend in need is a friend indeed.', 'A true friend helps you when you are in trouble.'],
+  [8, 'Prevention is better than cure.', 'It is wiser to stop a problem than to fix it later.'],
+  [8, 'Two heads are better than one.', 'Sharing ideas helps to solve problems.'],
+  [9, 'Make hay while the sun shines.', 'Use a good opportunity before it passes.'],
 ]
 
 const ORAL: [J, string, string][] = [
@@ -103,6 +109,10 @@ const ORAL: [J, string, string][] = [
   [8, 'a legend', 'a story about a hero from the past, partly true'],
   [9, 'a myth', 'a traditional story explaining how something began'],
   [9, 'a lullaby', 'a song sung to put a baby to sleep'],
+  [7, 'a work song', 'a song sung to make hard work lighter'],
+  [8, 'a praise song', 'a song that honours a person or a community'],
+  [8, 'a fable', 'a short story, often with animals, that teaches a lesson'],
+  [9, 'an epic', 'a long story or poem about a great hero'],
 ]
 
 export const literatureJ = (g: J): Generator => (rng, level) => {

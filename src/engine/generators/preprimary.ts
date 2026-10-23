@@ -191,6 +191,11 @@ const HEAVY_LIGHT: [ArtId, ArtId][] = [
   ['bed', 'book'],
   ['goat', 'egg'],
   ['drum', 'ball'],
+  ['rock', 'flower'],
+  ['giraffe', 'cat'],
+  ['zebra', 'dog'],
+  ['house', 'shoe'],
+  ['lion', 'fish'],
 ]
 
 export const massP = (_g: PP): Generator => (rng, level) => {
@@ -220,6 +225,10 @@ const HOLDS: [ArtId, ArtId][] = [
   ['bucket', 'glass'],
   ['jerrycan', 'jug'],
   ['basin', 'cup'],
+  ['well', 'jug'],
+  ['lake', 'bucket'],
+  ['pot', 'spoon'],
+  ['jerrycan', 'glass'],
 ]
 
 export const capacityP = (_g: PP): Generator => (rng, level) => {
@@ -448,6 +457,10 @@ const WORDS: [ArtId, string][] = [
   ['sun', 'sun'],
   ['egg', 'egg'],
   ['cow', 'cow'],
+  ['jug', 'jug'],
+  ['tap', 'tap'],
+  ['ear', 'ear'],
+  ['hoe', 'hoe'],
   ['fish', 'fish'],
   ['ball', 'ball'],
   ['book', 'book'],
@@ -458,6 +471,15 @@ const WORDS: [ArtId, string][] = [
   ['shoe', 'shoe'],
   ['drum', 'drum'],
   ['leaf', 'leaf'],
+  ['bell', 'bell'],
+  ['soap', 'soap'],
+  ['comb', 'comb'],
+  ['rock', 'rock'],
+  ['rain', 'rain'],
+  ['hand', 'hand'],
+  ['seed', 'seed'],
+  ['bird', 'bird'],
+  ['lion', 'lion'],
 ]
 
 export const wordsP = (_g: PP): Generator => (rng, level) => {
