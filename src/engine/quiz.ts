@@ -26,6 +26,8 @@ import { UPPER_ARTS_CRE_BANKS, UPPER_ARTS_CRE_GENERATORS } from './banks/upper-a
 import { preprimaryOwn } from './generators/preprimary'
 import { jssMathGenerators } from './generators/jss-math'
 import { jssLanguageBanks, jssLanguageGenerators } from './generators/jss-languages'
+import { JSS_SCIENCE_BANKS, JSS_SCIENCE_GENERATORS } from './banks/jss-science'
+import { JSS_MORE_BANKS, JSS_MORE_GENERATORS } from './banks/jss-more'
 import { ENGLISH2_BANKS, ENGLISH2_GENERATORS } from './generators/english2'
 import { KISWAHILI2_BANKS, KISWAHILI2_GENERATORS } from './generators/kiswahili2'
 import { uid } from './helpers'
@@ -61,8 +63,8 @@ mix('k-msamiati', G1.msamiati2, [4, 5])
 mix('k-silabi', G1.silabi2, [1, 4])
 mix('k-kuandika', G1.tahajia2, [3, 4])
 // Bank-only Grade 1 sub-strands gain a question maker; the builder mixes the two.
-Object.assign(GENERATORS, upperMathGenerators(), upperEnglishGenerators(), upperKiswahiliGenerators(), UPPER_SCIENCE_GENERATORS, UPPER_AGRICULTURE_GENERATORS, UPPER_SOCIAL_GENERATORS, UPPER_ARTS_CRE_GENERATORS, jssMathGenerators(), jssLanguageGenerators())
-Object.assign(BANKS, upperEnglishBanks(), upperKiswahiliBanks(), UPPER_SCIENCE_BANKS, UPPER_AGRICULTURE_BANKS, UPPER_SOCIAL_BANKS, UPPER_ARTS_CRE_BANKS, jssLanguageBanks())
+Object.assign(GENERATORS, upperMathGenerators(), upperEnglishGenerators(), upperKiswahiliGenerators(), UPPER_SCIENCE_GENERATORS, UPPER_AGRICULTURE_GENERATORS, UPPER_SOCIAL_GENERATORS, UPPER_ARTS_CRE_GENERATORS, jssMathGenerators(), jssLanguageGenerators(), JSS_SCIENCE_GENERATORS, JSS_MORE_GENERATORS)
+Object.assign(BANKS, upperEnglishBanks(), upperKiswahiliBanks(), UPPER_SCIENCE_BANKS, UPPER_AGRICULTURE_BANKS, UPPER_SOCIAL_BANKS, UPPER_ARTS_CRE_BANKS, jssLanguageBanks(), JSS_SCIENCE_BANKS, JSS_MORE_BANKS)
 Object.assign(GENERATORS, GRADE1_ENV_GENERATORS, { 'e-polite': G1.polite1, 'k-salamu': G1.salamu2 })
 BANKS['e-comprehension'] = [...BANKS['e-comprehension'], ...G1.COMP1_MORE]
 BANKS['k-ufahamu'] = [...BANKS['k-ufahamu'], ...G1.UFAHAMU1_MORE]
