@@ -48,7 +48,7 @@ const frame = async (page, t) => {
   return Buffer.from(data.split(',')[1], 'base64')
 }
 
-const { writeFileSync, rmSync } = await import('node:fs')
+const { writeFileSync, rmSync, existsSync, statSync } = await import('node:fs')
 const first = await openPage()
 const duration = await first.page.evaluate(() => window.DURATION)
 
@@ -70,7 +70,8 @@ if (stills) {
   await Promise.all(pages.map(async ({ page }, w) => {
     for (let i = w; i < n; i += WORKERS) {
       const file = join(dir, `${String(i).padStart(5, '0')}.png`)
-      writeFileSync(file, await frame(page, i / FPS))
+      // resume: frames already on disk from an interrupted run are kept
+      if (!existsSync(file) || statSync(file).size < 1000) writeFileSync(file, await frame(page, i / FPS))
       if (++done % 30 === 0) process.stdout.write(`\rframe ${done}/${n}  ${Math.round((Date.now() - started) / done)} ms/frame`)
     }
   }))
