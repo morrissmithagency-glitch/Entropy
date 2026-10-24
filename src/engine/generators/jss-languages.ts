@@ -588,14 +588,47 @@ const AINA: [string, string][] = [
   ['Aliketi _karibu na_ dirisha.', 'kihusishi'],
   ['_Lo!_ Umeshinda tena!', 'kihisishi'],
   ['_Ala!_ Kumbe umefika.', 'kihisishi'],
+  ['_Shule_ yetu ina madarasa kumi.', 'nomino'],
+  ['_Nairobi_ ni mji mkuu wa Kenya.', 'nomino'],
+  ['Ndege _wanaruka_ angani.', 'kitenzi'],
+  ['Wanafunzi _wataimba_ wimbo wa taifa.', 'kitenzi'],
+  ['Ana kalamu _nyekundu_.', 'kivumishi'],
+  ['Walinunua viti _vitatu_.', 'kivumishi'],
+  ['Aliimba _vizuri_ sana.', 'kielezi'],
+  ['Mtoto alilala _sakafuni_.', 'kielezi'],
+  ['_Sisi_ tutashinda mechi hii.', 'kiwakilishi'],
+  ['_Huyu_ ni dada yangu.', 'kiwakilishi'],
+  ['Alisoma kwa bidii _ili_ apite mtihani.', 'kiunganishi'],
+  ['Utakunywa chai _au_ maziwa?', 'kiunganishi'],
+  ['Paka amelala _chini ya_ kitanda.', 'kihusishi'],
+  ['Nyumba yetu iko _mbele ya_ shule.', 'kihusishi'],
+  ['_Ole wangu!_ Nimechelewa.', 'kihisishi'],
+  ['_Hongera!_ Umefaulu mtihani.', 'kihisishi'],
 ]
 const AINA_ALL = ['nomino', 'kitenzi', 'kivumishi', 'kielezi', 'kiwakilishi', 'kiunganishi', 'kihusishi', 'kihisishi']
+/** Words that belong to one class even out of a sentence, for "which word is a …?" */
+const AINA_WORDS: Record<string, string[]> = {
+  nomino: ['mwalimu', 'furaha', 'shule', 'kitabu'],
+  kitenzi: ['anacheza', 'walipika', 'tutasoma', 'wameimba'],
+  kivumishi: ['kizuri', 'vitatu', 'kikubwa', 'mrefu'],
+  kielezi: ['polepole', 'vizuri', 'sakafuni', 'mara mbili'],
+  kiwakilishi: ['wao', 'sisi', 'yeye', 'ninyi'],
+  kiunganishi: ['lakini', 'ingawa', 'ili', 'au'],
+  kihusishi: ['juu ya', 'karibu na', 'chini ya', 'mbele ya'],
+  kihisishi: ['Lo!', 'Ala!', 'Hongera!', 'Ole wangu!'],
+}
 
 export const ainaJ = (g: J): Generator =>
   blend(g, (rng, level) => {
+    if (level >= 3 && rng.next() < 0.4) {
+      const cls = rng.pick(AINA_ALL)
+      const right = rng.pick(AINA_WORDS[cls])
+      const wrong = rng.sample(AINA_ALL.filter((c) => c !== cls), 3).map((c) => rng.pick(AINA_WORDS[c]))
+      return q(level, `Neno lipi kati ya haya ni ${cls}?`, right, wrong)
+    }
     const [s, a] = rng.pick(AINA)
     return q(level, `Neno lililopigiwa mstari ni aina gani ya neno?\n${s}`, a, rng.sample(AINA_ALL.filter((x) => x !== a), 3))
-  }, vivumishiU(6))
+  })
 
 const HALI: [string, string, string[]][] = [
   ['Yeye husoma kila siku.', 'hali ya mazoea', ['wakati ujao', 'hali timilifu', 'hali ya masharti']],
@@ -621,6 +654,27 @@ const KAULI: [string, string, string, string, string][] = [
   ['cheza', 'chezea', 'chezwa', 'chezeka', 'chezesha'],
   ['imba', 'imbia', 'imbwa', 'imbika', 'imbisha'],
   ['lima', 'limia', 'limwa', 'limika', 'limisha'],
+  ['kata', 'katia', 'katwa', 'katika', 'katisha'],
+  ['funga', 'fungia', 'fungwa', 'fungika', 'fungisha'],
+  ['lipa', 'lipia', 'lipwa', 'lipika', 'lipisha'],
+  ['piga', 'pigia', 'pigwa', 'pigika', 'pigisha'],
+  ['jenga', 'jengea', 'jengwa', 'jengeka', 'jengesha'],
+  ['shona', 'shonea', 'shonwa', 'shoneka', 'shonesha'],
+]
+/** The right form of the verb inside a sentence: [sentence, answer, wrong forms, kauli]. */
+const KAULI_SENT: [string, string, string[], string][] = [
+  ['Barua ___ na Juma jana.', 'iliandikwa', ['iliandika', 'iliandikia', 'iliandikisha'], 'kutendwa'],
+  ['Chakula ___ na mama.', 'kilipikwa', ['kilipika', 'kilipikia', 'kilipikisha'], 'kutendwa'],
+  ['Wimbo ___ na kwaya ya shule.', 'uliimbwa', ['uliimba', 'uliimbia', 'uliimbisha'], 'kutendwa'],
+  ['Nyumba ___ na fundi stadi.', 'ilijengwa', ['ilijenga', 'ilijengea', 'ilijengesha'], 'kutendwa'],
+  ['Baba ___ mtoto viatu vipya.', 'alimnunulia', ['alimnunua', 'alinunuliwa', 'alimnunulisha'], 'kutendea'],
+  ['Shangazi ___ mama barua ndefu.', 'alimwandikia', ['alimwandika', 'aliandikwa', 'alimwandikisha'], 'kutendea'],
+  ['Mwalimu ___ wanafunzi hesabu.', 'aliwasomesha', ['aliwasoma', 'aliwasomea', 'walisomwa'], 'kutendesha'],
+  ['Kitabu hiki ___ kwa urahisi.', 'kinasomeka', ['kinasoma', 'kinasomwa', 'kinasomesha'], 'kutendeka'],
+  ['Mlango huu ___ kwa urahisi.', 'unafungika', ['unafunga', 'unafungwa', 'unafungisha'], 'kutendeka'],
+  ['Juma na Amina ___ sokoni jana.', 'walionana', ['waliona', 'walionwa', 'walionea'], 'kutendana'],
+  ['Wachezaji ___ mikono baada ya mechi.', 'walishikana', ['walishika', 'walishikwa', 'walishikia'], 'kutendana'],
+  ['Nguo hizi ___ na fundi cherehani.', 'zilishonwa', ['zilishona', 'zilishonea', 'zilishonesha'], 'kutendwa'],
 ]
 const KAULI_NAMES = ['kutendea', 'kutendwa', 'kutendeka', 'kutendesha']
 const KUTENDANA: [string, string][] = [
@@ -638,11 +692,15 @@ export const kauliJ = (g: J): Generator =>
       const [s, f] = rng.pick(KUTENDANA)
       return q(level, `Andika kitenzi "${s}" katika kauli ya kutendana.`, f, rng.sample(KUTENDANA.map(([, x]) => x).filter((x) => x !== f), 2).concat(`${s.slice(0, -1)}wa`), 'Kauli ya kutendana huonyesha kitendo kinachofanywa na pande mbili kwa kila mmoja.')
     }
+    if (level >= 3 && rng.next() < 0.45) {
+      const [s, a, w, kauli] = rng.pick(KAULI_SENT)
+      return q(level, `Jaza pengo kwa kitenzi chenye kauli ya ${kauli}:\n${s}`, a, w)
+    }
     const row = rng.pick(KAULI)
     const i = rng.int(0, 3)
     if (level <= 2 || (level === 3 && rng.next() < 0.5)) return q(level, `Kitenzi "${row[i + 1]}" kiko katika kauli gani?`, KAULI_NAMES[i], KAULI_NAMES.filter((n) => n !== KAULI_NAMES[i]))
     return q(level, `Andika kitenzi "${row[0]}" katika kauli ya ${KAULI_NAMES[i]}.`, row[i + 1], row.slice(1).filter((x) => x !== row[i + 1]))
-  }, ngeliU(6))
+  })
 
 const USEMI: [string, string, string[]][] = [
   ['"Ninasoma kitabu," Juma alisema.', 'Juma alisema kwamba alikuwa akisoma kitabu.', ['Juma alisema kwamba ninasoma kitabu.', 'Juma alisema atasoma kitabu.', 'Juma husema kwamba alikuwa akisoma kitabu.']],
@@ -652,6 +710,22 @@ const USEMI: [string, string, string[]][] = [
   ['"Unaishi wapi?" Neema aliniuliza.', 'Neema aliniuliza ninaishi wapi.', ['Neema aliniuliza unaishi wapi?', 'Neema alisema ninaishi wapi.', 'Neema aliniuliza nitaishi wapi.']],
   ['"Nilienda sokoni jana," mama alisema.', 'Mama alisema kwamba alikuwa ameenda sokoni siku iliyotangulia.', ['Mama alisema kwamba nilienda sokoni jana.', 'Mama alisema ataenda sokoni kesho.', 'Mama husema kwamba alienda sokoni.']],
   ['"Tafadhali nisaidie," Otieno alimwomba rafiki yake.', 'Otieno alimwomba rafiki yake amsaidie.', ['Otieno alimwomba rafiki yake nisaidie.', 'Otieno alisema rafiki yake alimsaidia.', 'Otieno alimwomba rafiki yake atamsaidia kesho.']],
+  ['"Ninapenda Kiswahili," Wanjiru alisema.', 'Wanjiru alisema kwamba alipenda Kiswahili.', ['Wanjiru alisema kwamba ninapenda Kiswahili.', 'Wanjiru alisema kwamba atapenda Kiswahili.', 'Wanjiru husema kwamba anapenda Kiswahili.']],
+  ['"Tutacheza mpira kesho," wavulana walisema.', 'Wavulana walisema kwamba wangecheza mpira siku iliyofuata.', ['Wavulana walisema kwamba tutacheza mpira kesho.', 'Wavulana walisema kwamba walicheza mpira jana.', 'Wavulana watasema kwamba watacheza mpira.']],
+  ['"Nimepoteza kalamu yangu," Baraka alisema.', 'Baraka alisema kwamba alikuwa amepoteza kalamu yake.', ['Baraka alisema kwamba nimepoteza kalamu yangu.', 'Baraka alisema kwamba atapoteza kalamu yake.', 'Baraka alisema kwamba amepoteza kalamu yangu.']],
+  ['"Leteni madaftari yenu," mwalimu aliwaambia wanafunzi.', 'Mwalimu aliwaambia wanafunzi walete madaftari yao.', ['Mwalimu aliwaambia wanafunzi leteni madaftari yenu.', 'Mwalimu aliwaambia wanafunzi walileta madaftari yao.', 'Mwalimu aliwaambia wanafunzi watakaoleta madaftari.']],
+  ['"Je, umekula?" mama aliniuliza.', 'Mama aliniuliza kama nilikuwa nimekula.', ['Mama aliniuliza je, umekula?', 'Mama aliniambia nile chakula.', 'Mama aliniuliza kama atakula.']],
+  ['"Usichelewe shuleni," baba alimwonya Zawadi.', 'Baba alimwonya Zawadi asichelewe shuleni.', ['Baba alimwonya Zawadi usichelewe shuleni.', 'Baba alimwonya Zawadi alichelewa shuleni.', 'Baba alimwonya Zawadi atachelewa shuleni.']],
+  ['"Ninaishi hapa," mzee alisema.', 'Mzee alisema kwamba aliishi pale.', ['Mzee alisema kwamba ninaishi hapa.', 'Mzee alisema kwamba ataishi hapa.', 'Mzee alisema kwamba aliishi hapa kesho.']],
+]
+/** Direct speech written out properly: [question, right, wrong]. */
+const USEMI_HALISI: [string, string, string[]][] = [
+  ['Ni sentensi ipi imeandikwa ipasavyo kwa usemi halisi?', '"Karibu nyumbani," mama alisema.', ['"Karibu nyumbani" mama alisema.', 'Karibu nyumbani, "mama alisema."', '"karibu nyumbani," Mama alisema.']],
+  ['Ni sentensi ipi imeandikwa ipasavyo kwa usemi halisi?', 'Mwalimu alisema, "Fungueni vitabu vyenu."', ['Mwalimu alisema "fungueni vitabu vyenu".', 'Mwalimu alisema, Fungueni vitabu vyenu.', 'Mwalimu alisema, "fungueni vitabu vyenu".']],
+  ['Ni sentensi ipi imeandikwa ipasavyo kwa usemi halisi?', '"Unaenda wapi?" Juma aliuliza.', ['"Unaenda wapi." Juma aliuliza.', '"Unaenda wapi?" juma aliuliza.', 'Unaenda wapi? "Juma aliuliza."']],
+  ['Katika usemi wa taarifa, neno "kesho" hubadilika kuwa nini?', 'siku iliyofuata', ['siku iliyotangulia', 'leo', 'jana']],
+  ['Katika usemi wa taarifa, neno "hapa" hubadilika kuwa nini?', 'pale', ['huku', 'humu', 'hapa hapa']],
+  ['Katika usemi wa taarifa, neno "jana" hubadilika kuwa nini?', 'siku iliyotangulia', ['siku iliyofuata', 'leo', 'kesho']],
 ]
 
 export const usemiJ = (g: J): Generator =>
@@ -659,11 +733,12 @@ export const usemiJ = (g: J): Generator =>
     if (level === 1 && rng.next() < 0.5) {
       return q(level, 'Usemi halisi huandikwa ndani ya alama gani?', 'alama za kunukuu (" ")', ['mabano ( )', 'nukta pacha (:)', 'kistari (-)'])
     }
+    if (level <= 3 && rng.next() < 0.35) return tableQ(rng, level, USEMI_HALISI)
     const [d, r, w] = rng.pick(USEMI)
     return level >= 4 && rng.next() < 0.4
-      ? q(level, `Ni ipi usemi halisi wa sentensi hii?\n"${r}"`, d, USEMI.map(([x]) => x).filter((x) => x !== d).slice(0, 3))
+      ? q(level, `Ni ipi usemi halisi wa sentensi hii?\n"${r}"`, d, rng.sample(USEMI.map(([x]) => x).filter((x) => x !== d), 3))
       : q(level, `Andika katika usemi wa taarifa:\n${d}`, r, w)
-  }, uakifishajiU(6))
+  })
 
 const UFAHAMU_J: BankQuestion[] = [
   ...passage(3, 'Mradi wa Maji', 'Kisima cha kijiji cha Kaptembwo kilipokauka, wasichana walilazimika kutembea saa nne kila siku kuchota maji mtoni. Wengi walikosa masomo. Wanafunzi wa Gredi ya Tisa waliamua kuchukua hatua. Walipima mapaa ya shule, wakakadiria kiasi cha maji ya mvua yanayoweza kuvunwa, kisha wakawasilisha matokeo yao kwa afisa wa kaunti. Kaunti ilikubali kununua mifereji na matangi mawili makubwa ikiwa wanakijiji wangetoa nguvukazi. Baada ya muhula mmoja, matangi yalijaa na wasichana wakarejea darasani.', [

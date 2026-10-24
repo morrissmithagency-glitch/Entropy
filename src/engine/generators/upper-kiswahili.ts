@@ -228,7 +228,8 @@ export const vivumishiU = (g: G): Generator => (rng, level) => {
       const n = plural ? pl : sg
       const a = adj(cls, stem, plural)
       const v = `${NGELI[cls].subj[i]}me${verb}`
-      const extra = rng.pick(['sana', 'leo', 'jana'])
+      // Only adverbs that suit a finished action (-me-): never "sana" or "jana" with it.
+      const extra = rng.pick(['leo', 'tayari'])
       return q(level, `Kivumishi katika sentensi hii ni kipi?\n${cap(n)} ${a} ${v} ${extra}.`, a, [n, v, extra], 'Kivumishi hueleza zaidi kuhusu nomino.')
     }
     case 2: {
