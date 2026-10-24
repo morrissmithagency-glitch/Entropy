@@ -18,6 +18,7 @@ const stills = arg('--stills', '')
 const PAGE = arg('--page', 'promo.html')
 const NAME = arg('--out', 'cbc-helper-promo')
 const MUSIC = arg('--music', 'music.py')
+const PORT = Number(arg('--port', 8765))
 
 const types = { '.html': 'text/html', '.png': 'image/png', '.woff2': 'font/woff2', '.js': 'text/javascript' }
 const server = createServer(async (req, res) => {
@@ -28,17 +29,17 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream' })
     res.end(body)
   } catch { res.writeHead(404); res.end() }
-}).listen(8765)
+}).listen(PORT)
 
 // Several browsers render interleaved frames at once; WebGL in a headless browser runs on the
 // CPU, so this scales with cores.
 const WORKERS = Number(arg('--workers', 1))
 async function openPage() {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } })
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1920 } })
   page.on('pageerror', (e) => console.error('page error:', e.message))
   page.on('console', (m) => m.type() === 'error' && !m.text().includes('404') && console.error('console:', m.text()))
-  await page.goto(`http://localhost:8765/marketing/promo/${PAGE}`)
+  await page.goto(`http://localhost:${PORT}/marketing/promo/${PAGE}`)
   await page.evaluate(() => window.ready)
   return { browser, page }
 }

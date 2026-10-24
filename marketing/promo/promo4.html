@@ -1,0 +1,291 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CBC Helper: Quiet Income</title>
+<style>
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Lexend'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/lexend/files/lexend-latin-wght-normal.woff2') format('woff2-variations'); }
+  html, body { margin: 0; background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// "Quiet Income": a 24-second vertical ad for would-be affiliates. Dark glass and mint light,
+// numbers that roll like an odometer, a year of commissions drawing itself, and commission
+// alerts stacking up. Every figure follows server/affiliate.json; the worked example is labelled
+// as an example. 124 bpm; the copy lands on the beat. renderFrame(t) is pure.
+'use strict'
+const W = 1080, H = 1920, BPM = 124, BEAT = 60 / BPM, BAR = BEAT * 4, DURATION = 24.2
+const cx = document.getElementById('c').getContext('2d')
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
+const lerp = (a, b, k) => a + (b - a) * k
+const prog = (t, a, b) => clamp((t - a) / (b - a))
+const easeOut = (k) => 1 - Math.pow(1 - k, 3)
+const easeInOut = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2)
+const back = (k) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2) }
+function rng(seed) { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296) }
+const MINT = '#5ef2c2', GOLD = '#f1cf87', CREAM = '#f7f4ee', MIST = 'rgba(206,216,235,0.72)'
+const ksh = (n) => 'KSh ' + Math.round(n).toLocaleString('en-KE')
+
+// The worked example: 10 parents on Pro (KSh 1,250 a month). First month 10%, then 16%.
+const PRO = 1250, PARENTS = 10
+const MONTHS = Array.from({ length: 12 }, (_, i) => PARENTS * Math.floor(PRO * (i === 0 ? 0.1 : 0.16)))
+const TOTAL = MONTHS.reduce((a, b) => a + b, 0) // 23,250
+
+const B = (n) => n * BAR
+window.CUES = { duration: DURATION, bpm: BPM, hits: [B(1), B(2), B(3), B(4), B(5), B(6), B(8), B(9), B(10)], roll: [B(6), B(8)], end: B(10) }
+
+const img = {}
+const load = (n, src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => { img[n] = i; res() }; i.onerror = rej; i.src = src })
+function roundRect(x, y, w, h, r) { cx.beginPath(); cx.roundRect(x, y, w, h, r) }
+
+// ── background: deep night, a slow aurora of mint and gold, drifting light particles
+function background(t) {
+  const g = cx.createLinearGradient(0, 0, 0, H)
+  g.addColorStop(0, '#060b18'); g.addColorStop(1, '#0d1326')
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H)
+  for (const [x, y, r, c, sp] of [[0.2, 0.25, 900, 'rgba(94,242,194,0.16)', 0.13], [0.85, 0.7, 1000, 'rgba(241,207,135,0.12)', 0.1], [0.5, 1.0, 800, 'rgba(80,120,255,0.12)', 0.07]]) {
+    const px = W * (x + 0.08 * Math.sin(t * sp * 2)), py = H * (y + 0.05 * Math.cos(t * sp * 3))
+    const rg = cx.createRadialGradient(px, py, 0, px, py, r)
+    rg.addColorStop(0, c); rg.addColorStop(1, 'rgba(0,0,0,0)')
+    cx.fillStyle = rg; cx.fillRect(0, 0, W, H)
+  }
+  // a fine perspective grid on the floor, like a trading floor at night
+  cx.save(); cx.globalAlpha = 0.18; cx.strokeStyle = MINT; cx.lineWidth = 1.2
+  const hy = H * 0.62
+  for (let i = -12; i <= 12; i++) { cx.beginPath(); cx.moveTo(W / 2 + i * 30, hy); cx.lineTo(W / 2 + i * 260, H); cx.stroke() }
+  for (let j = 0; j < 14; j++) { const k = ((j + (t * 0.6) % 1) / 14) ** 2.2; const y = hy + (H - hy) * k; cx.globalAlpha = 0.18 * k; cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke() }
+  cx.restore()
+  const r = rng(4)
+  for (let i = 0; i < 70; i++) {
+    const x = r() * W, y = (((r() * H - t * (20 + r() * 40)) % H) + H) % H, s = 1 + r() * 2.5
+    cx.fillStyle = `rgba(200,255,235,${0.15 + 0.35 * r()})`; cx.beginPath(); cx.arc(x, y, s, 0, 7); cx.fill()
+  }
+}
+
+// ── type
+function line(text, x, y, t, at, { size = 96, weight = 800, font = 'Lexend', italic = false, color = CREAM, align = 'center', out = 99, glow = null } = {}) {
+  const k = clamp((t - at) / 0.4), o = 1 - clamp((t - out) / 0.3)
+  if (k <= 0 || o <= 0) return
+  cx.save(); cx.globalAlpha = o
+  cx.font = `${italic ? 'italic ' : ''}${weight} ${size}px ${font}`; cx.textAlign = align; cx.textBaseline = 'alphabetic'
+  // reveal through a rising mask, each line sliding up into place
+  const m = cx.measureText(text), w = m.width
+  const left = align === 'center' ? x - w / 2 : x
+  cx.beginPath(); cx.rect(left - 40, y - size * 1.05, w + 80, size * 1.35); cx.clip()
+  const dy = (1 - easeOut(k)) * size * 1.1 - (1 - o) * size * 0.6
+  if (glow) { cx.shadowColor = glow; cx.shadowBlur = 40 }
+  cx.fillStyle = color; cx.fillText(text, x, y + dy)
+  cx.restore()
+}
+function caps(text, x, y, t, at, { size = 30, color = MIST, spacing = 8, align = 'center', out = 99, weight = 500 } = {}) {
+  const k = easeOut(clamp((t - at) / 0.4)), o = 1 - clamp((t - out) / 0.3)
+  if (k <= 0 || o <= 0) return
+  cx.save(); cx.globalAlpha = k * o; cx.font = `${weight} ${size}px Lexend`; cx.letterSpacing = spacing + 'px'; cx.textAlign = align; cx.fillStyle = color
+  cx.fillText(text, x + (align === 'center' ? spacing / 2 : 0), y + (1 - k) * 18); cx.restore()
+}
+
+// ── an odometer: each digit rolls from the old value to the new
+function odometer(value, x, y, size, color, align = 'center') {
+  const s = ksh(Math.floor(value))
+  cx.save(); cx.font = `800 ${size}px Lexend`; cx.textBaseline = 'alphabetic'
+  const cw = cx.measureText('0').width, total = [...s].reduce((a, ch) => a + (/\d/.test(ch) ? cw : cx.measureText(ch).width), 0)
+  let px = align === 'center' ? x - total / 2 : x
+  // fixed-width digits so the number doesn't jitter as it climbs
+  cx.fillStyle = color
+  for (const ch of s) { const w = /\d/.test(ch) ? cw : cx.measureText(ch).width; cx.fillText(ch, px + (w - cx.measureText(ch).width) / 2, y); px += w }
+  cx.restore()
+}
+
+// ── glass card
+function glass(x, y, w, h, r = 36, a = 1) {
+  cx.save(); cx.globalAlpha = a
+  cx.shadowColor = 'rgba(0,0,0,0.45)'; cx.shadowBlur = 50; cx.shadowOffsetY = 24
+  roundRect(x, y, w, h, r); cx.fillStyle = 'rgba(255,255,255,0.07)'; cx.fill()
+  cx.shadowColor = 'transparent'
+  const g = cx.createLinearGradient(x, y, x + w, y + h)
+  g.addColorStop(0, 'rgba(255,255,255,0.16)'); g.addColorStop(0.5, 'rgba(255,255,255,0.03)'); g.addColorStop(1, 'rgba(255,255,255,0.08)')
+  cx.fillStyle = g; cx.fill()
+  cx.strokeStyle = 'rgba(255,255,255,0.18)'; cx.lineWidth = 2; cx.stroke()
+  cx.restore()
+}
+
+// ── a ring that fills to a percentage
+function ring(x, y, r, frac, label, t, at, color) {
+  const k = easeInOut(clamp((t - at) / 0.9))
+  cx.save(); cx.lineCap = 'round'
+  cx.strokeStyle = 'rgba(255,255,255,0.08)'; cx.lineWidth = 34; cx.beginPath(); cx.arc(x, y, r, 0, 7); cx.stroke()
+  cx.shadowColor = color; cx.shadowBlur = 40; cx.strokeStyle = color
+  cx.beginPath(); cx.arc(x, y, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac * k); cx.stroke()
+  cx.shadowBlur = 0
+  cx.fillStyle = CREAM; cx.font = '800 220px Lexend'; cx.textAlign = 'center'; cx.textBaseline = 'middle'
+  const num = String(Math.round(label * k))
+  const nw = cx.measureText(num).width
+  cx.font = '700 110px Lexend'; const pw = cx.measureText('%').width
+  const left = x - (nw + pw + 10) / 2
+  cx.font = '800 220px Lexend'; cx.textAlign = 'left'; cx.fillText(num, left, y + 8)
+  cx.font = '700 110px Lexend'; cx.fillStyle = color; cx.fillText('%', left + nw + 10, y + 30)
+  cx.restore()
+}
+
+// ── the phone with the real Earn screen
+function phone(x, y, h, t, at, out) {
+  const k = clamp((t - at) / 0.6), o = clamp((t - out) / 0.4)
+  if (k <= 0 || o >= 1) return
+  const w = h * 0.462
+  cx.save(); cx.translate(x, y + (1 - back(k)) * 700 - easeOut(o) * 900); cx.rotate(-0.06 + Math.sin(t * 1.6) * 0.01)
+  cx.shadowColor = 'rgba(94,242,194,0.35)'; cx.shadowBlur = 80
+  roundRect(-w / 2 - 14, -h / 2 - 14, w + 28, h + 28, 64); cx.fillStyle = '#05070f'; cx.fill()
+  cx.shadowBlur = 0
+  cx.save(); roundRect(-w / 2, -h / 2, w, h, 50); cx.clip()
+  // scroll the screen slowly so the table comes into view
+  const sh = img.earn.height * (w / img.earn.width)
+  cx.drawImage(img.earn, -w / 2, -h / 2 - (sh - h) * easeInOut(prog(t, at + 0.6, out - 0.2)), w, sh)
+  cx.restore()
+  cx.strokeStyle = 'rgba(94,242,194,0.6)'; cx.lineWidth = 3; roundRect(-w / 2 - 14, -h / 2 - 14, w + 28, h + 28, 64); cx.stroke()
+  cx.restore()
+}
+
+// ── commission alerts sliding in and stacking
+const ALERTS = [
+  ['Pro · renewal', '0712 ••• 678', 200],
+  ['Standard · renewal', '0722 ••• 104', 152],
+  ['Weekly · first payment', '0701 ••• 552', 30],
+  ['Super Pro · renewal', '0733 ••• 219', 552],
+  ['Pro · first payment', '0790 ••• 340', 125],
+  ['Weekly · renewal', '0745 ••• 871', 42],
+]
+function alerts(t, at, out) {
+  const o = clamp((t - out) / 0.4)
+  ALERTS.forEach(([what, who, amt], i) => {
+    const k = clamp((t - at - i * BEAT * 0.75) / 0.45)
+    if (k <= 0) return
+    const y = 520 + i * 182 - (1 - easeOut(k)) * 60
+    const x = 90 + (1 - back(k)) * 600 + easeOut(o) * (i % 2 ? 900 : -900)
+    glass(x, y, W - 180, 150, 40, Math.min(1, k * 2))
+    cx.save(); cx.globalAlpha = Math.min(1, k * 2)
+    cx.fillStyle = MINT; cx.beginPath(); cx.arc(x + 70, y + 75, 32, 0, 7); cx.fill()
+    cx.fillStyle = '#052a20'; cx.font = '800 34px Lexend'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('+', x + 70, y + 77)
+    cx.textAlign = 'left'; cx.fillStyle = CREAM; cx.font = '600 36px Lexend'; cx.fillText('Commission', x + 130, y + 56)
+    cx.fillStyle = MIST; cx.font = '400 28px Lexend'; cx.fillText(`${what} · ${who}`, x + 130, y + 102)
+    cx.textAlign = 'right'; cx.fillStyle = MINT; cx.font = '800 44px Lexend'; cx.fillText('+' + ksh(amt), x + W - 180 - 40, y + 82)
+    cx.restore()
+  })
+}
+
+// ── a year of earnings, month by month, with a running total
+function yearChart(t, at, out) {
+  const o = 1 - clamp((t - out) / 0.4)
+  if (t < at || o <= 0) return
+  cx.save(); cx.globalAlpha = o
+  glass(80, 640, W - 160, 820, 48)
+  const x0 = 150, y0 = 1370, cw = (W - 300) / 12, maxV = 2000
+  const p = clamp((t - at - 0.3) / (BAR * 1.6))
+  let sum = 0
+  MONTHS.forEach((v, i) => {
+    const k = clamp(p * 12 - i)
+    const h = (v / maxV) * 340 * easeOut(k)
+    sum += v * k
+    const g = cx.createLinearGradient(0, y0 - h, 0, y0)
+    g.addColorStop(0, MINT); g.addColorStop(1, 'rgba(94,242,194,0.15)')
+    cx.fillStyle = g; roundRect(x0 + i * cw + 8, y0 - h, cw - 16, h, 12); cx.fill()
+    cx.fillStyle = MIST; cx.font = '400 22px Lexend'; cx.textAlign = 'center'; cx.fillText(String(i + 1), x0 + i * cw + cw / 2, y0 + 40)
+  })
+  caps('MONTH', W / 2, y0 + 84, t, at, { size: 22, spacing: 6 })
+  caps('YOUR EARNINGS', W / 2, 730, t, at, { size: 26, spacing: 8, color: MIST })
+  odometer(sum, W / 2, 860, 120, CREAM)
+  caps('10 parents on Pro · 10% first month, then 16%', W / 2, 930, t, at + 0.2, { size: 26, spacing: 1, color: MIST, weight: 400 })
+  cx.restore()
+}
+
+function renderFrame(t) {
+  background(t)
+  const beat = (t / BEAT) % 1, pulse = Math.exp(-beat * 7)
+  const CW = W / 2
+
+  // bar 0-1: the hook
+  line('You already tell', CW, 760, t, 0.15, { size: 84, out: B(2) - 0.15 })
+  line('parents what works.', CW, 860, t, BEAT * 1, { size: 84, out: B(2) - 0.15 })
+  line('Now get', CW, 1080, t, B(1), { size: 140, weight: 800, out: B(2) - 0.15 })
+  line('paid for it.', CW, 1230, t, B(1) + BEAT, { size: 150, weight: 300, font: 'Fraunces', italic: true, color: MINT, glow: 'rgba(94,242,194,0.6)', out: B(2) - 0.15 })
+
+  // bar 2-3: share your link; the real Earn screen
+  if (t >= B(2) - 0.1 && t < B(4)) {
+    line('Share CBC Helper', CW, 300, t, B(2), { size: 76, out: B(4) - 0.2 })
+    line('with parents.', CW, 390, t, B(2) + BEAT, { size: 76, weight: 300, font: 'Fraunces', italic: true, color: GOLD, out: B(4) - 0.2 })
+    phone(CW, 1150, 1300, t, B(2) + 0.1, B(4) - 0.15)
+  }
+  // bar 4: 10% on their first plan
+  if (t >= B(4) - 0.1 && t < B(5)) {
+    ring(CW, 900, 300, 0.1, 10, t, B(4), MINT)
+    line('of their first payment', CW, 1380, t, B(4) + BEAT, { size: 64, weight: 600, out: B(5) - 0.1 })
+  }
+  // bar 5: up to 16% on every renewal, for 12 months
+  if (t >= B(5) - 0.1 && t < B(6)) {
+    ring(CW, 900, 300, 0.16, 16, t, B(5), GOLD)
+    line('on every renewal', CW, 1380, t, B(5) + BEAT * 0.5, { size: 64, weight: 600, out: B(6) - 0.1 })
+    line('for 12 months.', CW, 1470, t, B(5) + BEAT * 1.5, { size: 64, weight: 300, font: 'Fraunces', italic: true, color: GOLD, out: B(6) - 0.1 })
+    caps('14% ON WEEKLY · 16% ON MONTHLY PLANS', CW, 1560, t, B(5) + BEAT * 2.5, { size: 26, spacing: 5, out: B(6) - 0.1 })
+  }
+  // bar 6-7: a year with ten parents
+  if (t >= B(6) - 0.1 && t < B(8)) {
+    line('Ten parents.', CW, 360, t, B(6), { size: 96, out: B(8) - 0.2 })
+    line('One year.', CW, 470, t, B(6) + BEAT, { size: 96, weight: 300, font: 'Fraunces', italic: true, color: MINT, out: B(8) - 0.2 })
+    yearChart(t, B(6) + 0.2, B(8) - 0.2)
+    caps('ILLUSTRATIVE EXAMPLE. EARNINGS DEPEND ON REAL PAYMENTS.', CW, 1560, t, B(6) + 1, { size: 20, spacing: 3, color: 'rgba(206,216,235,0.55)', out: B(8) - 0.2 })
+  }
+  // bar 8: commissions arriving
+  if (t >= B(8) - 0.1 && t < B(9)) {
+    line('Every renewal', CW, 300, t, B(8), { size: 84, out: B(9) - 0.15 })
+    line('pays you again.', CW, 400, t, B(8) + BEAT * 0.5, { size: 84, weight: 300, font: 'Fraunces', italic: true, color: MINT, out: B(9) - 0.15 })
+    alerts(t, B(8) + 0.15, B(9) - 0.3)
+  }
+  // bar 9: how you're paid
+  if (t >= B(9) - 0.1 && t < B(10)) {
+    line('Paid to your M-Pesa,', CW, 820, t, B(9), { size: 84, out: B(10) - 0.15 })
+    line('every month.', CW, 920, t, B(9) + BEAT * 0.5, { size: 84, weight: 300, font: 'Fraunces', italic: true, color: GOLD, out: B(10) - 0.15 })
+    caps('NO STOCK  ·  NOTHING TO PAY TO JOIN', CW, 1090, t, B(9) + BEAT * 1.5, { size: 32, spacing: 6, color: CREAM, out: B(10) - 0.15 })
+    caps(`PAYOUTS FROM ${ksh(500).toUpperCase()}`, CW, 1150, t, B(9) + BEAT * 2, { size: 28, spacing: 6, out: B(10) - 0.15 })
+  }
+  // bar 10+: the call to action
+  if (t >= B(10) - 0.1) {
+    const k = easeOut(prog(t, B(10), B(10) + 0.6))
+    cx.save(); cx.globalAlpha = k; cx.textAlign = 'center'; cx.textBaseline = 'alphabetic'
+    cx.font = '500 70px Fraunces'; const w1 = cx.measureText('CBC ').width; cx.font = 'italic 300 70px Fraunces'; const w2 = cx.measureText('Helper').width
+    cx.textAlign = 'left'; const x0 = CW - (w1 + w2) / 2
+    cx.fillStyle = CREAM; cx.font = '500 70px Fraunces'; cx.fillText('CBC ', x0, 560); cx.fillStyle = GOLD; cx.font = 'italic 300 70px Fraunces'; cx.fillText('Helper', x0 + w1, 560)
+    cx.restore()
+    line('Earn with', CW, 820, t, B(10) + 0.1, { size: 120, weight: 300, font: 'Fraunces', italic: true, color: CREAM })
+    line('CBC Helper', CW, 960, t, B(10) + BEAT, { size: 140, weight: 800, color: MINT, glow: 'rgba(94,242,194,0.55)' })
+    const ck = back(prog(t, B(10) + BEAT * 2, B(10) + BEAT * 2 + 0.4))
+    if (ck > 0) {
+      cx.save(); cx.translate(CW, 1180); cx.scale(ck * (1 + pulse * 0.02), ck * (1 + pulse * 0.02))
+      roundRect(-330, -66, 660, 132, 66); cx.fillStyle = MINT; cx.shadowColor = 'rgba(94,242,194,0.6)'; cx.shadowBlur = 50; cx.fill()
+      cx.shadowBlur = 0; cx.fillStyle = '#052a20'; cx.font = '700 46px Lexend'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('Apply in the app', 0, 4)
+      cx.restore()
+    }
+    caps('PLANS → EARN WITH CBC HELPER', CW, 1330, t, B(10) + BEAT * 3, { size: 28, spacing: 6, color: CREAM })
+    caps('18+ · KENYAN ID · EVERY AFFILIATE IS APPROVED BY US', CW, 1400, t, B(10) + BEAT * 3.5, { size: 22, spacing: 3 })
+  }
+  // a beat-synced light sweep and grain over everything
+  cx.save(); cx.globalAlpha = 0.05 * pulse; cx.fillStyle = MINT; cx.fillRect(0, 0, W, H); cx.restore()
+  const gr = rng(Math.floor(t * 30) + 3)
+  cx.fillStyle = 'rgba(255,255,255,0.03)'; for (let i = 0; i < 1200; i++) cx.fillRect(gr() * W, gr() * H, 2, 2)
+  const fade = Math.min(prog(t, 0, 0.3), 1 - prog(t, DURATION - 0.6, DURATION))
+  if (fade < 1) { cx.fillStyle = `rgba(0,0,0,${1 - fade})`; cx.fillRect(0, 0, W, H) }
+}
+
+window.ready = (async () => {
+  await load('earn', 'assets/screen-earn.png')
+  await Promise.all(['800 100px Lexend', '300 100px Lexend', 'italic 300 100px Fraunces', '500 100px Fraunces'].map((f) => document.fonts.load(f)))
+  window.renderFrame = renderFrame
+  window.DURATION = DURATION
+  if (location.search.includes('play')) { const t0 = performance.now(); const loop = () => { renderFrame(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() } else renderFrame(0)
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CBC Helper: Kanga</title>
+<style>
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Lexend'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/lexend/files/lexend-latin-wght-normal.woff2') format('woff2-variations'); }
+  html, body { margin: 0; background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// "Kanga": a 22-second vertical ad for parents. The whole frame is a kanga cloth that changes
+// colour and pattern on the beat (120 bpm): a patterned border (pindo), a field, a medallion
+// (mji) in the middle, and a saying (jina) along the bottom, as a real kanga has. The copy hits
+// on the downbeats; the app's real screens drop into the medallion. renderFrame(t) is pure.
+'use strict'
+const W = 1080, H = 1920, BPM = 120, BEAT = 60 / BPM, BAR = BEAT * 4, DURATION = 22
+const cx = document.getElementById('c').getContext('2d')
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
+const lerp = (a, b, k) => a + (b - a) * k
+const prog = (t, a, b) => clamp((t - a) / (b - a))
+const easeOut = (k) => 1 - Math.pow(1 - k, 3)
+const easeIn = (k) => k * k * k
+const easeInOut = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2)
+const back = (k) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2) }
+const elastic = (k) => (k === 0 || k === 1 ? k : Math.pow(2, -10 * k) * Math.sin((k * 10 - 0.75) * (2 * Math.PI) / 3) + 1)
+function rng(seed) { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296) }
+
+// Kanga palettes: field, border, ink, accent, cream.
+const PAL = [
+  { field: '#1b1f4b', border: '#f2b33d', ink: '#0d0f26', accent: '#e8453c', cream: '#fbf1dc' }, // indigo & saffron
+  { field: '#c2185b', border: '#ffd166', ink: '#3a0620', accent: '#06d6a0', cream: '#fff4e0' }, // magenta & mango
+  { field: '#0b6e4f', border: '#f4a259', ink: '#062a20', accent: '#f25c54', cream: '#fdf6e3' }, // forest & papaya
+  { field: '#f2b33d', border: '#1b1f4b', ink: '#3a2600', accent: '#c2185b', cream: '#fffaf0' }, // saffron & night
+  { field: '#123c69', border: '#ee6c4d', ink: '#081a30', accent: '#ffd166', cream: '#fdf2e9' }, // ocean & coral
+  { field: '#5b2a86', border: '#7ae582', ink: '#22093a', accent: '#ffd166', cream: '#f9f0ff' }, // violet & lime
+]
+
+// The story, bar by bar (2 s each).
+const SCENES = [
+  { bar: 0, pal: 0, kind: 'hook' },
+  { bar: 1, pal: 1, kind: 'question' },
+  { bar: 2, pal: 2, kind: 'phone', screen: 'home', big: 'PP1', small: 'to Grade 9', note: 'Every CBC learning area' },
+  { bar: 3, pal: 4, kind: 'phone', screen: 'map', big: 'Every', small: 'strand, mapped', note: 'Sub-strand by sub-strand' },
+  { bar: 4, pal: 3, kind: 'phone', screen: 'learn', big: 'Learn', small: 'then practise', note: 'Lessons that teach first' },
+  { bar: 5, pal: 5, kind: 'phone', screen: 'quiz', big: '1000s', small: 'of questions', note: 'In English & Kiswahili' },
+  { bar: 6, pal: 1, kind: 'phone', screen: 'results', big: 'Every', small: 'win, celebrated', note: 'With Kobe cheering them on' },
+  { bar: 7, pal: 2, kind: 'phone', screen: 'worlds', big: 'Calm', small: '& quick', note: 'On any phone' },
+  { bar: 8, pal: 0, kind: 'free' },
+  { bar: 9, pal: 3, kind: 'end' },
+]
+const sceneAt = (t) => { let s = SCENES[0]; for (const x of SCENES) if (t >= x.bar * BAR - 0.001) s = x; return s }
+window.CUES = { duration: DURATION, bpm: BPM, bars: SCENES.map((s) => s.bar * BAR), drop: 2 * BAR, free: 8 * BAR, end: 9 * BAR }
+
+// ───────── patterns ─────────
+const img = {}
+const load = (n, src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => { img[n] = i; res() }; i.onerror = rej; i.src = src })
+
+/** One tile of a kanga border motif, in two colours. */
+function motif(ctx, kind, s, a, b) {
+  ctx.fillStyle = a
+  if (kind === 0) { // saw-tooth triangles with dots
+    ctx.beginPath(); ctx.moveTo(0, s); ctx.lineTo(s / 2, 0); ctx.lineTo(s, s); ctx.closePath(); ctx.fill()
+    ctx.fillStyle = b; ctx.beginPath(); ctx.arc(s / 2, s * 0.68, s * 0.12, 0, 7); ctx.fill()
+  } else if (kind === 1) { // cashew (paisley) shapes
+    ctx.save(); ctx.translate(s / 2, s / 2); ctx.rotate(-0.6)
+    ctx.beginPath(); ctx.ellipse(0, 0, s * 0.26, s * 0.38, 0, 0, 7); ctx.fill()
+    ctx.fillStyle = b; ctx.beginPath(); ctx.ellipse(-s * 0.04, s * 0.06, s * 0.1, s * 0.16, 0, 0, 7); ctx.fill()
+    ctx.beginPath(); ctx.arc(s * 0.08, -s * 0.36, s * 0.07, 0, 7); ctx.fill(); ctx.restore()
+  } else if (kind === 2) { // diamonds in diamonds
+    ctx.beginPath(); ctx.moveTo(s / 2, 0); ctx.lineTo(s, s / 2); ctx.lineTo(s / 2, s); ctx.lineTo(0, s / 2); ctx.closePath(); ctx.fill()
+    ctx.fillStyle = b; ctx.beginPath(); ctx.moveTo(s / 2, s * 0.25); ctx.lineTo(s * 0.75, s / 2); ctx.lineTo(s / 2, s * 0.75); ctx.lineTo(s * 0.25, s / 2); ctx.closePath(); ctx.fill()
+  } else { // sun discs
+    ctx.beginPath(); ctx.arc(s / 2, s / 2, s * 0.38, 0, 7); ctx.fill()
+    ctx.strokeStyle = b; ctx.lineWidth = s * 0.06
+    for (let i = 0; i < 8; i++) { const an = (i / 8) * Math.PI * 2; ctx.beginPath(); ctx.moveTo(s / 2 + Math.cos(an) * s * 0.14, s / 2 + Math.sin(an) * s * 0.14); ctx.lineTo(s / 2 + Math.cos(an) * s * 0.3, s / 2 + Math.sin(an) * s * 0.3); ctx.stroke() }
+  }
+}
+const tileCache = new Map()
+function tile(kind, s, a, b) {
+  const key = `${kind}|${s}|${a}|${b}`
+  if (!tileCache.has(key)) { const c = document.createElement('canvas'); c.width = c.height = s; motif(c.getContext('2d'), kind, s, a, b); tileCache.set(key, c) }
+  return tileCache.get(key)
+}
+/** A row of motifs along a strip, scrolling with the music. */
+function strip(x, y, w, h, kind, a, b, shift) {
+  const s = h
+  cx.save(); cx.beginPath(); cx.rect(x, y, w, h); cx.clip()
+  const t0 = tile(kind, s, a, b)
+  const off = ((shift % s) + s) % s
+  for (let px = x - s + off; px < x + w; px += s) cx.drawImage(t0, px, y)
+  cx.restore()
+}
+
+// The kanga cloth: field, scattered motif, double border with motif bands, medallion ring, jina panel.
+function kanga(t, p, k, beatPulse, opts = {}) {
+  const B = 64
+  cx.fillStyle = p.field; cx.fillRect(0, 0, W, H)
+  // field: a lattice of faint motifs drifting slowly
+  const fk = (Math.floor(t / BAR) + 1) % 4
+  const ft = tile(fk, 120, hexA(p.cream, 0.07), hexA(p.ink, 0.12))
+  const dx = (t * 18) % 120, dy = (t * 30) % 120
+  for (let y = -120; y < H + 120; y += 120) for (let x = -120 + ((y / 120) % 2) * 60; x < W + 120; x += 120) cx.drawImage(ft, x + dx, y + dy)
+  // a soft light from the centre so the cloth has depth
+  const g = cx.createRadialGradient(W / 2, H * 0.44, 50, W / 2, H * 0.44, H * 0.75)
+  g.addColorStop(0, 'rgba(255,255,255,0.12)'); g.addColorStop(1, 'rgba(0,0,0,0.38)')
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H)
+  // border bands (pindo): outer solid, motif band, inner rule
+  const grow = easeOut(clamp(k)) // borders draw in at the start
+  const bw = B * grow
+  cx.fillStyle = p.border
+  cx.fillRect(0, 0, W, bw); cx.fillRect(0, H - bw, W, bw); cx.fillRect(0, 0, bw, H); cx.fillRect(W - bw, 0, bw, H)
+  if (grow > 0.6) {
+    const kind = Math.floor(t / BAR) % 4
+    const sh = t * 60 + beatPulse * 14
+    strip(0, 6, W, B - 12, kind, p.ink, p.border, sh)
+    strip(0, H - B + 6, W, B - 12, kind, p.ink, p.border, -sh)
+    cx.save(); cx.translate(6, 0); cx.rotate(Math.PI / 2); strip(0, -B + 12, H, B - 12, kind, p.ink, p.border, sh); cx.restore()
+    cx.save(); cx.translate(W - 6, 0); cx.rotate(Math.PI / 2); strip(0, 0, H, B - 12, kind, p.ink, p.border, -sh); cx.restore()
+    cx.strokeStyle = p.border; cx.lineWidth = 4
+    cx.strokeRect(B + 16, B + 16, W - 2 * B - 32, H - 2 * B - 32)
+    cx.lineWidth = 1.5; cx.strokeRect(B + 28, B + 28, W - 2 * B - 56, H - 2 * B - 56)
+  }
+  // jina panel at the bottom, as on a real kanga
+  if (opts.jina) {
+    const y = H - B - 210, a = opts.jina
+    cx.fillStyle = hexA(p.ink, 0.35 * a); roundRect(B + 60, y, W - 2 * B - 120, 120, 60); cx.fill()
+    cx.fillStyle = hexA(p.cream, a); cx.font = '600 38px Lexend'; cx.textAlign = 'center'; cx.textBaseline = 'middle'
+    cx.letterSpacing = '6px'; cx.fillText('HABA NA HABA HUJAZA KIBABA', W / 2 + 3, y + 62); cx.letterSpacing = '0px'
+  }
+}
+function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})` }
+function roundRect(x, y, w, h, r) { cx.beginPath(); cx.roundRect(x, y, w, h, r) }
+
+/** The medallion (mji): rings of motifs turning around the centre. */
+function medallion(x, y, r, t, p, a, pulse) {
+  if (a <= 0) return
+  cx.save(); cx.globalAlpha = a; cx.translate(x, y)
+  const rings = [[r, 0, 1], [r * 0.82, 2, -1], [r * 0.66, 1, 1]]
+  rings.forEach(([rr, kind, dir], i) => {
+    const n = Math.round((2 * Math.PI * rr) / 56)
+    const tl = tile(kind, 52, i % 2 ? p.border : p.cream, p.ink)
+    for (let j = 0; j < n; j++) {
+      const an = (j / n) * Math.PI * 2 + dir * t * 0.25
+      cx.save(); cx.rotate(an); cx.translate(0, -rr * (1 + pulse * 0.025)); cx.rotate(Math.PI); cx.drawImage(tl, -26, -26); cx.restore()
+    }
+  })
+  cx.strokeStyle = p.cream; cx.lineWidth = 3
+  for (const rr of [r * 1.1, r * 0.56]) { cx.beginPath(); cx.arc(0, 0, rr, 0, 7); cx.stroke() }
+  cx.restore()
+}
+
+// ───────── type ─────────
+/** A line that slams in on a beat: scales from big, with a stamped shadow and a little motion blur. */
+function slam(text, x, y, t, at, { size = 120, weight = 900, italic = false, color = '#fff', shadow = '#000', align = 'center', out = 99, rot = 0 } = {}) {
+  const k = clamp((t - at) / 0.22)
+  if (k <= 0 || t > out + 0.25) return
+  const o = 1 - clamp((t - out) / 0.25)
+  const s = lerp(1.9, 1, easeOut(k))
+  cx.save(); cx.translate(x, y); cx.rotate(rot * (1 - easeOut(k))); cx.scale(s, s)
+  cx.font = `${italic ? 'italic ' : ''}${weight} ${size}px Fraunces`; cx.textAlign = align; cx.textBaseline = 'alphabetic'
+  // motion trails while it lands
+  if (k < 1) for (let i = 3; i >= 1; i--) { cx.globalAlpha = 0.12 * (1 - k) * o; cx.fillStyle = color; cx.fillText(text, 0, -i * 18 * (1 - k)) }
+  cx.globalAlpha = o * Math.min(1, k * 3)
+  cx.fillStyle = shadow; cx.fillText(text, 7, 9)
+  cx.fillStyle = color; cx.fillText(text, 0, 0)
+  cx.restore()
+}
+function label(text, x, y, t, at, { size = 34, color = '#fff', align = 'center', spacing = 8, out = 99, weight = 500 } = {}) {
+  const k = easeOut(clamp((t - at) / 0.35)), o = 1 - clamp((t - out) / 0.25)
+  if (k <= 0 || o <= 0) return
+  cx.save(); cx.globalAlpha = k * o
+  cx.font = `${weight} ${size}px Lexend`; cx.textAlign = align; cx.textBaseline = 'alphabetic'; cx.letterSpacing = spacing + 'px'
+  cx.fillStyle = color; cx.fillText(text, x + (align === 'center' ? spacing / 2 : 0), y + (1 - k) * 24)
+  cx.restore()
+}
+
+// ───────── the phone ─────────
+function phone(screen, x, y, h, t, enterAt, exitAt, p, tilt) {
+  const k = clamp((t - enterAt) / 0.5), e = clamp((t - exitAt) / 0.3)
+  if (k <= 0 || e >= 1) return
+  const w = h * 0.462
+  const yy = y + (1 - back(k)) * 900 - easeIn(e) * 1300
+  const rot = tilt * (1 - easeOut(k)) + Math.sin(t * 2.2) * 0.012 + e * -0.2
+  cx.save(); cx.translate(x, yy); cx.rotate(rot)
+  cx.shadowColor = 'rgba(0,0,0,0.45)'; cx.shadowBlur = 60; cx.shadowOffsetY = 40
+  roundRect(-w / 2 - 14, -h / 2 - 14, w + 28, h + 28, 64); cx.fillStyle = '#0a0d18'; cx.fill()
+  cx.shadowColor = 'transparent'
+  cx.strokeStyle = p.border; cx.lineWidth = 4; roundRect(-w / 2 - 14, -h / 2 - 14, w + 28, h + 28, 64); cx.stroke()
+  cx.save(); roundRect(-w / 2, -h / 2, w, h, 50); cx.clip()
+  cx.drawImage(img['screen-' + screen], -w / 2, -h / 2, w, h)
+  // a glint sweeps across as it lands
+  const gx = lerp(-w * 1.5, w * 1.5, clamp((t - enterAt - 0.2) / 0.7))
+  const gr = cx.createLinearGradient(gx - 120, 0, gx + 120, 0)
+  gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, 'rgba(255,255,255,0.28)'); gr.addColorStop(1, 'rgba(255,255,255,0)')
+  cx.fillStyle = gr; cx.fillRect(-w / 2, -h / 2, w, h)
+  cx.restore()
+  roundRect(-60, -h / 2 + 16, 120, 30, 15); cx.fillStyle = '#05070f'; cx.fill()
+  cx.restore()
+}
+
+// ───────── one frame ─────────
+function renderFrame(t) {
+  const sc = sceneAt(t), p = PAL[sc.pal]
+  const s0 = sc.bar * BAR, local = t - s0
+  const beatPhase = (t / BEAT) % 1, beatPulse = Math.exp(-beatPhase * 6)
+  // camera punch on every downbeat of a new scene
+  const punch = Math.exp(-local * 9) * 0.06
+  cx.save()
+  cx.translate(W / 2, H / 2); cx.scale(1 + punch + beatPulse * 0.006, 1 + punch + beatPulse * 0.006); cx.translate(-W / 2, -H / 2)
+  kanga(t, p, sc.kind === 'hook' ? prog(t, 0.0, 1.2) : 1, beatPulse, { jina: sc.kind === 'end' ? easeOut(prog(t, s0 + 1.0, s0 + 1.6)) : 0 })
+
+  const CW = W / 2
+  if (sc.kind === 'hook') {
+    slam('Homework.', CW, 860, t, BEAT * 1, { size: 150, color: p.cream, shadow: p.ink, italic: true, weight: 800 })
+    slam('Again.', CW, 1040, t, BEAT * 3, { size: 170, color: p.border, shadow: p.ink, weight: 900, rot: -0.12 })
+  } else if (sc.kind === 'question') {
+    slam('What if', CW, 760, t, s0, { size: 120, color: p.cream, shadow: p.ink, weight: 800 })
+    slam('practice', CW, 900, t, s0 + BEAT, { size: 150, color: p.border, shadow: p.ink, weight: 900 })
+    slam('felt like an', CW, 1030, t, s0 + BEAT * 2, { size: 100, color: p.cream, shadow: p.ink, italic: true, weight: 700 })
+    slam('adventure?', CW, 1190, t, s0 + BEAT * 3, { size: 160, color: p.accent, shadow: p.ink, italic: true, weight: 900, rot: 0.1 })
+  } else if (sc.kind === 'phone') {
+    medallion(CW, 1000, 470, t, p, easeOut(prog(local, 0, 0.4)), beatPulse)
+    phone(sc.screen, CW, 1030, 1020, t, s0 + 0.05, s0 + BAR - 0.18, p, sc.bar % 2 ? 0.25 : -0.25)
+    slam(sc.big, CW, 330, t, s0 + 0.02, { size: 170, color: p.cream, shadow: p.ink, weight: 900, out: s0 + BAR - 0.2 })
+    slam(sc.small, CW, 420, t, s0 + BEAT, { size: 76, color: p.border, shadow: p.ink, italic: true, weight: 600, out: s0 + BAR - 0.2 })
+    label(sc.note.toUpperCase(), CW, 1660, t, s0 + BEAT * 2, { size: 34, color: p.cream, spacing: 7, out: s0 + BAR - 0.2 })
+  } else if (sc.kind === 'free') {
+    slam('The first strand', CW, 640, t, s0, { size: 92, color: p.cream, shadow: p.ink, weight: 700, italic: true })
+    slam('in every world', CW, 760, t, s0 + BEAT * 0.5, { size: 92, color: p.cream, shadow: p.ink, weight: 700, italic: true })
+    slam('FREE', CW, 1020, t, s0 + BEAT * 1.5, { size: 300, color: p.border, shadow: p.ink, weight: 900, rot: -0.15 })
+    label('PLANS FROM KSH 300 A WEEK', CW, 1220, t, s0 + BEAT * 2.5, { size: 38, color: p.cream, spacing: 8 })
+    label('PAY WITH M-PESA', CW, 1290, t, s0 + BEAT * 3, { size: 38, color: p.accent, spacing: 8, weight: 700 })
+  } else if (sc.kind === 'end') {
+    medallion(CW, 760, 330, t, p, easeOut(prog(local, 0, 0.5)), beatPulse)
+    if (img.kobe) { const k = back(prog(local, 0.15, 0.75)), kw = 380 * k; if (kw > 0) cx.drawImage(img.kobe, CW - kw / 2, 760 - kw * 0.58, kw, kw * 423 / 540) }
+    const k1 = easeOut(prog(local, 0.4, 0.9))
+    cx.save(); cx.globalAlpha = k1; cx.textAlign = 'left'; cx.textBaseline = 'alphabetic'
+    cx.font = '800 150px Fraunces'; const w1 = cx.measureText('CBC ').width; cx.font = 'italic 500 150px Fraunces'; const w2 = cx.measureText('Helper').width
+    const x0 = CW - (w1 + w2) / 2, y0 = 1270 + (1 - k1) * 30
+    cx.fillStyle = p.ink; cx.font = '800 150px Fraunces'; cx.fillText('CBC ', x0 + 6, y0 + 8); cx.font = 'italic 500 150px Fraunces'; cx.fillText('Helper', x0 + w1 + 6, y0 + 8)
+    cx.fillStyle = p.cream; cx.font = '800 150px Fraunces'; cx.fillText('CBC ', x0, y0); cx.fillStyle = p.accent; cx.font = 'italic 500 150px Fraunces'; cx.fillText('Helper', x0 + w1, y0)
+    cx.restore()
+    label('PP1 TO GRADE 9 · THE WHOLE CBC', CW, 1350, t, s0 + 0.8, { size: 30, color: p.ink, spacing: 6, weight: 600 })
+    // call to action, breathing on the beat
+    const ck = back(prog(local, 1.1, 1.5))
+    if (ck > 0) {
+      cx.save(); cx.translate(CW, 1480); cx.scale(ck * (1 + beatPulse * 0.03), ck * (1 + beatPulse * 0.03))
+      roundRect(-300, -62, 600, 124, 62); cx.fillStyle = p.ink; cx.fill()
+      cx.fillStyle = p.cream; cx.font = '700 50px Lexend'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('Try it tonight', 0, 4)
+      cx.restore()
+    }
+  }
+  cx.restore()
+
+  // transitions: a diagonal band of the next cloth sweeps across on each new bar
+  const next = SCENES.find((s) => s.bar * BAR > t)
+  if (next) {
+    const k = prog(t, next.bar * BAR - 0.22, next.bar * BAR)
+    if (k > 0) {
+      const np = PAL[next.pal]
+      cx.save(); cx.translate(W / 2, H / 2); cx.rotate(-0.35)
+      const span = 3400, x = lerp(-span, span * 0.2, easeIn(k))
+      cx.fillStyle = np.border; cx.fillRect(x - 220, -2000, 220, 4000)
+      cx.fillStyle = np.field; cx.fillRect(x, -2000, 3000, 4000)
+      cx.restore()
+    }
+  }
+  // grain and a slight vignette for a printed-cloth feel
+  const gr = rng(Math.floor(t * 30) + 1)
+  cx.fillStyle = 'rgba(255,255,255,0.035)'
+  for (let i = 0; i < 900; i++) cx.fillRect(gr() * W, gr() * H, 2, 2)
+  cx.fillStyle = 'rgba(0,0,0,0.04)'
+  for (let i = 0; i < 900; i++) cx.fillRect(gr() * W, gr() * H, 2, 2)
+  const fade = Math.min(prog(t, 0, 0.25), 1 - prog(t, DURATION - 0.5, DURATION))
+  if (fade < 1) { cx.fillStyle = `rgba(0,0,0,${1 - fade})`; cx.fillRect(0, 0, W, H) }
+}
+
+window.ready = (async () => {
+  await Promise.all([...['home', 'map', 'learn', 'quiz', 'results', 'worlds'].map((n) => load('screen-' + n, `assets/screen-${n}.png`)), load('kobe', 'assets/kobe-2.png')])
+  await Promise.all(['900 100px Fraunces', 'italic 900 100px Fraunces', '700 40px Lexend', '500 40px Lexend'].map((f) => document.fonts.load(f)))
+  window.renderFrame = renderFrame
+  window.DURATION = DURATION
+  if (location.search.includes('play')) { const t0 = performance.now(); const loop = () => { renderFrame(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }; loop() } else renderFrame(0)
+})()
+</script>
+</body>
+</html>
