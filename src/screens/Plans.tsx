@@ -39,7 +39,15 @@ export function Plans({ from }: { from?: AreaId }) {
           <div className="plan-now glass">
             <span className="plan-now-mark">{Icon.check}</span>
             <span>
-              <strong>{current.name}</strong> is open{current.sub.grade ? ` for ${GRADES.find((g) => g.id === current.sub.grade)?.label}` : ''} until {longDate(current.sub.expiresAt)}.
+              {current.sub.family ? (
+                <>
+                  <strong>Family pass.</strong> Every grade and every strand is open on this device, always.
+                </>
+              ) : (
+                <>
+                  <strong>{current.name}</strong> is open{current.sub.grade ? ` for ${GRADES.find((g) => g.id === current.sub.grade)?.label}` : ''} until {longDate(current.sub.expiresAt)}.
+                </>
+              )}
               {current.sub.receipt && <span className="plan-now-receipt"> M-Pesa receipt {current.sub.receipt}</span>}
             </span>
           </div>

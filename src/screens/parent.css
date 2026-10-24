@@ -238,3 +238,26 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.pg-family {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.pg-family input {
+  flex: 1 1 160px;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--hair-strong);
+  background: rgba(7, 13, 27, 0.45);
+  color: var(--cloud);
+  font: inherit;
+}
+
+.pg-family input:focus {
+  outline: none;
+  border-color: var(--gold);
+}

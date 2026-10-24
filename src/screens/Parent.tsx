@@ -7,6 +7,8 @@ import { Chip, Icon, LevelGlyph, TopBar } from '../components/ui'
 import { findArea, LEVEL_NAMES } from '../curriculum'
 import { lessonFor } from '../lessons'
 import { calmChoice, setCalmChoice, useCalm } from '../state/calm'
+import { unlockFamily } from '../state/family'
+import { useSubscription } from '../state/subscription'
 import { dueReview, useProgress } from '../state/progress'
 import { gradeReports, totals, type SubReport } from '../state/summary'
 import './parent.css'
@@ -42,6 +44,42 @@ function MotionSetting() {
           </button>
         ))}
       </div>
+    </section>
+  )
+}
+
+/** A family login opens every grade and strand on this device, for good. */
+function FamilyPass() {
+  const sub = useSubscription()
+  const [user, setUser] = useState('')
+  const [pass, setPass] = useState('')
+  const [state, setState] = useState<'idle' | 'checking' | 'wrong'>('idle')
+  if (sub?.family)
+    return (
+      <section className="pg-motion glass">
+        <h3 className="pr-h good">Family pass</h3>
+        <p>Every grade and every strand is open on this device, always.</p>
+      </section>
+    )
+  const go = async () => {
+    setState('checking')
+    const ok = await unlockFamily(user, pass)
+    if (ok) sfx.correct()
+    else sfx.almost()
+    setState(ok ? 'idle' : 'wrong')
+  }
+  return (
+    <section className="pg-motion glass">
+      <h3 className="pr-h">Family pass</h3>
+      <p>Have a family login? Enter it to open everything on this device.</p>
+      <div className="pg-family">
+        <input aria-label="Username" placeholder="Username" autoCapitalize="none" autoComplete="username" value={user} onChange={(e) => setUser(e.target.value)} />
+        <input aria-label="Password" placeholder="Password" type="password" autoComplete="current-password" value={pass} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && void go()} />
+        <button type="button" className="btn primary" disabled={state === 'checking' || !user || !pass} onClick={() => void go()}>
+          {state === 'checking' ? 'Checking…' : 'Open'}
+        </button>
+      </div>
+      {state === 'wrong' && <p className="pg-wrong">That login was not recognised.</p>}
     </section>
   )
 }
@@ -198,6 +236,7 @@ export function Parent() {
 
             <p className="pg-fine">Progress is kept on this device. Super Pro will add a weekly report sent to your phone.</p>
             <MotionSetting />
+            <FamilyPass />
             <button type="button" className="earn-invite glass" onClick={() => go({ name: 'earn' })}>
               <span>
                 <strong>Earn with CBC Helper</strong>

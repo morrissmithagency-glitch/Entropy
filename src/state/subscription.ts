@@ -14,6 +14,8 @@ export interface Subscription {
   receipt: string | null
   /** Bought in test mode: no money moved. */
   test?: boolean
+  /** Opened with a family login: everything, always. */
+  family?: boolean
 }
 
 function load(): Subscription | null {
