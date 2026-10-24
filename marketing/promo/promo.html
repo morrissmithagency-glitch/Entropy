@@ -1,0 +1,713 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CBC Helper promo</title>
+<style>
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Lexend'; font-weight: 100 900; src: url('/node_modules/@fontsource-variable/lexend/files/lexend-latin-wght-normal.woff2') format('woff2-variations'); }
+  html, body { margin: 0; background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+// The launch film, drawn frame by frame: a rolled map opens, unfurls to the right with
+// burnt, torn edges while Kobe walks along it leaving tiny footprints, and each stop on
+// the map shows a real screen from the app. renderFrame(t) is deterministic, so the
+// recorder can step through time at any frame rate. Open ?play to watch it live.
+const W = 1920, H = 1080
+const DURATION = 37
+const URL_TEXT = '' // the launch address, e.g. 'cbchelper.co.ke'; left empty until there is one
+const cx = document.getElementById('c').getContext('2d')
+
+// ---------- helpers ----------
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
+const lerp = (a, b, k) => a + (b - a) * k
+const prog = (t, a, b) => clamp((t - a) / (b - a))
+const ease = (k) => k * k * (3 - 2 * k)
+const easeOut = (k) => 1 - Math.pow(1 - k, 3)
+const easeIn = (k) => k * k * k
+function hash(n) { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s) }
+function noise1(x) { const i = Math.floor(x), f = x - i; const u = f * f * (3 - 2 * f); return lerp(hash(i), hash(i + 1), u) * 2 - 1 }
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296) }
+
+const INK = '#3b2614', INK_SOFT = 'rgba(59,38,20,0.55)', GOLD = '#e8b75a', CREAM = '#f6ecd6'
+const SERIF = 'Fraunces', SANS = 'Lexend'
+function font(size, { italic = false, weight = 400, family = SERIF } = {}) {
+  cx.font = `${italic ? 'italic ' : ''}${weight} ${size}px ${family}`
+}
+function spaced(text, x, y, spacing, align = 'center') {
+  cx.letterSpacing = spacing + 'px'
+  cx.textAlign = align
+  cx.fillText(text, x + (align === 'center' ? spacing / 2 : 0), y)
+  cx.letterSpacing = '0px'
+}
+
+// ---------- assets ----------
+const img = {}
+function load(name, src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => { img[name] = i; res() }; i.onerror = rej; i.src = src }) }
+
+// ---------- story timing ----------
+const LEFT = 230            // where the left roller settles on screen
+const OPEN_W = 1460         // parchment visible once the first unroll ends
+const PAN_A = 7.6, PAN_B = 30.0, RAMP = 1.6
+const PAN_D = 7270          // how far the camera travels along the map
+const MAP_LEN = OPEN_W + PAN_D
+const PARCH_TOP = 150, PARCH_BOT = 930
+const ROLL_R = 30
+
+function camX(t) {
+  // trapezoid velocity: speeds up, glides, slows to a stop
+  const T = PAN_B - PAN_A, v = PAN_D / (T - RAMP)
+  const s = t - PAN_A
+  if (s <= 0) return 0
+  if (s < RAMP) return v * s * s / (2 * RAMP)
+  if (s < T - RAMP) return v * RAMP / 2 + v * (s - RAMP)
+  if (s < T) { const r = T - s; return PAN_D - v * r * r / (2 * RAMP) }
+  return PAN_D
+}
+function originX(t) {
+  if (t < 3.8) return W / 2
+  if (t < 4.7) return lerp(W / 2, LEFT, ease(prog(t, 3.8, 4.7)))
+  return LEFT - camX(t)
+}
+function revealed(t) {
+  if (t < 4.5) return 0
+  if (t < 7.1) return OPEN_W * easeOut(ease(prog(t, 4.5, 7.1)) * 0.5 + prog(t, 4.5, 7.1) * 0.5)
+  return OPEN_W + camX(t)
+}
+// Kobe walks from the start of the trail and keeps a little way behind the unrolling edge.
+function kobeM(t) {
+  if (t < 5.0) return 120
+  const behind = lerp(120, 920, ease(prog(t, 5.0, 9.4)))
+  let m = camX(t) + behind
+  if (t > PAN_B) m += 70 * easeOut(prog(t, PAN_B, PAN_B + 1.2))
+  return m
+}
+const trailY = (m) => 872 + 12 * Math.sin(m / 260) + 7 * Math.sin(m / 97 + 1.3)
+
+// ---------- the stops on the map ----------
+const STOPS = [
+  { place: 'The Golden Plains', scene: 'golden-hills', screen: 'home', head: ['PP1 to Grade 9,', 'every CBC learning area'] },
+  { place: 'The Tea Hills', scene: 'tea-hills', screen: 'map', head: ['Every strand and', 'sub-strand, mapped'] },
+  { place: 'Forest of Lessons', scene: 'forest-mist', screen: 'learn', head: ['Lessons that teach', 'before they test'] },
+  { place: 'The Lake of Words', scene: 'lake-dusk', screen: 'quiz', head: ['Thousands of questions', 'in English & Kiswahili'] },
+  { place: 'Flamingo Shore', scene: 'flamingo-lake', screen: 'results', head: ['Kobe cheers', 'every single step'] },
+  { place: 'The Coast of Calm', scene: 'coast-sunset', screen: 'worlds', head: ['Calm and beautiful,', 'quick on any phone'] },
+]
+const STOP0 = 2150, STOP_GAP = 1000
+STOPS.forEach((s, i) => (s.m = STOP0 + i * STOP_GAP))
+const TREASURE_M = 8380
+
+// ---------- prepared textures ----------
+let parchTile, sepia = {}, skyStars, edges
+function makeParchment() {
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 1024
+  const g = c.getContext('2d')
+  g.fillStyle = '#e6d2a4'; g.fillRect(0, 0, 1024, 1024)
+  const r = rng(7)
+  for (let i = 0; i < 70; i++) {
+    const x = r() * 1024, y = r() * 1024, rad = 40 + r() * 200
+    const gr = g.createRadialGradient(x, y, 0, x, y, rad)
+    const dark = r() < 0.6
+    gr.addColorStop(0, dark ? `rgba(150,105,50,${0.05 + r() * 0.08})` : `rgba(255,246,220,${0.08 + r() * 0.1})`)
+    gr.addColorStop(1, 'rgba(0,0,0,0)')
+    g.fillStyle = gr
+    for (const dx of [-1024, 0, 1024]) for (const dy of [-1024, 0, 1024]) { g.save(); g.translate(dx, dy); g.fillRect(x - rad, y - rad, rad * 2, rad * 2); g.restore() }
+  }
+  // fibres
+  g.lineWidth = 1
+  for (let i = 0; i < 900; i++) {
+    const x = r() * 1024, y = r() * 1024, a = r() * Math.PI, l = 6 + r() * 26
+    g.strokeStyle = `rgba(110,75,35,${0.04 + r() * 0.07})`
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l * 0.3); g.stroke()
+  }
+  // grain
+  const d = g.getImageData(0, 0, 1024, 1024)
+  for (let i = 0; i < d.data.length; i += 4) { const n = (r() - 0.5) * 18; d.data[i] += n; d.data[i + 1] += n; d.data[i + 2] += n * 0.8 }
+  g.putImageData(d, 0, 0)
+  // a few foxing spots
+  for (let i = 0; i < 26; i++) {
+    const x = r() * 1024, y = r() * 1024, rad = 2 + r() * 7
+    g.fillStyle = `rgba(140,80,30,${0.12 + r() * 0.15})`
+    g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill()
+  }
+  parchTile = cx.createPattern(c, 'repeat')
+}
+function makeSepia() {
+  for (const s of STOPS) {
+    const src = img['scene-' + s.scene]
+    const c = document.createElement('canvas'); c.width = src.width; c.height = src.height
+    const g = c.getContext('2d')
+    g.filter = 'sepia(1) saturate(0.55) contrast(1.15) brightness(1.15)'
+    g.drawImage(src, 0, 0)
+    g.filter = 'none'
+    g.globalCompositeOperation = 'multiply'
+    g.fillStyle = '#d8bf8c'; g.fillRect(0, 0, c.width, c.height)
+    sepia[s.scene] = c
+  }
+}
+function makeStars() {
+  const r = rng(42); skyStars = []
+  for (let i = 0; i < 240; i++) skyStars.push({ x: r() * W * 1.6, y: r() * H * 0.9, s: 0.5 + r() * 1.6, p: r() * 6.28, f: 0.6 + r() * 1.8, d: 0.04 + r() * 0.12 })
+}
+// Torn, burnt edges: a wobbly line with the odd deeper bite, sampled once along the whole map.
+function makeEdges() {
+  const step = 6, n = Math.ceil((MAP_LEN + 200) / step) + 1
+  const top = new Float32Array(n), bot = new Float32Array(n)
+  const bites = (seed) => { const r = rng(seed), list = []; for (let m = 80; m < MAP_LEN; m += 120 + r() * 260) list.push({ m, w: 30 + r() * 70, d: 10 + r() * 22 }); return list }
+  const bt = bites(3), bb = bites(9)
+  const depth = (m, list, ph) => {
+    let v = 9 + 6 * Math.sin(m * 0.011 + ph) + 5 * noise1(m / 37 + ph) + 3 * noise1(m / 9 + ph * 3) + 1.5 * noise1(m / 2.5 + ph)
+    for (const b of list) { const k = (m - b.m) / b.w; if (Math.abs(k) < 1) v += b.d * Math.pow(Math.cos(k * Math.PI / 2), 2) * (0.7 + 0.3 * noise1(m / 4)) }
+    return Math.max(2, v)
+  }
+  for (let i = 0; i < n; i++) { const m = i * step - 100; top[i] = depth(m, bt, 0.3); bot[i] = depth(m, bb, 5.1) }
+  edges = { step, top, bot }
+}
+const edgeAt = (arr, m) => { const k = (m + 100) / edges.step, i = Math.floor(k), f = k - i; return lerp(arr[clamp(i, 0, arr.length - 1)], arr[clamp(i + 1, 0, arr.length - 1)], f) }
+
+// ---------- the sky behind everything ----------
+function drawSky(t, cam) {
+  const g = cx.createLinearGradient(0, 0, 0, H)
+  g.addColorStop(0, '#0b1230'); g.addColorStop(0.55, '#231d47'); g.addColorStop(1, '#3d2a52')
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H)
+  // a low warm glow on the horizon, like the app's dusk worlds
+  const glow = cx.createRadialGradient(W * 0.7, H * 1.05, 50, W * 0.7, H * 1.05, 900)
+  glow.addColorStop(0, 'rgba(255,170,110,0.35)'); glow.addColorStop(1, 'rgba(255,170,110,0)')
+  cx.fillStyle = glow; cx.fillRect(0, 0, W, H)
+  for (const s of skyStars) {
+    const x = ((s.x - cam * s.d) % (W * 1.6) + W * 1.6) % (W * 1.6) - W * 0.3
+    const a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * s.f + s.p))
+    cx.fillStyle = `rgba(255,240,210,${a * 0.8})`
+    cx.beginPath(); cx.arc(x, s.y, s.s, 0, 7); cx.fill()
+  }
+  // far hills, drifting slower than the map
+  hills(cam * 0.08, 990, 70, '#2b2148', 0.9, 11)
+  hills(cam * 0.16, 1030, 60, '#1c1733', 1, 23)
+}
+function hills(off, base, amp, col, a, seed) {
+  cx.fillStyle = col; cx.globalAlpha = a
+  cx.beginPath(); cx.moveTo(0, H)
+  for (let x = 0; x <= W; x += 20) { const m = x + off; cx.lineTo(x, base - amp * (0.5 + 0.5 * noise1(m / 300 + seed)) - 20 * noise1(m / 90 + seed)) }
+  cx.lineTo(W, H); cx.closePath(); cx.fill(); cx.globalAlpha = 1
+}
+function motes(t, cam, n, seed, front) {
+  const r = rng(seed)
+  for (let i = 0; i < n; i++) {
+    const x0 = r() * W * 2, y0 = r() * H, sp = 8 + r() * 22, ph = r() * 6.28, sz = front ? 1.5 + r() * 2.5 : 0.8 + r() * 1.6, par = front ? 0.35 : 0.12
+    const x = (((x0 - cam * par + Math.sin(t * 0.5 + ph) * 30) % (W * 2)) + W * 2) % (W * 2) - W * 0.5
+    const y = (((y0 - t * sp) % H) + H) % H
+    const a = (0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 1.7 + ph))) * (front ? 0.55 : 0.5)
+    const gr = cx.createRadialGradient(x, y, 0, x, y, sz * 4)
+    gr.addColorStop(0, `rgba(255,214,140,${a})`); gr.addColorStop(1, 'rgba(255,214,140,0)')
+    cx.fillStyle = gr; cx.fillRect(x - sz * 4, y - sz * 4, sz * 8, sz * 8)
+  }
+}
+
+// ---------- the map itself (drawn in map coordinates: m = distance from the left edge) ----------
+function parchmentPath(L, inset) {
+  cx.beginPath()
+  const s = 6
+  cx.moveTo(-4, PARCH_TOP + inset)
+  for (let m = 0; m <= L; m += s) cx.lineTo(m, PARCH_TOP + edgeAt(edges.top, m) + inset)
+  cx.lineTo(L + 4, PARCH_TOP + edgeAt(edges.top, L) + inset)
+  cx.lineTo(L + 4, PARCH_BOT - edgeAt(edges.bot, L) - inset)
+  for (let m = L; m >= 0; m -= s) cx.lineTo(m, PARCH_BOT - edgeAt(edges.bot, m) - inset)
+  cx.lineTo(-4, PARCH_BOT - inset)
+  cx.closePath()
+}
+function drawParchment(L, vis0, vis1) {
+  const a = Math.max(0, vis0), b = Math.min(L, vis1)
+  if (b <= a) return
+  cx.save()
+  cx.beginPath(); cx.rect(a - 10, 0, b - a + 20, H); cx.clip()
+  // soft shadow under the sheet
+  cx.save(); cx.shadowColor = 'rgba(0,0,0,0.55)'; cx.shadowBlur = 40; cx.shadowOffsetY = 18
+  parchmentPath(L, -2); cx.fillStyle = '#24130a'; cx.fill(); cx.restore()
+  // ember glow along the burnt line
+  parchmentPath(L, 1); cx.strokeStyle = 'rgba(255,128,40,0.35)'; cx.lineWidth = 3; cx.stroke()
+  // charred rim
+  parchmentPath(L, 2); cx.fillStyle = '#3a1f0e'; cx.fill()
+  parchmentPath(L, 6); cx.fillStyle = '#7a4a22'; cx.fill()
+  // the paper
+  parchmentPath(L, 9)
+  cx.fillStyle = parchTile; cx.fill()
+  cx.save(); cx.clip()
+  // scorched gradient creeping in from the torn edges
+  const tg = cx.createLinearGradient(0, PARCH_TOP, 0, PARCH_BOT)
+  tg.addColorStop(0, 'rgba(95,52,18,0.55)'); tg.addColorStop(0.07, 'rgba(120,75,30,0.12)'); tg.addColorStop(0.18, 'rgba(0,0,0,0)')
+  tg.addColorStop(0.82, 'rgba(0,0,0,0)'); tg.addColorStop(0.93, 'rgba(120,75,30,0.14)'); tg.addColorStop(1, 'rgba(95,52,18,0.6)')
+  cx.fillStyle = tg; cx.fillRect(a - 10, PARCH_TOP, b - a + 20, PARCH_BOT - PARCH_TOP)
+  // follow the torn line with a darker band so the burn hugs the edge
+  cx.lineWidth = 26; cx.strokeStyle = 'rgba(110,60,20,0.18)'
+  cx.beginPath(); for (let m = a; m <= b; m += 8) cx.lineTo(m, PARCH_TOP + edgeAt(edges.top, m) + 9); cx.stroke()
+  cx.beginPath(); for (let m = a; m <= b; m += 8) cx.lineTo(m, PARCH_BOT - edgeAt(edges.bot, m) - 9); cx.stroke()
+  // faint survey lines
+  cx.strokeStyle = 'rgba(80,50,20,0.07)'; cx.lineWidth = 1.2
+  for (let y = 260; y < 900; y += 160) { cx.beginPath(); cx.moveTo(a, y); cx.lineTo(b, y); cx.stroke() }
+  for (let m = Math.ceil(a / 320) * 320; m < b; m += 320) { cx.beginPath(); cx.moveTo(m, PARCH_TOP); cx.lineTo(m, PARCH_BOT); cx.stroke() }
+  cx.restore()
+  cx.restore()
+}
+
+function drawCartouche(alpha) {
+  if (alpha <= 0) return
+  cx.save(); cx.globalAlpha = alpha
+  const x = 160, y = 290, w = 820, h = 400
+  cx.strokeStyle = INK; cx.lineWidth = 2.5
+  roundRect(x, y, w, h, 26); cx.stroke()
+  cx.lineWidth = 1; roundRect(x + 12, y + 12, w - 24, h - 24, 18); cx.stroke()
+  // corner flourishes
+  for (const [fx, fy, sx, sy] of [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]]) {
+    cx.beginPath(); cx.moveTo(fx + sx * 30, fy + sy * 6)
+    cx.bezierCurveTo(fx + sx * 70, fy + sy * 6, fx + sx * 60, fy + sy * 46, fx + sx * 36, fy + sy * 40)
+    cx.stroke()
+    cx.beginPath(); cx.arc(fx + sx * 40, fy + sy * 30, 4, 0, 7); cx.fillStyle = INK; cx.fill()
+  }
+  cx.fillStyle = INK_SOFT; font(20, { family: SANS, weight: 500 })
+  spaced('A  MAP  OF  LEARNING', x + w / 2, y + 86, 7)
+  font(124, { weight: 500 }); cx.textAlign = 'left'
+  const a1 = 'CBC ', a2 = 'Helper'
+  const w1 = cx.measureText(a1).width
+  font(124, { italic: true, weight: 400 }); const w2 = cx.measureText(a2).width
+  const sx = x + w / 2 - (w1 + w2) / 2
+  font(124, { weight: 500 }); cx.fillStyle = INK; cx.fillText(a1, sx, y + 228)
+  font(124, { italic: true, weight: 400 }); cx.fillStyle = '#9a5b16'; cx.fillText(a2, sx + w1, y + 228)
+  font(34, { italic: true }); cx.fillStyle = INK; cx.textAlign = 'center'
+  cx.fillText('PP1 to Grade 9, for every child in Kenya', x + w / 2, y + 296)
+  // little divider
+  cx.strokeStyle = INK_SOFT; cx.lineWidth = 1.5
+  cx.beginPath(); cx.moveTo(x + w / 2 - 120, y + 336); cx.lineTo(x + w / 2 - 14, y + 336); cx.moveTo(x + w / 2 + 14, y + 336); cx.lineTo(x + w / 2 + 120, y + 336); cx.stroke()
+  diamond(x + w / 2, y + 336, 7)
+  cx.restore()
+}
+function diamond(x, y, r) { cx.beginPath(); cx.moveTo(x, y - r); cx.lineTo(x + r, y); cx.lineTo(x, y + r); cx.lineTo(x - r, y); cx.closePath(); cx.fillStyle = INK; cx.fill() }
+function roundRect(x, y, w, h, r) { cx.beginPath(); cx.roundRect(x, y, w, h, r) }
+
+function drawCompass(mx, my, r, t) {
+  cx.save(); cx.translate(mx, my); cx.rotate(Math.sin(t * 0.6) * 0.04)
+  cx.strokeStyle = INK; cx.lineWidth = 1.5
+  cx.beginPath(); cx.arc(0, 0, r, 0, 7); cx.stroke()
+  cx.beginPath(); cx.arc(0, 0, r * 0.82, 0, 7); cx.setLineDash([3, 6]); cx.stroke(); cx.setLineDash([])
+  for (let i = 0; i < 8; i++) {
+    const a = i * Math.PI / 4 - Math.PI / 2, long = i % 2 === 0, len = long ? r * 0.98 : r * 0.55, wd = long ? r * 0.13 : r * 0.09
+    for (const side of [-1, 1]) {
+      cx.beginPath(); cx.moveTo(0, 0)
+      cx.lineTo(Math.cos(a + side * Math.PI / 2) * wd, Math.sin(a + side * Math.PI / 2) * wd)
+      cx.lineTo(Math.cos(a) * len, Math.sin(a) * len); cx.closePath()
+      cx.fillStyle = side < 0 ? (long ? '#c8892c' : '#a8742e') : '#5a3a1c'; cx.fill()
+    }
+  }
+  cx.beginPath(); cx.arc(0, 0, 6, 0, 7); cx.fillStyle = '#e8b75a'; cx.fill(); cx.stroke()
+  font(26, { weight: 600 }); cx.fillStyle = INK; cx.textAlign = 'center'; cx.fillText('N', 0, -r - 12)
+  cx.restore()
+}
+
+// small ink sketches that fill the empty spaces like an old chart
+function glyph(kind, x, y, s) {
+  cx.save(); cx.translate(x, y); cx.scale(s, s)
+  cx.strokeStyle = 'rgba(59,38,20,0.6)'; cx.fillStyle = 'rgba(59,38,20,0.5)'; cx.lineWidth = 1.6; cx.lineCap = 'round'
+  if (kind === 'acacia') {
+    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(0, -26); cx.moveTo(0, -18); cx.lineTo(-10, -30); cx.moveTo(0, -20); cx.lineTo(9, -31); cx.stroke()
+    cx.beginPath(); cx.ellipse(0, -34, 30, 7, 0, 0, 7); cx.fill()
+  } else if (kind === 'peaks') {
+    cx.beginPath(); cx.moveTo(-34, 0); cx.lineTo(-12, -34); cx.lineTo(2, -14); cx.lineTo(14, -26); cx.lineTo(34, 0); cx.stroke()
+    cx.beginPath(); cx.moveTo(-12, -34); cx.lineTo(-18, -24); cx.lineTo(-12, -27); cx.lineTo(-7, -24); cx.closePath(); cx.fill()
+    for (let i = -8; i < 30; i += 6) { cx.beginPath(); cx.moveTo(i, -2); cx.lineTo(i + 4, -10); cx.stroke() }
+  } else if (kind === 'waves') {
+    for (let r = 0; r < 3; r++) { cx.beginPath(); for (let i = 0; i < 4; i++) { cx.moveTo(-36 + i * 18 + (r % 2) * 9, r * 10); cx.quadraticCurveTo(-27 + i * 18 + (r % 2) * 9, -7 + r * 10, -18 + i * 18 + (r % 2) * 9, r * 10) } cx.stroke() }
+  } else if (kind === 'birds') {
+    for (const [bx, by] of [[0, 0], [16, 6], [-14, 8]]) { cx.beginPath(); cx.moveTo(bx - 7, by - 3); cx.quadraticCurveTo(bx - 3, by - 6, bx, by); cx.quadraticCurveTo(bx + 3, by - 6, bx + 7, by - 3); cx.stroke() }
+  } else if (kind === 'hut') {
+    cx.beginPath(); cx.moveTo(-16, 0); cx.lineTo(-16, -14); cx.lineTo(16, -14); cx.lineTo(16, 0); cx.stroke()
+    cx.beginPath(); cx.moveTo(-22, -12); cx.lineTo(0, -34); cx.lineTo(22, -12); cx.closePath(); cx.fill()
+  } else if (kind === 'baobab') {
+    cx.beginPath(); cx.moveTo(-8, 0); cx.quadraticCurveTo(-10, -20, -6, -34); cx.lineTo(6, -34); cx.quadraticCurveTo(10, -20, 8, 0); cx.closePath(); cx.fill()
+    for (const a of [-0.9, -0.4, 0.2, 0.8]) { cx.beginPath(); cx.moveTo(0, -32); cx.lineTo(Math.sin(a) * 22, -32 - Math.cos(a) * 16); cx.stroke() }
+  }
+  cx.restore()
+}
+const GLYPHS = (() => {
+  const r = rng(77), kinds = ['acacia', 'peaks', 'birds', 'hut', 'baobab', 'waves'], out = []
+  for (let m = 1150; m < MAP_LEN - 200; m += 150 + r() * 160) {
+    // keep the sketches clear of the stops
+    const near = STOPS.some((s) => m > s.m - 470 && m < s.m + 430)
+    if (near && r() < 0.85) continue
+    const top = r() < 0.5
+    out.push({ kind: kinds[Math.floor(r() * kinds.length)], m, y: top ? 230 + r() * 120 : 560 + r() * 200, s: 0.9 + r() * 0.6 })
+  }
+  return out
+})()
+
+function drawRoute(a, b) {
+  // the planned path, dotted in faded ink
+  cx.save(); cx.strokeStyle = 'rgba(120,70,30,0.32)'; cx.lineWidth = 2; cx.setLineDash([2, 12]); cx.lineCap = 'round'
+  cx.beginPath(); for (let m = Math.max(100, a); m < Math.min(b, TREASURE_M); m += 10) cx.lineTo(m, trailY(m)); cx.stroke()
+  cx.restore()
+}
+// A tortoise print: a rounded pad with four little claw marks.
+function footprint(m, y, side, alpha, scale) {
+  const ang = Math.atan2(trailY(m + 4) - trailY(m - 4), 8)
+  cx.save(); cx.translate(m, y + side * 8); cx.rotate(ang); cx.scale(scale, scale)
+  cx.globalAlpha = alpha; cx.fillStyle = '#4a2c14'
+  cx.beginPath(); cx.ellipse(0, 0, 5.2, 4, 0, 0, 7); cx.fill()
+  for (let i = 0; i < 4; i++) { const a = -0.75 + i * 0.5; cx.beginPath(); cx.arc(Math.cos(a) * 8, Math.sin(a) * 6.5, 1.5, 0, 7); cx.fill() }
+  cx.restore()
+}
+function drawFootprints(a, b, km) {
+  const last = km - 58
+  let i = 0
+  for (let m = 150; m < last; m += 26, i++) {
+    if (m < a - 20 || m > b + 20) continue
+    const age = (last - m) / 40
+    footprint(m, trailY(m), i % 2 ? 1 : -1, clamp(age) * 0.75, lerp(1.4, 1, clamp(age)))
+  }
+}
+
+function drawStop(s, i, sx, t) {
+  // sx: where the stop's centre is on screen; drives the reveal of each part
+  const seen = clamp((1720 - sx) / 520) // 0 when it just came out of the roll, 1 once it is well in view
+  const m = s.m, vx = m - 210, vy = 430, rx = 235, ry = 172
+  // place name
+  cx.fillStyle = INK_SOFT; font(19, { family: SANS, weight: 500 })
+  spaced(['I', 'II', 'III', 'IV', 'V', 'VI'][i] + '  ·  ' + s.place.toUpperCase(), vx, 222, 5)
+  // the painted world, first as an ink-wash sketch, then blooming into colour from the middle
+  const src = img['scene-' + s.scene], sp = sepia[s.scene]
+  const crop = 760 * (2 * rx / (2 * ry)), sxs = (src.width - crop) / 2
+  cx.save(); cx.beginPath(); cx.ellipse(vx, vy, rx, ry, 0, 0, 7); cx.clip()
+  cx.drawImage(sp, sxs, 0, crop, 760, vx - rx, vy - ry, 2 * rx, 2 * ry)
+  const bloom = ease(clamp((seen - 0.15) / 0.75))
+  if (bloom > 0) {
+    cx.save()
+    const r = bloom * (rx + 40)
+    const gm = cx.createRadialGradient(vx, vy, Math.max(0, r - 90), vx, vy, r)
+    // draw colour through a soft circular window
+    cx.beginPath(); cx.arc(vx, vy, r, 0, 7); cx.clip()
+    cx.drawImage(src, sxs, 0, crop, 760, vx - rx, vy - ry, 2 * rx, 2 * ry)
+    cx.globalCompositeOperation = 'source-atop'
+    gm.addColorStop(0, 'rgba(216,191,140,0)'); gm.addColorStop(1, 'rgba(216,191,140,0.85)')
+    cx.fillStyle = gm; cx.fillRect(vx - rx, vy - ry, 2 * rx, 2 * ry)
+    cx.restore()
+  }
+  // inner vignette so it sits in the paper
+  const iv = cx.createRadialGradient(vx, vy, ry * 0.6, vx, vy, rx * 1.02)
+  iv.addColorStop(0, 'rgba(0,0,0,0)'); iv.addColorStop(1, 'rgba(70,40,15,0.45)')
+  cx.fillStyle = iv; cx.fillRect(vx - rx, vy - ry, 2 * rx, 2 * ry)
+  cx.restore()
+  cx.strokeStyle = INK; cx.lineWidth = 2.5; cx.beginPath(); cx.ellipse(vx, vy, rx, ry, 0, 0, 7); cx.stroke()
+  cx.lineWidth = 1; cx.beginPath(); cx.ellipse(vx, vy, rx + 9, ry + 9, 0, 0, 7); cx.stroke()
+  cx.setLineDash([2, 7]); cx.beginPath(); cx.ellipse(vx, vy, rx + 18, ry + 18, 0, 0, 7); cx.stroke(); cx.setLineDash([])
+  // headline, inked in
+  const ink = ease(clamp((seen - 0.25) / 0.5))
+  cx.save(); cx.globalAlpha = ink; cx.fillStyle = INK; cx.textAlign = 'center'
+  font(46, { weight: 500 }); cx.fillText(s.head[0], vx, 684)
+  font(46, { italic: true, weight: 400 }); cx.fillStyle = '#8c4f12'; cx.fillText(s.head[1], vx, 738)
+  cx.restore()
+}
+
+function drawPhone(s, sx, t, i) {
+  const seen = clamp((1640 - sx) / 420)
+  if (seen <= 0) return
+  const k = easeOut(seen)
+  const pw = 286, ph = 619
+  const x = s.m + 270, y = 536 + (1 - k) * 90 + Math.sin(t * 1.3 + i) * 5
+  cx.save(); cx.translate(x, y); cx.rotate((i % 2 ? 1 : -1) * 0.035); cx.scale(lerp(0.9, 1, k), lerp(0.9, 1, k))
+  cx.globalAlpha = k
+  // glow and shadow
+  cx.save(); cx.shadowColor = 'rgba(30,15,5,0.55)'; cx.shadowBlur = 50; cx.shadowOffsetY = 26
+  roundRect(-pw / 2, -ph / 2, pw, ph, 46); cx.fillStyle = '#0a0d1a'; cx.fill(); cx.restore()
+  cx.strokeStyle = 'rgba(232,183,90,0.85)'; cx.lineWidth = 2; roundRect(-pw / 2, -ph / 2, pw, ph, 46); cx.stroke()
+  const b = 11
+  cx.save(); roundRect(-pw / 2 + b, -ph / 2 + b, pw - 2 * b, ph - 2 * b, 36); cx.clip()
+  cx.drawImage(img['screen-' + s.screen], -pw / 2 + b, -ph / 2 + b, pw - 2 * b, ph - 2 * b)
+  // glass sheen
+  const gl = cx.createLinearGradient(-pw / 2, -ph / 2, pw / 2, ph / 2)
+  gl.addColorStop(0, 'rgba(255,255,255,0.10)'); gl.addColorStop(0.4, 'rgba(255,255,255,0)')
+  cx.fillStyle = gl; cx.fillRect(-pw / 2, -ph / 2, pw, ph)
+  cx.restore()
+  roundRect(-38, -ph / 2 + 18, 76, 20, 10); cx.fillStyle = '#05070f'; cx.fill()
+  cx.restore()
+}
+
+function drawKobe(m, t, walking, mood) {
+  const y = trailY(m)
+  const phase = m / 18
+  const bob = walking ? Math.abs(Math.sin(phase)) * 5 : Math.sin(t * 2) * 1.2
+  const tilt = walking ? Math.sin(phase) * 0.035 : 0
+  const w = 150, h = w * 423 / 540
+  cx.save(); cx.translate(m, y + 26 - bob); cx.rotate(tilt)
+  cx.drawImage(img['kobe-' + mood], -w / 2, -h, w, h)
+  cx.restore()
+}
+
+function drawTreasure(t, a, b) {
+  if (TREASURE_M + 300 < a || 7650 > b) return
+  cx.save()
+  cx.fillStyle = INK; cx.textAlign = 'center'
+  font(19, { family: SANS, weight: 500 }); cx.fillStyle = INK_SOFT
+  spaced('JOURNEY’S  END,  AND  EVERY  BEGINNING', 8000, 300, 5)
+  font(64, { weight: 500 }); cx.fillStyle = INK
+  cx.fillText('Here lies the treasure:', 8000, 470)
+  font(64, { italic: true }); cx.fillStyle = '#8c4f12'
+  cx.fillText('a child who loves to learn.', 8000, 550)
+  // X marks the spot
+  const x = TREASURE_M, y = trailY(TREASURE_M) - 6
+  cx.strokeStyle = '#8a1f12'; cx.lineWidth = 9; cx.lineCap = 'round'
+  cx.beginPath(); cx.moveTo(x - 26, y - 26); cx.lineTo(x + 26, y + 26); cx.moveTo(x + 26, y - 26); cx.lineTo(x - 26, y + 26); cx.stroke()
+  const pulse = 0.5 + 0.5 * Math.sin(t * 3)
+  const gr = cx.createRadialGradient(x, y, 0, x, y, 90)
+  gr.addColorStop(0, `rgba(255,200,90,${0.25 + 0.2 * pulse})`); gr.addColorStop(1, 'rgba(255,200,90,0)')
+  cx.fillStyle = gr; cx.fillRect(x - 90, y - 90, 180, 180)
+  cx.restore()
+}
+
+// ---------- rollers, ribbon and seal ----------
+function roller(x, top, bot, t, thick) {
+  // wooden dowel ends with brass knobs
+  for (const [y0, dir] of [[top, -1], [bot, 1]]) {
+    cx.fillStyle = '#5b3517'; cx.fillRect(x - 9, dir < 0 ? y0 - 46 : y0, 18, 46)
+    const k = cx.createRadialGradient(x - 6, y0 + dir * 56 - 6, 2, x, y0 + dir * 56, 22)
+    k.addColorStop(0, '#fff1c2'); k.addColorStop(0.4, '#e2b25a'); k.addColorStop(1, '#7a4f1a')
+    cx.fillStyle = k; cx.beginPath(); cx.arc(x, y0 + dir * 56, 20, 0, 7); cx.fill()
+  }
+  // the rolled paper, shaded as a cylinder
+  const r = thick
+  const g = cx.createLinearGradient(x - r, 0, x + r, 0)
+  g.addColorStop(0, '#8a6232'); g.addColorStop(0.25, '#e9d4a2'); g.addColorStop(0.5, '#f4e4bd'); g.addColorStop(0.8, '#b48a51'); g.addColorStop(1, '#5e3e1c')
+  cx.fillStyle = g
+  roundRect(x - r, top - 10, 2 * r, bot - top + 20, r * 0.45); cx.fill()
+  // turns of paper
+  cx.strokeStyle = 'rgba(90,55,25,0.35)'; cx.lineWidth = 1
+  for (let y = top + 4; y < bot; y += 11) { cx.beginPath(); cx.moveTo(x - r + 2, y + Math.sin(y) * 1.5); cx.lineTo(x + r - 2, y + Math.sin(y) * 1.5); cx.stroke() }
+  // burnt ends of the roll
+  cx.fillStyle = '#3a1f0e'
+  cx.beginPath(); cx.ellipse(x, top - 6, r, 7, 0, 0, 7); cx.fill()
+  cx.beginPath(); cx.ellipse(x, bot + 6, r, 7, 0, 0, 7); cx.fill()
+}
+function rollerShadow(x, dir) {
+  const g = cx.createLinearGradient(x, 0, x + dir * 70, 0)
+  g.addColorStop(0, 'rgba(40,20,5,0.4)'); g.addColorStop(1, 'rgba(40,20,5,0)')
+  cx.fillStyle = g; cx.fillRect(Math.min(x, x + dir * 70), PARCH_TOP, 70, PARCH_BOT - PARCH_TOP)
+}
+function ribbonAndSeal(x, t) {
+  const pop = prog(t, 3.3, 3.9)
+  if (pop >= 1) return
+  cx.save()
+  // the ribbon slips away as the seal breaks
+  cx.globalAlpha = 1 - ease(pop)
+  const drop = easeIn(pop) * 220
+  cx.fillStyle = '#9b2a1e'
+  cx.fillRect(x - 70, 528 + drop, 140, 24)
+  cx.fillStyle = '#c4473a'; cx.fillRect(x - 70, 532 + drop, 140, 6)
+  for (const s of [-1, 1]) {
+    cx.fillStyle = '#9b2a1e'; cx.beginPath()
+    cx.moveTo(x, 545 + drop); cx.lineTo(x + s * 26, 620 + drop + s * 4); cx.lineTo(x + s * 12, 612 + drop); cx.lineTo(x + s * 4, 628 + drop); cx.closePath(); cx.fill()
+  }
+  // wax seal pressed with Kobe's shell
+  const sc = 1 + Math.sin(pop * Math.PI) * 0.25
+  cx.translate(x, 540 + drop * 0.5); cx.scale(sc, sc); cx.rotate(pop * 0.6)
+  const wg = cx.createRadialGradient(-8, -8, 4, 0, 0, 46)
+  wg.addColorStop(0, '#d6533f'); wg.addColorStop(1, '#7a1a12')
+  cx.fillStyle = wg; cx.beginPath()
+  for (let i = 0; i <= 24; i++) { const a = i / 24 * Math.PI * 2, rr = 44 + Math.sin(i * 2.7) * 4; cx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) }
+  cx.fill()
+  cx.strokeStyle = 'rgba(60,8,4,0.6)'; cx.lineWidth = 2
+  hex(0, 0, 13); for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; hex(Math.cos(a) * 22, Math.sin(a) * 22, 9) }
+  cx.restore()
+}
+function hex(x, y, r) { cx.beginPath(); for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3 + Math.PI / 6; cx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r) } cx.closePath(); cx.stroke() }
+
+function sparkles(x, y0, y1, t, from, to, seed, count) {
+  for (let i = 0; i < count; i++) {
+    const born = from + (i / count) * (to - from)
+    const age = t - born
+    if (age < 0 || age > 1.6) continue
+    const r = rng(seed + i * 13); const u = r(), v = r(), w = r()
+    const px = x + (v - 0.3) * 50 - age * (20 + w * 60)
+    const py = lerp(y0, y1, u) - age * (25 + v * 40)
+    const a = Math.sin(age / 1.6 * Math.PI)
+    star(px, py, (2 + w * 3) * a, a)
+  }
+}
+function star(x, y, r, a) {
+  if (r <= 0) return
+  const g = cx.createRadialGradient(x, y, 0, x, y, r * 4)
+  g.addColorStop(0, `rgba(255,236,180,${a})`); g.addColorStop(1, 'rgba(255,214,140,0)')
+  cx.fillStyle = g; cx.fillRect(x - r * 4, y - r * 4, r * 8, r * 8)
+  cx.fillStyle = `rgba(255,250,230,${a})`
+  cx.beginPath(); cx.moveTo(x, y - r * 2.6); cx.lineTo(x + r * 0.4, y); cx.lineTo(x, y + r * 2.6); cx.lineTo(x - r * 0.4, y); cx.closePath(); cx.fill()
+  cx.beginPath(); cx.moveTo(x - r * 2.6, y); cx.lineTo(x, y + r * 0.4); cx.lineTo(x + r * 2.6, y); cx.lineTo(x, y - r * 0.4); cx.closePath(); cx.fill()
+}
+function burst(x, y, t, at, seed) {
+  const age = t - at
+  if (age < 0 || age > 1.4) return
+  const r = rng(seed)
+  for (let i = 0; i < 26; i++) {
+    const a = r() * Math.PI * 2, sp = 120 + r() * 260, d = sp * easeOut(age / 1.4)
+    star(x + Math.cos(a) * d, y + Math.sin(a) * d + age * age * 40, (2 + r() * 3) * (1 - age / 1.4), 1 - age / 1.4)
+  }
+}
+
+// ---------- titles over the sky ----------
+function introText(t) {
+  const a = ease(prog(t, 0.3, 1.2)) * (1 - ease(prog(t, 1.7, 2.3)))
+  if (a <= 0) return
+  const lift = ease(prog(t, 1.7, 2.3)) * 70
+  cx.save(); cx.globalAlpha = a; cx.textAlign = 'center'
+  cx.fillStyle = CREAM; font(72, { weight: 400 })
+  cx.fillText('Every great journey', W / 2, 470 - lift)
+  font(72, { italic: true, weight: 300 }); cx.fillStyle = GOLD
+  cx.fillText('begins with one small step.', W / 2, 560 - lift)
+  cx.restore()
+}
+
+function endCard(t) {
+  const a = ease(prog(t, 30.9, 32.0))
+  if (a <= 0) return
+  cx.save()
+  cx.globalAlpha = a
+  const g = cx.createLinearGradient(0, 0, 0, H)
+  g.addColorStop(0, '#0b1230'); g.addColorStop(0.6, '#211b45'); g.addColorStop(1, '#3d2a52')
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H)
+  cx.restore()
+  motes(t, 0, 40, 909, true)
+  // footprints leading in to Kobe
+  const fpA = prog(t, 31.3, 32.4)
+  for (let i = 0; i < 14; i++) {
+    const k = i / 14
+    if (k > fpA) break
+    const x = 150 + i * 24, y = 478 + Math.sin(i * 0.7) * 4
+    cx.save(); cx.translate(x, y + (i % 2 ? 7 : -7)); cx.globalAlpha = 0.7 * clamp((fpA - k) * 6)
+    cx.fillStyle = GOLD; cx.beginPath(); cx.ellipse(0, 0, 5, 4, 0, 0, 7); cx.fill()
+    for (let j = 0; j < 4; j++) { const an = -0.75 + j * 0.5; cx.beginPath(); cx.arc(Math.cos(an) * 8, Math.sin(an) * 6.5, 1.5, 0, 7); cx.fill() }
+    cx.restore()
+  }
+  const kA = easeOut(prog(t, 31.6, 32.5))
+  if (kA > 0) {
+    const w = 330, h = w * 423 / 540, bob = Math.sin(t * 2.2) * 4
+    cx.save(); cx.globalAlpha = kA
+    const halo = cx.createRadialGradient(625, 380, 10, 625, 380, 300)
+    halo.addColorStop(0, 'rgba(255,200,120,0.25)'); halo.addColorStop(1, 'rgba(255,200,120,0)')
+    cx.fillStyle = halo; cx.fillRect(325, 80, 600, 600)
+    cx.drawImage(img['kobe-2'], 625 - w / 2, 520 - h - (1 - kA) * 40 + bob, w, h)
+    cx.restore()
+  }
+  const wA = easeOut(prog(t, 32.0, 32.9))
+  cx.save(); cx.globalAlpha = wA; cx.textAlign = 'left'
+  font(120, { weight: 500 }); const w1 = cx.measureText('CBC ').width
+  font(120, { italic: true, weight: 400 })
+  const x0 = 820, y0 = 400 + (1 - wA) * 24
+  font(120, { weight: 500 }); cx.fillStyle = CREAM; cx.fillText('CBC ', x0, y0)
+  font(120, { italic: true, weight: 400 }); cx.fillStyle = GOLD; cx.fillText('Helper', x0 + w1, y0)
+  font(22, { family: SANS, weight: 500 }); cx.fillStyle = 'rgba(246,236,214,0.7)'
+  spaced('PP1  TO  GRADE  9  ·  KENYA’S  CBC', x0 + 4, y0 + 58, 5, 'left')
+  cx.restore()
+  const pA = ease(prog(t, 32.6, 33.6))
+  cx.save(); cx.globalAlpha = pA; cx.textAlign = 'center'
+  font(58, { italic: true, weight: 400 }); cx.fillStyle = GOLD
+  cx.fillText('Haba na haba hujaza kibaba.', W / 2, 700)
+  cx.restore()
+  const eA = ease(prog(t, 33.1, 34.1))
+  cx.save(); cx.globalAlpha = eA; cx.textAlign = 'center'
+  font(34, { family: SANS, weight: 300 }); cx.fillStyle = CREAM
+  cx.fillText('Little by little, every child grows into something bright.', W / 2, 770)
+  cx.restore()
+  const cA = easeOut(prog(t, 33.8, 34.7))
+  if (cA > 0) {
+    cx.save(); cx.globalAlpha = cA
+    const label = URL_TEXT ? 'Start learning at ' + URL_TEXT : 'Start the journey today'
+    font(34, { family: SANS, weight: 500 }); const tw = cx.measureText(label).width
+    const bw = tw + 110, bx = W / 2 - bw / 2, by = 850 + (1 - cA) * 20
+    cx.shadowColor = 'rgba(255,200,110,0.45)'; cx.shadowBlur = 40
+    roundRect(bx, by, bw, 84, 42); cx.fillStyle = CREAM; cx.fill()
+    cx.shadowBlur = 0; cx.strokeStyle = GOLD; cx.lineWidth = 3; cx.stroke()
+    cx.fillStyle = '#1b1838'; cx.textAlign = 'center'; cx.fillText(label, W / 2, by + 54)
+    cx.restore()
+  }
+  burst(625, 380, t, 31.7, 515)
+}
+
+// ---------- one frame ----------
+function renderFrame(t) {
+  const cam = camX(t)
+  cx.setTransform(1, 0, 0, 1, 0, 0)
+  drawSky(t, cam)
+  motes(t, cam, 50, 101, false)
+
+  // the closed scroll rises into view while the opening line fades
+  const rise = (1 - easeOut(prog(t, 2.1, 3.3))) * 760
+  const ox = originX(t), L = revealed(t)
+  cx.save(); cx.translate(0, rise)
+  cx.globalAlpha = clamp(prog(t, 2.1, 2.8))
+
+  // map content, clipped to what has unrolled so far
+  const vis0 = -ox - 40, vis1 = W - ox + 40
+  cx.save(); cx.translate(ox, 0)
+  drawParchment(L, vis0, vis1)
+  cx.save(); cx.beginPath(); cx.rect(0, 0, L, H); cx.clip()
+  parchmentPath(L, 9); cx.clip()
+  for (const g of GLYPHS) if (g.m > vis0 - 60 && g.m < vis1 + 60) glyph(g.kind, g.m, g.y, g.s)
+  drawRoute(vis0, vis1)
+  drawCartouche(clamp((L - 900) / 300))
+  if (vis0 < 1500) drawCompass(1180, 330, 92, t)
+  // a little humour in the margins, in the old chart-maker's way
+  cx.fillStyle = INK_SOFT; font(24, { italic: true })
+  cx.textAlign = 'center'; cx.fillText('here be lions', 3700, 268); cx.fillText('here be long division', 5150, 840)
+  STOPS.forEach((s, i) => { if (s.m + 500 > vis0 && s.m - 500 < vis1) drawStop(s, i, ox + s.m, t) })
+  drawTreasure(t, vis0, vis1)
+  const km = kobeM(t)
+  drawFootprints(vis0, vis1, km)
+  STOPS.forEach((s, i) => { if (s.m + 500 > vis0 && s.m - 500 < vis1) drawPhone(s, ox + s.m, t, i) })
+  if (t > 4.9) {
+    cx.save(); cx.globalAlpha = clamp(prog(t, 4.9, 5.5))
+    const moving = t < PAN_B + 1.1
+    drawKobe(km, t, moving, t > PAN_B + 1.0 ? 2 : 0)
+    cx.restore()
+  }
+  cx.restore()
+  cx.restore()
+
+  // rollers sit outside the clip; the right one carries the rest of the map
+  const lx = ox - ROLL_R, rx = ox + L + ROLL_R
+  if (L > 0) { rollerShadow(lx + ROLL_R, 1); rollerShadow(rx - ROLL_R, -1) }
+  const thick = lerp(ROLL_R + 6, ROLL_R - 4, clamp(L / MAP_LEN))
+  if (lx > -120) roller(lx, PARCH_TOP + 4, PARCH_BOT - 4, t, ROLL_R)
+  roller(rx, PARCH_TOP + 4, PARCH_BOT - 4, t, thick)
+  ribbonAndSeal(ox, t)
+  cx.restore()
+
+  burst(ox, 540, t, 3.35, 31)
+  // magic trails off the unrolling edge
+  if (t > 4.5 && t < PAN_B + 0.6) sparkles(rx + 10, PARCH_TOP + 60, PARCH_BOT - 60, t, 4.5, PAN_B + 0.6, 1000, Math.round((PAN_B - 3.6) * 22))
+  motes(t, cam, 18, 202, true)
+  introText(t)
+  endCard(t)
+
+  // gentle vignette and a soft fade at the very end
+  const v = cx.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, H * 1.05)
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.45)')
+  cx.fillStyle = v; cx.fillRect(0, 0, W, H)
+  const fin = Math.max(1 - prog(t, 0, 0.6), prog(t, DURATION - 0.6, DURATION))
+  if (fin > 0) { cx.fillStyle = `rgba(0,0,0,${fin})`; cx.fillRect(0, 0, W, H) }
+}
+
+window.ready = (async () => {
+  const names = ['kobe-0', 'kobe-2', ...STOPS.map((s) => 'scene-' + s.scene), ...STOPS.map((s) => 'screen-' + s.screen)]
+  await Promise.all(names.map((n) => load(n, `assets/${n}.png`)))
+  await Promise.all(['400 40px Fraunces', 'italic 400 40px Fraunces', '400 40px Lexend'].map((f) => document.fonts.load(f)))
+  makeParchment(); makeSepia(); makeStars(); makeEdges()
+  window.renderFrame = renderFrame
+  window.DURATION = DURATION
+  if (location.search.includes('play')) {
+    const t0 = performance.now()
+    const loop = () => { renderFrame(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop) }
+    loop()
+  } else renderFrame(0)
+})()
+</script>
+</body>
+</html>
