@@ -6,6 +6,7 @@ import type { AreaId, GradeId } from './curriculum'
 import type { Level } from './engine/types'
 import { Home } from './screens/Home'
 import { MapScreen } from './screens/MapScreen'
+import { Earn } from './screens/Earn'
 import { Learn } from './screens/Learn'
 import { Parent } from './screens/Parent'
 import { Plans } from './screens/Plans'
@@ -33,6 +34,7 @@ export type Screen =
   | { name: 'plans'; from?: AreaId }
   | { name: 'learn'; area: AreaId; sub: string }
   | { name: 'parent' }
+  | { name: 'earn' }
   | ({ name: 'quiz' } & QuizTarget)
   | ({ name: 'results'; correct: number; total: number } & QuizTarget)
 
@@ -108,6 +110,7 @@ function Router() {
       {screen.name === 'map' && <MapScreen key={screen.area} area={screen.area} open={screen.open} />}
       {screen.name === 'learn' && <Learn key={screen.sub} area={screen.area} sub={screen.sub} />}
       {screen.name === 'parent' && <Parent />}
+      {screen.name === 'earn' && <Earn />}
       {screen.name === 'plans' && <Plans from={screen.from} />}
       {screen.name === 'quiz' && <QuizScreen key={`${screen.review ? 'review' : (screen.kpsea ?? screen.sub ?? screen.strand)}:${screen.level}:${screen.paper}`} target={screen} />}
       {screen.name === 'results' && <Results target={screen} correct={screen.correct} total={screen.total} />}

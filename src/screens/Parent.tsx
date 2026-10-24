@@ -10,6 +10,7 @@ import { calmChoice, setCalmChoice, useCalm } from '../state/calm'
 import { dueReview, useProgress } from '../state/progress'
 import { gradeReports, totals, type SubReport } from '../state/summary'
 import './parent.css'
+import './earn.css'
 
 const pct = (x: number | null) => (x == null ? '–' : `${Math.round(x * 100)}%`)
 
@@ -197,6 +198,15 @@ export function Parent() {
 
             <p className="pg-fine">Progress is kept on this device. Super Pro will add a weekly report sent to your phone.</p>
             <MotionSetting />
+            <button type="button" className="earn-invite glass" onClick={() => go({ name: 'earn' })}>
+              <span>
+                <strong>Earn with CBC Helper</strong>
+                Share CBC Helper with other parents and earn on every plan they pay for.
+              </span>
+              <span className="arrow" aria-hidden>
+                →
+              </span>
+            </button>
           </motion.div>
         )}
       </div>

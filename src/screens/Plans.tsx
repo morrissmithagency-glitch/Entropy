@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useNav } from '../App'
 import { sfx } from '../audio/sfx'
+import { checkCode, cleanCode, storedRef } from '../billing/affiliate'
 import { requestPayment, paymentStatus, TEST_MODE } from '../billing/mpesa'
 import { ksh, normalisePhone, PLANS, prettyPhone, type Plan } from '../billing/plans'
 import { NatureScene } from '../components/NatureScene'
@@ -10,6 +11,7 @@ import { Breath, Icon, SettingsButtons, TopBar } from '../components/ui'
 import { gradeOfArea, GRADES, type AreaId, type GradeId } from '../curriculum'
 import { activePlan, setSubscription, useSubscription } from '../state/subscription'
 import './plans.css'
+import './earn.css'
 
 const longDate = (t: number) => new Date(t).toLocaleDateString('en-KE', { weekday: 'long', day: 'numeric', month: 'long' })
 
@@ -79,6 +81,16 @@ export function Plans({ from }: { from?: AreaId }) {
         <p className="plans-fine">
           Plans don&rsquo;t renew by themselves: you pay again only when you choose to. Prices include all charges.
         </p>
+
+        <button type="button" className="earn-invite glass" onClick={() => go({ name: 'earn' })}>
+          <span>
+            <strong>Earn with CBC Helper</strong>
+            Know parents who would love this? Share your code and earn on every plan they pay for.
+          </span>
+          <span className="arrow" aria-hidden>
+            →
+          </span>
+        </button>
       </div>
 
       <AnimatePresence>
@@ -100,6 +112,9 @@ function Checkout({ plan, defaultGrade, onDone }: { plan: Plan; defaultGrade?: G
   const [step, setStep] = useState<Step>({ name: 'form' })
   const [grade, setGrade] = useState<GradeId>(defaultGrade ?? GRADES[0].id)
   const [phone, setPhone] = useState('')
+  const [ref, setRef] = useState(storedRef)
+  const [showRef, setShowRef] = useState(() => !!storedRef())
+  const [refName, setRefName] = useState<string | null>(null)
   const [error, setError] = useState('')
   const started = useRef(0)
 
@@ -113,7 +128,7 @@ function Checkout({ plan, defaultGrade, onDone }: { plan: Plan; defaultGrade?: G
     sfx.select()
     setStep({ name: 'sending' })
     try {
-      const id = await requestPayment({ plan: plan.id, phone: msisdn, grade: plan.allGrades ? undefined : grade, days: plan.days })
+      const id = await requestPayment({ plan: plan.id, phone: msisdn, grade: plan.allGrades ? undefined : grade, days: plan.days, ref: cleanCode(ref) || undefined })
       started.current = Date.now()
       setStep({ name: 'waiting', id, phone: msisdn })
     } catch (e) {
@@ -121,6 +136,19 @@ function Checkout({ plan, defaultGrade, onDone }: { plan: Plan; defaultGrade?: G
       setError((e as Error).message)
     }
   }
+
+  // Show whose code it is, so a parent knows it was typed right.
+  useEffect(() => {
+    const code = cleanCode(ref)
+    setRefName(null)
+    if (code.length < 4) return
+    let live = true
+    const t = setTimeout(() => void checkCode(code).then((n) => live && setRefName(n)), 400)
+    return () => {
+      live = false
+      clearTimeout(t)
+    }
+  }, [ref])
 
   // Poll the payment until M-Pesa answers.
   const waitingId = step.name === 'waiting' ? step.id : null
@@ -199,6 +227,17 @@ function Checkout({ plan, defaultGrade, onDone }: { plan: Plan; defaultGrade?: G
                   aria-invalid={!!error}
                 />
               </label>
+              {showRef ? (
+                <label className="co-field">
+                  <span className="co-label">Referral code (optional)</span>
+                  <input className="co-phone" autoCapitalize="characters" placeholder="e.g. AMIN482" value={ref} onChange={(e) => setRef(cleanCode(e.target.value))} />
+                  {refName && <span className="co-ref-ok">Code from {refName}. Asante!</span>}
+                </label>
+              ) : (
+                <button type="button" className="co-ref-toggle" onClick={() => setShowRef(true)}>
+                  Have a referral code?
+                </button>
+              )}
               {error && <p className="co-error">{error}</p>}
 
               <button type="button" className="btn primary sheet-go mpesa" disabled={step.name === 'sending'} onClick={() => void pay()}>

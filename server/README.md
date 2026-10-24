@@ -47,8 +47,9 @@ Environment variables:
 | `CALLBACK_SECRET` | A long random string; it hides the callback address |
 | `ALLOWED_ORIGIN` | The app's address, e.g. `https://cbchelper.co.ke` (comma-separate several) |
 | `PORT` | Defaults to 8787 |
+| `ADMIN_TOKEN` | A long random string that opens `/admin`, where you approve affiliates and record payouts. See [AFFILIATES.md](AFFILIATES.md) |
 
-Payments are kept in `server/data/payments.json`. Put that folder on a disk that survives
+Payments are kept in `server/data/payments.json` (affiliate records sit beside it). Put that folder on a disk that survives
 restarts, and back it up: it is your record of who paid.
 
 ## 3. Point the app at it

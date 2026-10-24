@@ -1,0 +1,8 @@
+{
+  "firstRate": 0.1,
+  "renewalRate": { "week": 0.14, "month": 0.16 },
+  "renewalDays": 365,
+  "holdDays": 7,
+  "minPayout": 500,
+  "minAge": 18
+}
